@@ -59,7 +59,7 @@ This example uses the ORCID public API. A members API is also available, but the
 
 An Orcid client makes it possible to communicate with the orcid count whose authentication elements are contained in the Oauth object which is passed to the Oclient constructor 
  
-<pre>
+```php
 // Check for successful authentication
 
 if ($oauth->isAuthenticated())
@@ -68,12 +68,12 @@ if ($oauth->isAuthenticated())
 	$OrcidClient=new OClient($oauth);
 }
    // 2-creation of an Orcid work
-        $work=<span class="pl-k">new</span> <span class="pl-cl">Work()</span>;
+        $work=new Work();
         $work->setTitle("Les stalagmites du réseau du trou Noir")
              ->setType("Work-paper")
              ->setJournalTitle("naturephysic")
-             ->setCitation("The citation........")
-            ->setShortDescription("") 
+             ->setCitation("The work citation........")
+            ->setShortDescription("the work description") 
             //add Author with Author FullName 
             ->addAuthor("Benjamin Lans")
             ->addAuthor("Richard Maire")
@@ -88,10 +88,7 @@ if ($oauth->isAuthenticated())
             ->addExternalIdent("uri","00199711","","https://hal.archives-ouvertes.fr/hal-00199711");
      //3- send the Work
      $OrcidClient->postOne($work); 
-</pre>
-<span class="pl-k">
-</span>
-<span class="pl-cl">
+```
     
 The minimum configuration for sending an Orcid Work is to define the title, the type of document and add at least an external identifier.
 The add methods allow you to add several values ​​for the same parameter, by adding a box containing the value to the parameter table.

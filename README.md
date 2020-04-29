@@ -54,6 +54,55 @@ if ($oauth->isAuthenticated())
 ```
 
 This example uses the ORCID public API. A members API is also available, but the OAuth process is essentially the same.
+ 
+### Profile
+
+As alluded to in the samples above, once successfully authenticated via OAuth, you can make subsequent requests to the other public/member APIs. For example:
+
+```php
+$orcid = new Profile($oauth);
+
+// Get ORCID profile details
+$id    = $orcid->id();
+$email = $orcid->email();
+$name  = $orcid->fullName();
+```
+
+The profile class currently only supports a limited number of helper methods for directly accessing elements from the profile data. This will be expanded upon as needed. The raw JSON data from the profile output is available by calling the `raw()` method.
+
+Note that some fields (like email) may return null if the user has not made that field available.
+
+### Environment and API types
+
+ORCID supports two general API endpoints.  The first is their public API, and a second is for registered ORCID members (membership in this scenario does not simply mean that you have an ORCID account).  The public API is used by default and currently supports all functionality provided by the library.  You can, however, switch to the member API by calling:
+
+```php
+$oauth = new Oauth;
+$oauth->useMembersApi();
+```
+
+If you explicitly want to use the public API, you can do so by calling:
+
+```php
+$oauth = new Oauth;
+$oauth->usePublicApi();
+```
+
+ORCID also supports a sandbox environment designed for testing.  To use this environment, rather than the production environment (which is default), you can call the following command:
+
+```php
+$oauth = new Oauth;
+$oauth->useSandboxEnvironment();
+```
+
+The counterpart to this function, though not explicitly necessary, is:
+
+```php
+$oauth = new Oauth;
+$oauth->useProductionEnvironment();
+```
+
+
 #### Work
 ```php
    // creation of an Orcid work
@@ -81,8 +130,8 @@ The minimum configuration for sending an Orcid Work is to define the title, the 
 ```php
  // minimum configuration to create an Orcid work
         $work=new Work();
-        $work->setTitle("document Title")->setType("document type")
-              ->addExternalIdent("idType","idValue","","idUrl","idRelatiob");  
+        $work->setTitle($title)->setType($workType)
+              ->addExternalIdent($idType,$idValue,$idUrl,$idRelatiob);  
 ```
 In the case of a work modification, the identifier of the orcid work called Put-code must be added to this minimum configuration.
 ```php
@@ -156,54 +205,77 @@ ReadSingle: Allows you to read a recording by taking its putCode parameter
 ReadMultiple allows you to read several jobs for which the putCode table is taken as a parameter
 
 ### Oresponse
+It is a response object returned by Oclient methods. It contains the information of the response returned by Orcid via curl
   ```php 
-    
+    $OResponse= $this->workManager->ReadSummary($jsonFormat);
+        $code=$OResponse->getCode();
+        $header=$OResponse->getHeaders();
+        $body=$OResponse->getBody();
 ```
-
-### Profile
-
-As alluded to in the samples above, once successfully authenticated via OAuth, you can make subsequent requests to the other public/member APIs. For example:
+in case of error Orcid returns data which can be retrieved by these methods which will return null or an empty string if there has been no error
+  ```php 
+        if($OResponse->hasError()){
+           
+            $errorCode=$OResponse->getErrorCode();
+            $userMessage=$OResponse->getUserMessage();
+            $developperMessage=$OResponse->getDevelopperMessage();
+        }
+	
+   ```
+   In the case of reading all the work records in an orcid account with the ReadSummary method Oresponse has a method which returns the list of Orcid records read This method returns null if Oresponse is not the response to a call to the ReadSummary method
+   ```php       
+     $OResponse= $OrcidClient->ReadSummary()
+      if($OResponse->hasSuccess()){
+         /** @var Records $recordWorkList */
+            $recordWorkList=$OResponse->getWorkRecordList(); 
+        }
+ ```
+ This method returns an instance of Records which is a list of Record instances
+### Records and Record
+It is an instance whose set of properties represents an orcid work from the user's orcid account. It has some properties in common with the Work instance (the class used to create a work to send to Orcid) and specific properties coming from orcid
+   ```php    
+   
+        /**
+         * @var Records $records
+         */
+	 
+	 //returns date of last modification of oricd registrations
+        $groupelastModifiedDate=$records->getLastModifiedDate(); 
+	
+	// returns a complex associative array coming directly from Orcid and containing the information on the work read
+        $group=$records->getOrcidWorks(); 
+	
+        foreach ($records as $record){
+            /**
+             * @var Record $record
+             */
+            $putCode= $record->getPutCode();
+            $workSource=$record->getSource();
+            $workPath=$record->getPath();
+            $lastModifiedDate=$record->getLastModifiedDate();//returns date of last modification of this record work
+            $title=$record->getTitle(); 
+	    
+	    //returns an external identifier array of type ExternalId
+            /** @var ExternalId [] $externalIds */
+            $externalIds= $record->getExternals();
+        }
+ ```
+ 
+### ExternalId
+represents an external identifier and contains the four properties $ idType, $ idValue, $ idUrl, $ idRelationship
 
 ```php
-$orcid = new Profile($oauth);
+       /**
+         * @var Record $record
+         */
+        $externalIds= $record->getExternals();
+        foreach ($externalIds as $externalId){
 
-// Get ORCID profile details
-$id    = $orcid->id();
-$email = $orcid->email();
-$name  = $orcid->fullName();
+            /** @var ExternalId $externalId */
+            
+                $idType=$externalId->getIdValue();
+                $idValue= $externalId->getIdValue(); 
+                $idUrl=$externalId->getIdUrl(); 
+                $idRelationship=$externalId->getIdRelationship();
+        }
 ```
-
-The profile class currently only supports a limited number of helper methods for directly accessing elements from the profile data. This will be expanded upon as needed. The raw JSON data from the profile output is available by calling the `raw()` method.
-
-Note that some fields (like email) may return null if the user has not made that field available.
-
-### Environment and API types
-
-ORCID supports two general API endpoints.  The first is their public API, and a second is for registered ORCID members (membership in this scenario does not simply mean that you have an ORCID account).  The public API is used by default and currently supports all functionality provided by the library.  You can, however, switch to the member API by calling:
-
-```php
-$oauth = new Oauth;
-$oauth->useMembersApi();
-```
-
-If you explicitly want to use the public API, you can do so by calling:
-
-```php
-$oauth = new Oauth;
-$oauth->usePublicApi();
-```
-
-ORCID also supports a sandbox environment designed for testing.  To use this environment, rather than the production environment (which is default), you can call the following command:
-
-```php
-$oauth = new Oauth;
-$oauth->useSandboxEnvironment();
-```
-
-The counterpart to this function, though not explicitly necessary, is:
-
-```php
-$oauth = new Oauth;
-$oauth->useProductionEnvironment();
-```
-

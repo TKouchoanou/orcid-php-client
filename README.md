@@ -54,20 +54,9 @@ if ($oauth->isAuthenticated())
 ```
 
 This example uses the ORCID public API. A members API is also available, but the OAuth process is essentially the same.
-
-#### OClient 
-
-An Orcid client makes it possible to communicate with the orcid count whose authentication elements are contained in the Oauth object which is passed to the Oclient constructor 
- 
+#### Work
 ```php
-// Check for successful authentication
-
-if ($oauth->isAuthenticated())
-{
-    //1- creation of an orcid client
-	$OrcidClient=new OClient($oauth);
-}
-   // 2-creation of an Orcid work
+   // creation of an Orcid work
         $work=new Work();
         $work->setTitle("Les stalagmites du réseau du trou Noir")
              ->setType("Work-paper")
@@ -86,33 +75,90 @@ if ($oauth->isAuthenticated())
             // add External Ident 
             ->addExternalIdent("doi","10.1038/nphys1170","https://www.nature.com/articles/nphys1170","self")
             ->addExternalIdent("uri","00199711","","https://hal.archives-ouvertes.fr/hal-00199711");
-     //3- send the Work
-     $OrcidClient->postOne($work); 
+  
 ```
-    
 The minimum configuration for sending an Orcid Work is to define the title, the type of document and add at least an external identifier.
-The add methods allow you to add several values ​​for the same parameter, by adding a box containing the value to the parameter table.
+```php
+ // minimum configuration to create an Orcid work
+        $work=new Work();
+        $work->setTitle("document Title")->setType("document type")
+              ->addExternalIdent("idType","idValue","","idUrl","idRelatiob");  
+```
+In the case of a work modification, the identifier of the orcid work called Put-code must be added to this minimum configuration.
+```php
+    $work->setPutCode(14563); 
+```
+The add methods allow you to add several values ​​for the same parameter, by adding a new array case containing the value to the parameter array.
+#### Works
+Works is a class that inherits from arrayIterator. It is a list of orcid jobs to which we can add instances of type Work with the append method 
+```php
+    $worksList=new Works();
+        $worksList->append($firstwork);
+        $worksList->append($secondwork);
+        $worksList->append($thirdwork);
+```
+and on which we can iterate with foreach for example
+```php
+    foreach ($worksList as $work){
+            /**
+             * @var Work $work
+             */
+            $work->addAuthor("Author fullname"); 
+        }
+```
+
+#### OClient 
+
+An Orcid client makes it possible to communicate with the orcid count whose authentication elements are contained in the Oauth object which is passed to the Oclient constructor 
+ 
+```php
+// Check for successful authentication
+
+if ($oauth->isAuthenticated())
+{
+    // creation of an orcid client
+	$OrcidClient=new OClient($oauth);
+}
+```
 
 The different methods of Oclient are:
+
 PostOne: allows you to send an Orcid work taken as a parameter
-PostMultiple:
-allows to send several jobs, it takes as parameter a list of Work type work array or Works a class which are arrayIterator
-
-Update: to modify it is imperative to add the putCode and at least the title, the type, and an externalId
-
+  ```php 
+     // send the Work
+     $OrcidClient->postOne($work); 
+```
+PostMultiple: allows to send several jobs, it takes as parameter a list of Work type work array or Works a 
+ ```php 
+     //send a list of Works
+     $OrcidClient->postMultiple($worksList); 
+```
+Update: to modify it is imperative to add the putCode and at least the minimum configuration
+  ```php 
+     // update a Work
+     $OrcidClient->update($work); 
+```
 Delete: allows you to delete a job. It takes as parameter the putCode of work on orcid
 
-ReadSummary: Allows you to read all the works present Orcid registration of the account holder represented by $ oauth. It takes no parameters
+```php 
+     // delete a Work
+     $putcode=14563; 
+     $OrcidClient->delete($putcode); 
+```
 
+ReadSummary: Allows you to read all the works present Orcid registration of the account holder represented by $ oauth. It takes no parameters
+  ```php 
+     // read Summary
+     $OrcidClient->ReadSummary()
+```
 ReadSingle: Allows you to read a recording by taking its putCode parameter
 
 ReadMultiple allows you to read several jobs for which the putCode table is taken as a parameter
 
-Ouvrir dans Google Traduction	
-Commentaires
-Résultat Web avec des liens annexes
-
-
+### Oresponse
+  ```php 
+    
+```
 
 ### Profile
 

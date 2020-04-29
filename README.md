@@ -131,7 +131,7 @@ The minimum configuration for sending an Orcid Work is to define the title, the 
  // minimum configuration to create an Orcid work
         $work=new Work();
         $work->setTitle($title)->setType($workType)
-              ->addExternalIdent($idType,$idValue,$idUrl,$idRelatiob);  
+              ->addExternalIdent($idType,$idValue,$idUrl,$idRelationShip);  
 ```
 In the case of a work modification, the identifier of the orcid work called Put-code must be added to this minimum configuration.
 ```php

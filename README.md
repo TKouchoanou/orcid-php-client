@@ -59,6 +59,7 @@ This example uses the ORCID public API. A members API is also available, but the
 
 An Orcid client makes it possible to communicate with the orcid count whose authentication elements are contained in the Oauth object which is passed to the Oclient constructor 
  
+<pre>
 // Check for successful authentication
 
 if ($oauth->isAuthenticated())
@@ -87,6 +88,7 @@ if ($oauth->isAuthenticated())
             ->addExternalIdent("uri","00199711","","https://hal.archives-ouvertes.fr/hal-00199711");
      //3- send the Work
      $OrcidClient->postOne($work); 
+</pre>
     
 The minimum configuration for sending an Orcid Work is to define the title, the type of document and add at least an external identifier.
 The add methods allow you to add several values ​​for the same parameter, by adding a box containing the value to the parameter table.

@@ -68,7 +68,7 @@ if ($oauth->isAuthenticated())
 	$OrcidClient=new OClient($oauth);
 }
    // 2-creation of an Orcid work
-        $work=new Work();
+        $work=<span class="pl-k">new</span> <span class="pl-cl">Work()</span>;
         $work->setTitle("Les stalagmites du réseau du trou Noir")
              ->setType("Work-paper")
              ->setJournalTitle("naturephysic")
@@ -89,6 +89,9 @@ if ($oauth->isAuthenticated())
      //3- send the Work
      $OrcidClient->postOne($work); 
 </pre>
+<span class="pl-k">
+</span>
+<span class="pl-cl">
     
 The minimum configuration for sending an Orcid Work is to define the title, the type of document and add at least an external identifier.
 The add methods allow you to add several values ​​for the same parameter, by adding a box containing the value to the parameter table.

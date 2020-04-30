@@ -10,7 +10,7 @@ use Orcid\Work\Create\Works;
 
 class OClient
 {
-    /**
+     /**
      * @var Oauth
      */
     private $oauth = null;
@@ -41,9 +41,9 @@ class OClient
      * @param bool $jsonformat
      * @return mixed
      */
-    public function ReadSummary($jsonFormat=true)
+    public function ReadSummary($dataIsJsonFormat=true)
     {
-        $contentType=$jsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
+        $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         $this->oauth->http->initialize(true);
        $response=  $this->oauth->http->setUrl($this->oauth->getApiEndpoint('works'))
             ->setHeader([
@@ -61,8 +61,8 @@ class OClient
      * @param bool $jsonformat
      * @return OResponse
      */
-    public function ReadSingle($putCode,$jsonformat=true){
-        $contentType=$jsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
+    public function ReadSingle($putCode,$dataIsJsonFormat=true){
+        $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         $this->oauth->http->initialize(true);
       $response=  $this->oauth->http->setUrl($this->oauth->getApiEndpoint('work').'/'.$putCode)
             ->setHeader([
@@ -79,8 +79,8 @@ class OClient
      * @return mixed
      * @throws Exception
      */
-    public function ReadMultiple(array $worksIdArray,$jsonformat=true){
-        $contentType=$jsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
+    public function ReadMultiple(array $worksIdArray,$dataIsJsonFormat=true){
+        $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         if($worksIdArray->length<0){
             throw new Exception("the work id array must not be empity");
         }
@@ -105,10 +105,8 @@ class OClient
 
     }
 
-    
-    
-    
-      /**
+
+    /**
      * @param Work|Works|Work[] $works
      * @return OResponse
      * @throws \Exception
@@ -116,36 +114,35 @@ class OClient
     public function  send($works){
 
         if($works instanceof Work){
-          return  $this->postOne($work);
+            $data=$works->getXMLData();
+          return  $this->postOne($data);
         }elseif ($works instanceof works){
-          return  $this->postMultiple($works);
+             $data=$works->getXMLData();
+          return  $this->postMultiple($data);
         }elseif (is_array($works)){
             $newWorks=new Works();
-
             foreach ($works as $work){
-
                 if ($work instanceof Work){
                     $newWorks->append($work);
                 }else{
                     throw new \Exception("All values of your array must be instance of Work");
                 }
             }
-
-          return  $this->postMultiple($newWorks);
+            $data=$newWorks->getXMLData();
+          return  $this->postMultiple($data);
         }else{
             throw new \Exception("Oclient Send Method parameter can  be :
              instance of Work, instance of works or array of work instance. Your work(s) type is not accepted ");
         }
-
     }
+
     /**
      * @param Work $work
      * @param bool $dataIsJsonFormat
      * @return OResponse
      */
-    public function postOne(Work $work,$dataIsJsonFormat=true){
-        $data=$work->getXMLData();
-        $contentType=$jsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
+    protected function postOne($data,$dataIsJsonFormat=false){
+        $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         $response= $this->oauth->http->initialize(true)
             ->setHeader([
                 'Content-Type'  => $contentType,
@@ -160,13 +157,12 @@ class OClient
     }
 
     /**
-     * @param Works $works
+     * @param $data
      * @param bool $dataIsJsonFormat
      * @return OResponse
      */
-    public function postMultiple(Works $works,$dataIsJsonFormat=true){
-        $data=$works->getXMLData();
-        $contentType=$jsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
+    protected function postMultiple($data,$dataIsJsonFormat=false){
+        $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         $response=$this->oauth->http->initialize(true)
             ->setUrl($this->oauth->getApiEndpoint('works'))
             ->setPostData($data)
@@ -181,20 +177,25 @@ class OClient
 
     /**
      * @param Work $work
-     * @param bool $dataIsJsonFormat
      * @return OResponse
      * @throws \Exception
      */
-    public function update(Work $work,$dataIsJsonFormat=true){
-
+    public function update(Work $work){
         $putCode=$work->getPutCode();
         $data=$work->getXMLData();
-
         if(empty($putCode)||!is_numeric($putCode)){
             throw new \Exception("putcode must be numéric and not empity to update ORCID Work");
         }
+        return$this->updateOneWork($data,$putCode);
+    }
 
-        $contentType=$jsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
+    /**
+     * @param string $data //xml string
+     * @param bool $dataIsJsonFormat
+     * @return OResponse
+     */
+    protected function updateOneWork($data,$putCode,$dataIsJsonFormat=false){
+        $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         $response=$this->oauth->http->initialize(true)->setPut()
             ->setUrl($this->oauth->getApiEndpoint('work/'.$putCode))
             ->setPostData($data)
@@ -213,7 +214,7 @@ class OClient
      * @return OResponse
      */
     public function delete($putCode,$dataIsJsonFormat=true){
-        $contentType=$jsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
+        $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         $response=$this->oauth->http->initialize(true)->setDelete()
             ->setUrl($this->oauth->getApiEndpoint('work/'.$putCode))
             ->setHeader([
@@ -225,8 +226,5 @@ class OClient
         return  new OResponse($response,$infos);
 
     }
-
-
-
 
 }

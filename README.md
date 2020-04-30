@@ -119,7 +119,7 @@ Work is a class that allows you to create a publication on your orcid account. T
 	     ->setPublicationDate('1998','09','20')// the first parameter year is required if you want to set date
 	     ->setLanguageCode('FR')
 	     ->setCountry('US')
-            //add Authors with Author FullName and role by default the role 'author will be chosen'
+            //add Authors with Author FullName and role, by default the role 'author' will be chosen
              ->addAuthor("Benjamin Lans","author")
              ->addAuthor("Richard Maire","Director")
              ->addAuthor("Richard Ortega","Collaborator")
@@ -127,7 +127,7 @@ Work is a class that allows you to create a publication on your orcid account. T
             //add subtitles
              ->addSubTitle("subtitle one ")
              ->addSubTitle("subtitle two")
-             ->addSubTitle("subtitle three ")
+             ->addSubTitle("subtitle three")
             // add External Ident 
              ->addExternalIdent("doi","10.1038/nphys1170","https://www.nature.com/articles/nphys1170","self")
              ->addExternalIdent("uri","00199711","","https://hal.archives-ouvertes.fr/hal-00199711");

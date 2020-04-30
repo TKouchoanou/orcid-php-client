@@ -10,7 +10,7 @@ use Orcid\Work\Create\Works;
 
 class OClient
 {
-     /**
+      /**
      * @var Oauth
      */
     private $oauth = null;
@@ -38,8 +38,8 @@ class OClient
 
 
     /**
-     * @param bool $jsonformat
-     * @return mixed
+     * @param bool $dataIsJsonFormat
+     * @return OResponse
      */
     public function ReadSummary($dataIsJsonFormat=true)
     {
@@ -61,7 +61,7 @@ class OClient
      * @param bool $jsonformat
      * @return OResponse
      */
-    public function ReadSingle($putCode,$dataIsJsonFormat=true){
+    public function readSingle($putCode,$dataIsJsonFormat=true){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         $this->oauth->http->initialize(true);
       $response=  $this->oauth->http->setUrl($this->oauth->getApiEndpoint('work').'/'.$putCode)
@@ -75,14 +75,13 @@ class OClient
 
     /**
      * @param array $worksIdArray
-     * @param bool $jsonformat
-     * @return mixed
-     * @throws Exception
+     * @param bool $dataIsJsonFormat
+     * @return OResponse
      */
-    public function ReadMultiple(array $worksIdArray,$dataIsJsonFormat=true){
+    public function readMultiple(array $worksIdArray,$dataIsJsonFormat=true){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
-        if($worksIdArray->length<0){
-            throw new Exception("the work id array must not be empity");
+        if(empty($worksIdArray)){
+            throw new Exception("the work put-code array (worksIdArray) must not be empity");
         }
         if($worksIdArray->length>50){
             throw new Exception("you can't read more than 50 Work yourwork id array length is more than 50");
@@ -101,8 +100,17 @@ class OClient
             ])->execute();
         $infos=$this->oauth->http->getResponseInfos();
         return  new OResponse($response,$infos);
+    }
 
-
+    /**
+     * @param int|string|array $putCode
+     * @return OResponse
+     */
+    public function read($putCode){
+        if(is_array($putCode)){
+           return  $this->readMultiple($putCode);
+        }
+        return $this->readSingle($putCode); 
     }
 
 
@@ -226,5 +234,6 @@ class OClient
         return  new OResponse($response,$infos);
 
     }
+
 
 }

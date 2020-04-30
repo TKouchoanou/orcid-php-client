@@ -113,15 +113,16 @@ Work is a class that allows you to create a publication on your orcid account. T
              ->setTranslatedTitleLanguageCode('en');
              ->setType("Work-paper")
              ->setJournalTitle("naturephysic")
-             ->setCitation("The work citation....")
+             ->setCitation("The work citation....")//if you don't set citationType formatted-unspecified will be set
+	     ->setCitationType('the citation type')
              ->setShortDescription("the work description...") 
-	     ->setPublicationDate('1998','09','20')//
+	     ->setPublicationDate('1998','09','20')// the first parameter year is required if you want to set date
 	     ->setLanguageCode('FR')
 	     ->setCountry('US')
-            //add Authors with Author FullName 
-             ->addAuthor("Benjamin Lans")
-             ->addAuthor("Richard Maire")
-             ->addAuthor("Richard Ortega")
+            //add Authors with Author FullName and role by default the role 'author will be chosen'
+             ->addAuthor("Benjamin Lans","author")
+             ->addAuthor("Richard Maire","Director")
+             ->addAuthor("Richard Ortega","Collaborator")
              ->addAuthor("Guillaume Devès")
             //add subtitles
              ->addSubTitle("subtitle one ")

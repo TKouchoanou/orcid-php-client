@@ -12,8 +12,9 @@ use Orcid\Work\ExternalId;
 class Work extends OAwork
 {
     const FULL_NAME = 'fullName';
-    const ORCID_ID = 'orcidID';
-    const SEQUENCE = 'sequence';
+    const ORCID_ID  = 'orcidID';
+    const ROLE      = 'role';
+    const SEQUENCE  = 'sequence';
     const HOSTNAME  = 'orcid.org';
 
     public static $namespaceWork= "http://www.orcid.org/ns/work";
@@ -65,9 +66,9 @@ class Work extends OAwork
      * @param string $authors
      * @return \Orcid\Work
      */
-    public function addAuthor(string $fullName,string $orcidID='',string $sequence='')
+    public function addAuthor(string $fullName,string $role='author',string $orcidID='', string $sequence='')
     {
-        $this->authors []= [self::FULL_NAME =>$fullName, self::ORCID_ID =>$orcidID, self::SEQUENCE =>$sequence];
+        $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID, self::SEQUENCE =>$sequence];
         return $this;
     }
 
@@ -227,7 +228,7 @@ class Work extends OAwork
         if(isset($this->authors)&& is_array($this->authors)){
             $contributors = $work->appendChild( $dom->createElementNS(self::$namespaceWork,"contributors") );
             foreach($this->authors as $author){
-                $contributors->appendChild( $this->nodeContributor($dom,$author[self::FULL_NAME], "author",$author[self::ORCID_ID],$author[self::SEQUENCE]) );
+                $contributors->appendChild( $this->nodeContributor($dom,$author[self::FULL_NAME],$author[self::ROLE],$author[self::ORCID_ID],$author[self::SEQUENCE]) );
             }
         }
         if(isset($this->principalAuthors)&&is_array($this->principalAuthors)){
@@ -256,7 +257,7 @@ class Work extends OAwork
      * @return DOMNode
      */
 
-    protected function externalIdNode(DOMDocument $dom, $type, $value, $url="",$relationship)
+    protected function externalIdNode(DOMDocument $dom, $type, $value, $url="",$relationship="self")
     {
         $externalId = $dom->createElementNS(self::$namespaceCommon, "external-id");
         $externalId->appendChild( $dom->createElementNS(self::$namespaceCommon,"external-id-type", $type) );
@@ -379,20 +380,21 @@ class Work extends OAwork
 
     public function checkMetaValueAndThrowExceptionIfNecessary()
     {
-        $reponse="";
+         $reponse="";
         if(empty($this->title)) {
-            $reponse .=" Echec récupération du titre";
+            $reponse .=" Title recovery failed: Title value cannot be empty";
         }
         if(empty($this->type)) {
-            $reponse .=" Echec récupération du type de travail";
+            $reponse .=" Work Type recovery failed: Type value cannot be empty";
         }
 
         if(empty($this->externals)) {
-            $reponse .=" Echec récupération d'un identifiant externe";
+            $reponse .=" externals Ident recovery failed: externals values cannot be empty";
         }
         if($reponse!==""){
             throw new \Exception($reponse);
         }
     }
+
 
 }

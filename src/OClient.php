@@ -105,6 +105,38 @@ class OClient
 
     }
 
+    
+    
+    
+        /**
+     * @param  Work|Works|Work[] $works
+     * @throws \Exception
+     */
+    public function  send($works){
+
+        if($works instanceof Work){
+          return  $this->postOne($work);
+        }elseif ($works instanceof works){
+          return  $this->postMultiple($works);
+        }elseif (is_array($works)){
+            $newWorks=new Works();
+
+            foreach ($works as $work){
+
+                if ($work instanceof Work){
+                    $newWorks->append($work);
+                }else{
+                    throw new \Exception("All values of your array must be instance of Work");
+                }
+            }
+
+          return  $this->postMultiple($newWorks);
+        }else{
+            throw new \Exception("Oclient Send Method parameter can  be :
+             instance of Work, instance of works or array of work instance. Your work(s) type is not accepted ");
+        }
+
+    }
     /**
      * @param Work $work
      * @param bool $dataIsJsonFormat

@@ -108,8 +108,9 @@ class OClient
     
     
     
-        /**
-     * @param  Work|Works|Work[] $works
+      /**
+     * @param Work|Works|Work[] $works
+     * @return OResponse
      * @throws \Exception
      */
     public function  send($works){

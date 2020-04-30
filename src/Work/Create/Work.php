@@ -80,9 +80,11 @@ class Work extends OAwork
      */
     public function setCitation($citation, string $citationType='formatted-unspecified')
     {
-        if(!empty($citation)){
+          if(!empty($citation)){
             $this->citation = $citation;
-            $this->citationType=$citationType;
+            if(empty($this->citationType)){
+                $this->setCitationType($citationType); 
+            }
         }
         return $this;
     }

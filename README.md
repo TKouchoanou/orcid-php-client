@@ -103,7 +103,7 @@ $oauth->useProductionEnvironment();
 ```
 
 
-#### Work
+### Work
 Work is a class that allows you to create a publication on your orcid account. The data of a document to send to orcid must be added to a Work instance by the setters. Work provides methods to create xml in the format accepted by Orcid
 ```php
    // creation of an Orcid work
@@ -145,7 +145,7 @@ In the case of a work modification, the identifier of the orcid work called Put-
     $work->setPutCode(14563); 
 ```
 The add methods allow you to add several values ​​for the same parameter, by adding a new array case containing the value to the parameter array.
-#### Works
+### Works
 Works is a class that inherits from arrayIterator. It is a list of orcid jobs to which we can add instances of type Work with the append method 
 ```php
     $worksList=new Works();
@@ -163,7 +163,7 @@ and on which we can iterate with foreach for example
         }
 ```
 
-#### OClient 
+### OClient 
 
 An Orcid client makes it possible to communicate with the orcid count whose authentication elements are contained in the Oauth object which is passed to the Oclient constructor 
  
@@ -214,7 +214,7 @@ Read : Allows you to read one or more records by taking its parameter a putCode 
 ### Oresponse
 It is a response object returned by Oclient methods. It contains the information of the response returned by Orcid . Requests are made with curl
   ```php 
-    $OResponse= $OrcidClient->ReadSummary($jsonFormat);
+    $OResponse= $OrcidClient->ReadSummary();
         $code=$OResponse->getCode();
         $header=$OResponse->getHeaders();
         $body=$OResponse->getBody();
@@ -231,7 +231,6 @@ in case of error Orcid returns data which can be retrieved by these methods whic
    ```
    In the case of reading all the work records in an orcid account with the ReadSummary method Oresponse has a method which returns the list of Orcid records read This method returns null if Oresponse is not the response to a call to the ReadSummary method
    ```php       
-     $OResponse= $OrcidClient->ReadSummary()
       if($OResponse->hasSuccess()){
          /** @var Records $recordWorkList */
             $recordWorkList=$OResponse->getWorkRecordList(); 

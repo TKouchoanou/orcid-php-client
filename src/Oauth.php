@@ -124,7 +124,18 @@ class Oauth
      * @var array
      */
     private $authenticateData=null;
-
+    /**
+     * @var string
+     */
+    private $refreshToken=null;
+    /**
+     * @var int
+     */
+    private $expireIn=0;
+    /**
+     * @var string
+     */
+    private $name=null;
     /**
      * Constructs a new instance
      *
@@ -297,6 +308,59 @@ class Oauth
     }
 
     /**
+     * @param string $refreshToken
+     */
+    public function setRefreshToken(string $refreshToken)
+    {
+        $this->refreshToken = $refreshToken;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRefreshToken(): string
+    {
+        return $this->refreshToken;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExpireIn(): int
+    {
+        return $this->expireIn;
+    }
+
+    /**
+     * @param int $expireIn
+     */
+    public function setExpireIn(int $expireIn)
+    {
+        $this->expireIn = $expireIn;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+
+    /**
      * Gets the ORCID iD
      *
      * @return  string
@@ -460,6 +524,9 @@ class Oauth
         if (isset($data->access_token)) {
             $this->setAccessToken($data->access_token);
             $this->setOrcid($data->orcid);
+            $this->setRefreshToken($data->refresh_token);
+            $this->setName($data->name);
+            $this->setExpireIn($data->expires_in);
             $this->setAuthenticateData((array)$data);
         } else {
             // Seems like the response format changes on occasion...not sure what's going on there?

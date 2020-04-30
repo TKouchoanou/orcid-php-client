@@ -186,20 +186,18 @@ Send: allows you to send one or more publications. It takes as parameter an arra
            /*** @var Work|Works|Work[] $works  */
      $OrcidClient->send($works); 
   ```
-Update: to modify it is imperative to add the putCode and at least the minimum configuration
+Update: This method allows you to modify a Work already sent to Orcid. You can only modify a work already present in an orcid account with a putCode to recover.To modify don't forget to set putCode
   ```php 
      // update a Work
      $OrcidClient->update($work); 
 ```
 Delete: allows you to delete a job. It takes as parameter the putCode of work on orcid
-
 ```php 
      // delete a Work
      $putcode=14563; 
      $OrcidClient->delete($putcode); 
 ```
-
-ReadSummary: Allows you to read all the works present Orcid registration of the account holder represented by $ oauth. It takes no parameters
+ReadSummary: Allows you to read all the works present Orcid registration of the account holder represented by $ oauth. 
   ```php 
      // read Summary
      $OrcidClient->ReadSummary()
@@ -216,7 +214,7 @@ Read : Allows you to read one or more records by taking its parameter a putCode 
 ### Oresponse
 It is a response object returned by Oclient methods. It contains the information of the response returned by Orcid . Requests are made with curl
   ```php 
-    $OResponse= $this->workManager->ReadSummary($jsonFormat);
+    $OResponse= $OrcidClient->ReadSummary($jsonFormat);
         $code=$OResponse->getCode();
         $header=$OResponse->getHeaders();
         $body=$OResponse->getBody();

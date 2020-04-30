@@ -109,22 +109,27 @@ Work is a class that allows you to create a publication on your orcid account. T
    // creation of an Orcid work
         $work=new Work();
         $work->setTitle("Les stalagmites du réseau du trou Noir")
+	     ->setTranslatedTitle('The stalagmites of the Black hole network')
+             ->setTranslatedTitleLanguageCode('en');
              ->setType("Work-paper")
              ->setJournalTitle("naturephysic")
-             ->setCitation("The work citation........")
-            ->setShortDescription("the work description") 
-            //add Author with Author FullName 
-            ->addAuthor("Benjamin Lans")
-            ->addAuthor("Richard Maire")
-            ->addAuthor("Richard Ortega")
-            ->addAuthor("Guillaume Devès")
-            //add subtitle
-            ->addSubTitle("subtitle one ")
-            ->addSubTitle("subtitle two")
-            ->addSubTitle("subtitle three ")
+             ->setCitation("The work citation....")
+             ->setShortDescription("the work description...") 
+	     ->setPublicationDate('1998','09','20')//
+	     ->setLanguageCode('FR')
+	     ->setCountry('US')
+            //add Authors with Author FullName 
+             ->addAuthor("Benjamin Lans")
+             ->addAuthor("Richard Maire")
+             ->addAuthor("Richard Ortega")
+             ->addAuthor("Guillaume Devès")
+            //add subtitles
+             ->addSubTitle("subtitle one ")
+             ->addSubTitle("subtitle two")
+             ->addSubTitle("subtitle three ")
             // add External Ident 
-            ->addExternalIdent("doi","10.1038/nphys1170","https://www.nature.com/articles/nphys1170","self")
-            ->addExternalIdent("uri","00199711","","https://hal.archives-ouvertes.fr/hal-00199711");
+             ->addExternalIdent("doi","10.1038/nphys1170","https://www.nature.com/articles/nphys1170","self")
+             ->addExternalIdent("uri","00199711","","https://hal.archives-ouvertes.fr/hal-00199711");
   
 ```
 The minimum configuration for sending an Orcid Work is to define the title, the type of document and add at least an external identifier.

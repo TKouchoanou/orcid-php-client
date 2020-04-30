@@ -104,6 +104,7 @@ $oauth->useProductionEnvironment();
 
 
 #### Work
+Work is a class that allows you to create a publication on your orcid account. The data of a document to send to orcid must be added to a Work instance by the setters. Work provides methods to create xml in the format accepted by Orcid
 ```php
    // creation of an Orcid work
         $work=new Work();
@@ -202,7 +203,7 @@ ReadSummary: Allows you to read all the works present Orcid registration of the 
 ```
 ReadSingle: Allows you to read a recording by taking its putCode parameter
 
-ReadMultiple allows you to read several jobs for which the putCode table is taken as a parameter
+ReadMultiple: allows you to read several jobs for which the putCode table is taken as a parameter
 
 ### Oresponse
 It is a response object returned by Oclient methods. It contains the information of the response returned by Orcid via curl

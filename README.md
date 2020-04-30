@@ -173,6 +173,13 @@ if ($oauth->isAuthenticated())
 
 The different methods of Oclient are:
 
+Send: allows you to send one or more publications. It takes as parameter an array of instance of the work class, an instance of works to send several publications or an instance of the work class to send a single publication
+
+  ```php 
+     // send one or several work(s)
+           /*** @var Work|Works|Work[] $works  */
+     $OrcidClient->send($works); 
+  ```
 PostOne: allows you to send an Orcid work taken as a parameter
   ```php 
      // send the Work

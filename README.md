@@ -186,16 +186,6 @@ Send: allows you to send one or more publications. It takes as parameter an arra
            /*** @var Work|Works|Work[] $works  */
      $OrcidClient->send($works); 
   ```
-PostOne: allows you to send an Orcid work taken as a parameter
-  ```php 
-     // send the Work
-     $OrcidClient->postOne($work); 
-```
-PostMultiple: allows to send several jobs, it takes as parameter a list of Work type work array or Works a 
- ```php 
-     //send a list of Works
-     $OrcidClient->postMultiple($worksList); 
-```
 Update: to modify it is imperative to add the putCode and at least the minimum configuration
   ```php 
      // update a Work
@@ -214,9 +204,14 @@ ReadSummary: Allows you to read all the works present Orcid registration of the 
      // read Summary
      $OrcidClient->ReadSummary()
 ```
-ReadSingle: Allows you to read a recording by taking its putCode parameter
-
-ReadMultiple: allows you to read several jobs for which the putCode table is taken as a parameter
+Read : Allows you to read one or more records by taking its parameter a putCode of type int or string or an array of putCode. The putCode must be a numeric value, it is returned by orcid
+  ```php 
+     // read work(s)
+      /**
+         * @var int|string|array $putCode
+         */
+        $OrcidClient->read($putCode);
+```
 
 ### Oresponse
 It is a response object returned by Oclient methods. It contains the information of the response returned by Orcid . Requests are made with curl

@@ -206,7 +206,7 @@ ReadSingle: Allows you to read a recording by taking its putCode parameter
 ReadMultiple: allows you to read several jobs for which the putCode table is taken as a parameter
 
 ### Oresponse
-It is a response object returned by Oclient methods. It contains the information of the response returned by Orcid via curl
+It is a response object returned by Oclient methods. It contains the information of the response returned by Orcid . Requests are made with curl
   ```php 
     $OResponse= $this->workManager->ReadSummary($jsonFormat);
         $code=$OResponse->getCode();

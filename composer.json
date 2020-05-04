@@ -1,5 +1,5 @@
 {
-    "name": " TKouchoanou/OrcidPHPClient",
+    "name": "TKouchoanou/OrcidPHPClient",
     "description": "Library for ORCID web services",
     "keywords": ["orcid", "php", "oauth"],
     "license": "MIT",

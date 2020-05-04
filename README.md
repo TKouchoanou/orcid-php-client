@@ -1,4 +1,4 @@
-# OrcidPHPClient
+# Orcid-PHP-Client
 php client to send and read workflows on orcid
 
 This library was started to support the ORCID OAuth2 authentication workflow. It also supports basic profile access, but is a work in progress. More features are to come as needed by the developer or requested/contributed by other interested parties.

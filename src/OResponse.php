@@ -219,6 +219,10 @@ class OResponse
     public function hasNotFound(){
         return$this->code==404;
     }
+    
+     public function isEmpity(){
+        return $this->code==0; 
+    }
 
     /**
      * @param string $xmlString

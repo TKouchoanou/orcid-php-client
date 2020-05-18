@@ -159,8 +159,22 @@ namespace Orcid\Work;
          $this->publicationDate = ['year'=>$year,'month'=>$month,'day'=>$day] ;
          return $this;
      }
+  
+     /**
+      * @return string
+      */
+     public function getType(): string
+     {
+         return $this->type;
+     }
 
-
+     /**
+      * @return string
+      */
+     public function getTitle(): string
+     {
+         return $this->title;
+     }
 
 
 }

@@ -116,8 +116,12 @@ class Work extends OAwork
      */
     public function setLanguageCode(string $languageCode)
     {
-        $this->languageCode = $languageCode;
-        return $this;
+        if(strlen($languageCode)>2 || empty($languageCode)){
+           $this->languageCode = $languageCode;
+           return $this;
+       }else{
+           throw new Exception(" langage code must be a string of two character"); 
+       }
     }
 
     /**

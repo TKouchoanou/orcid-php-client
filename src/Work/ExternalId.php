@@ -31,6 +31,16 @@ class ExternalId
         $this->setIdValue($idValue);
         $this->setIdUrl($idUrl);
     }
+    
+     /**
+     * @param $other
+     * @return bool
+     */
+    public function isEqualTo($other){
+        return ( $other instanceof ExternalId
+                && $other->getIdType()===$this->getIdType()
+                && $other->getIdValue()===$this->getIdValue());
+    }
 
     /**
      * @param string $idRelationship

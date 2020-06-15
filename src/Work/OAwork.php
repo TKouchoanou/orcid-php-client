@@ -67,6 +67,9 @@ namespace Orcid\Work;
       */
      public function setType($type)
      {
+       if(empty($type)||!is_string($type)){
+             throw new \Exception("The type of work must be string and not empity,you try to set the value which is not string or empity");
+         }
          $this->type = $type;
          return $this;
 
@@ -80,6 +83,10 @@ namespace Orcid\Work;
       */
      public function setTitle($title, $translatedTitle='',$translatedTitleLanguageCode='')
      {
+        if(empty($title)||!is_string($title)){
+                throw new \Exception("The title of work must be string and not empity,you try to set the value which is not string or empity");
+         }
+      
          $this->title = $title;
          $this->setTranslatedTitle($translatedTitle);
          $this->setTranslatedTitleLanguageCode($translatedTitleLanguageCode);
@@ -116,8 +123,8 @@ namespace Orcid\Work;
       */
      public function setPutCode($putCode)
      {
-          if(empty($putCode)||!is_numeric($putCode)){
-             throw new \Exception("putcode must be numéric and not empity,you try to set empity or not numeric value");
+         if(empty($putCode)||!is_numeric($putCode)){
+             throw new \Exception("The putcode of work must be numéric and not empity,you try to set a value which is not numercic or empity");
          }
 
          $this->putCode = $putCode;

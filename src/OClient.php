@@ -191,9 +191,6 @@ class OClient
     public function update(Work $work){
         $putCode=$work->getPutCode();
         $data=$work->getXMLData();
-        if(empty($putCode)||!is_numeric($putCode)){
-            throw new \Exception("putcode must be numéric and not empity to update ORCID Work");
-        }
         return$this->updateOneWork($data,$putCode);
     }
 

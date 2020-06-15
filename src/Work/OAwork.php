@@ -175,6 +175,14 @@ namespace Orcid\Work;
      {
          return $this->title;
      }
-
+  
+  
+     /**
+     * @return array
+     */
+    public function getExternals(): array
+    {
+        return $this->externals;
+    }
 
 }

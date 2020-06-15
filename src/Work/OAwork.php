@@ -116,9 +116,12 @@ namespace Orcid\Work;
       */
      public function setPutCode($putCode)
      {
-         if (!empty($putCode)){
-         $this->putCode = $putCode;
+          if(empty($putCode)||!is_numeric($putCode)){
+             throw new \Exception("putcode must be numéric and not empity,you try to set empity or not numeric value");
          }
+
+         $this->putCode = $putCode;
+
          return $this;
      }
 

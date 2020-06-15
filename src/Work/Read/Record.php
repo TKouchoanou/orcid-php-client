@@ -85,14 +85,6 @@ class Record extends OAwork
     }
 
     /**
-     * @return array
-     */
-    public function getExternals(): array
-    {
-        return $this->externals;
-    }
-
-    /**
      * @return int|string
      */
     public function getPutCode()

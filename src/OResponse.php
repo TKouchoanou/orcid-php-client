@@ -83,6 +83,8 @@ class OResponse
      */
     protected function setWorkRecordList(){
         $workRecordsArray=null;
+        $workRecords= new Records();
+        $this->workRecordList=$workRecords;
         try {
             $workRecordsArray=json_decode($this->getBody(),true);
         }catch (\Exception $e){
@@ -93,7 +95,6 @@ class OResponse
             && isset($workRecordsArray['group'])
             && isset($workRecordsArray['path'])){
             try {
-                $workRecords= new Records();
                 $workRecords->buildWorkRecords($workRecordsArray);
                 $this->workRecordList=$workRecords;
             }catch (\Exception $e){

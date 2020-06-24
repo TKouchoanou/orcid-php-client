@@ -113,14 +113,15 @@ class Work extends OAwork
     /**
      * @param string $languageCode
      * @return $this
+     * @throws \Exception
      */
     public function setLanguageCode(string $languageCode)
     {
-        if(strlen($languageCode)>2 || empty($languageCode)){
+       if(in_array(strtolower($languageCode) ,self::LANGAGE_CODES)){
            $this->languageCode = $languageCode;
            return $this;
        }else{
-           throw new Exception(" langage code must be a string of two character"); 
+           throw new \Exception("The langage code must be a string of two or three character and must respect ISO 3166 rules for country ");
        }
     }
 
@@ -138,8 +139,10 @@ class Work extends OAwork
      */
     public function setCitationType(string $citationType)
     {
-        if (!empty($citationType)) {
+        if (!empty($citationType) && in_array(strtolower($citationType),self::CITATION_FORMATS)) {
             $this->citationType = $citationType;
+        }elseif (!empty($citationType)){
+            throw new \Exception("The citation format : ".$citationType."  is not valid");
         }
     }
 

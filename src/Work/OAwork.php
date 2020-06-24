@@ -10,6 +10,8 @@ namespace Orcid\Work;
      const ID_TYPE = 'idType';
      const ID_VALUE = 'idValue';
      const ID_URL = 'idUrl';
+     const CITATION_FORMAT=['formatted-unspecified', 'bibtex', 'ris', 'formatted-apa', 'formatted-harvard', 'formatted-ieee', 
+                            'formatted-mla', 'formatted-vancouver', 'formatted-chicago'];
 
      /**
       * @var string|int|

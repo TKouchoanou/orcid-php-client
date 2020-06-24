@@ -50,7 +50,7 @@ class Work extends OAwork
     /**
      * @var string
      */
-    protected $citationType='formatted-unspecified';
+    protected $citationType;
 
     /**
      * @var string

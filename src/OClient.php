@@ -14,10 +14,7 @@ class OClient
      * @var Oauth
      */
     private $oauth = null;
-    /**
-     * @var Curl
-     */
-    private $http=null;
+   
 
     public function __construct(Oauth $oauth)
     {

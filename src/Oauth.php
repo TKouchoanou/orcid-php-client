@@ -1,9 +1,4 @@
 <?php
-/**
- * @package   orcid-php
- * @author    Sam Wilson <samwilson@purdue.edu>
- * @license   http://www.opensource.org/licenses/mit-license.php MIT
- */
 
 namespace Orcid;
 

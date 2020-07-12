@@ -9,6 +9,7 @@ use XMLReader;
 class OResponse
 {
     const successCode=[200,201,202,203,204];
+    
     protected $code;
     /**
      * @var string
@@ -23,6 +24,9 @@ class OResponse
     protected $userMessage;
     protected $errorCode;
     protected $moreInfo;
+    /**
+     * @var Records
+     */
 
     protected $workRecordList;
 
@@ -84,7 +88,6 @@ class OResponse
     protected function setWorkRecordList(){
         $workRecordsArray=null;
         $workRecords= new Records();
-        $this->workRecordList=$workRecords;
         try {
             $workRecordsArray=json_decode($this->getBody(),true);
         }catch (\Exception $e){
@@ -98,6 +101,7 @@ class OResponse
                 $workRecords->buildWorkRecords($workRecordsArray);
                 $this->workRecordList=$workRecords;
             }catch (\Exception $e){
+                echo $e;
                 return $this;
             }
             return $this;
@@ -219,10 +223,6 @@ class OResponse
 
     public function hasNotFound(){
         return$this->code==404;
-    }
-    
-     public function isEmpity(){
-        return $this->code==0; 
     }
 
     /**

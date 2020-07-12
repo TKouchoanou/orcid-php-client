@@ -5,7 +5,7 @@ namespace Orcid\Work;
 
 
 class ExternalId
-{
+{ 
     /**
      * @var string
      */
@@ -23,24 +23,43 @@ class ExternalId
      */
     protected $idRelationship;
 
+    /**
+     * ExternalId constructor.
+     * @param string $idType
+     * @param string |int $idValue
+     * @param string $idUrl
+     * @param string $idRelationship
+     * @throws \Exception
+     */
     public function __construct($idType,$idValue,$idUrl,$idRelationship='self')
     {
-
+        if(!in_array(strtolower($idRelationship),OAwork::EXTERNAL_ID_RELATION_TYPE)){
+            throw new \Exception(" externalType : ".$idType." , external value : ".$idValue." , external relationship : ".$idRelationship." . The External Ident type of relationship is not valid");
+        }
         $this->setIdRelationship($idRelationship);
         $this->setIdType($idType);
         $this->setIdValue($idValue);
         $this->setIdUrl($idUrl);
     }
-    
-     /**
+
+    /**
      * @param $other
      * @return bool
      */
     public function isEqualTo($other){
         return ( $other instanceof ExternalId
-                && $other->getIdType()===$this->getIdType()
-                && $other->getIdValue()===$this->getIdValue());
+                && $other->getIdType()===$this->idType
+                && $other->getIdValue()===$this->idValue);
     }
+
+    /**
+     * @param string $idType
+     * @param string $idValue
+     * @return bool
+     */
+   public function isSame(string $idType,string $idValue){
+       return $this->idType===(string)$idType && $this->idValue===(string)$idValue;
+   }
 
     /**
      * @param string $idRelationship
@@ -64,14 +83,13 @@ class ExternalId
      */
     public function setIdUrl(string $idUrl)
     {
-        $this->checkisNotEmptyValue($idUrl,'idUrl');
         $this->idUrl = $idUrl;
     }
 
     /**
      * @param string $idValue
      */
-    public function setIdValue($idValue)
+    public function setIdValue(string $idValue)
     {
         $this->checkisNotEmptyValue($idValue,'idValue');
         $this->idValue = $idValue;
@@ -112,8 +130,7 @@ class ExternalId
     private function checkisNotEmptyValue($value,$name)
     {
         if(empty($value)){
-            throw new \Exception('la valeur de la variable  '.$name.' ne peut pas être nulle') ;
+            throw new \Exception('the value of '.$name.' can\'t be empity for valid external Id type') ;
         }
     }
-
 }

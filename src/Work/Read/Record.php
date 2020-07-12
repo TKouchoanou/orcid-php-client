@@ -30,6 +30,7 @@ class Record extends OAwork
      */
     protected $path;
 
+
     public function __construct()
     {
     }
@@ -69,7 +70,7 @@ class Record extends OAwork
      * @param string $visibility
      * @return $this
      */
-    public function setVisibility(string $visibility)
+    public function setVisibility($visibility)
     {
         $this->visibility = $visibility;
         return $this;
@@ -83,6 +84,8 @@ class Record extends OAwork
         $this->path = $path;
         return $this;
     }
+
+
 
     /**
      * @return int|string
@@ -114,6 +117,14 @@ class Record extends OAwork
     public function getPath()
     {
         return $this->path;
+    }
+    
+     /**
+     * @return string
+     */
+    public function getVisibility()
+    {
+        return $this->visibility;
     }
 
 }

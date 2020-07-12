@@ -6,9 +6,13 @@ namespace Orcid\Work;
 
  abstract  class OAwork
 {
-     const ID_TYPE = 'idType';
+     const ID_TYPE  = 'idType';
      const ID_VALUE = 'idValue';
-     const ID_URL = 'idUrl';
+     const ID_URL   = 'idUrl';
+     const YEAR     ='year';
+     const MONTH    = 'month';
+     const DAY      ='day';
+
      const EXTERNAL_ID_RELATION_TYPE=['self', 'part-of'];
      const CITATION_FORMATS=['formatted-unspecified', 'bibtex', 'ris', 'formatted-apa', 'formatted-harvard', 'formatted-ieee', 'formatted-mla', 'formatted-vancouver', 'formatted-chicago'];
      const LANGAGE_CODES = ['en', 'ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'zh_CN', 'zh_TW', 'cu',
@@ -17,9 +21,27 @@ namespace Orcid\Work;
          , 'gv', 'mi', 'mr', 'mh', 'mo', 'mn', 'na', 'nv', 'ng', 'ne', 'nd', 'se', 'no', 'nb', 'nn', 'ny', 'oc', 'oj', 'or', 'om', 'os', 'pi', 'pa', 'fa', 'pl', 'pt', 'ps', 'qu', 'rm', 'ro', 'rn', 'ru', 'sm', 'sg', 'sa', 'sc', 'gd'
          , 'sr', 'sn', 'ii', 'sd', 'si', 'sk', 'sl', 'so', 'nr', 'st', 'es', 'su', 'sw', 'ss', 'sv', 'tl', 'ty', 'tg', 'ta', 'tt', 'te', 'th', 'bo', 'ti', 'to', 'ts', 'tn', 'tr', 'tk', 'tw', 'ug', 'uk', 'ur', 'uz', 've', 'vi',
          'vo', 'wa', 'cy', 'wo', 'xh', 'ji', 'yo', 'za', 'zu'];
+     const EXTENAL_ID_TYPE=['agr','ark','arxiv','asin','asin-tld','authenticusid','bibcode','cba','cienciaiul','cit','ctx','dnb','doi','eid','ethos',
+         'grant_number','handle','hir','isbn','issn','jfm','jstor','kuid','lccn','lensid','mr','oclc','ol','osti','other-id','pat','pdb','pmc','pmid',
+         'proposal-id','rfc','rrid','source-work-id','ssrn','uri','urn','wosuid','zbl'];
+     const EXTERNAL_URL_BY_IDTYPE=['arxiv'=>'https://arxiv.org/abs/','asin'=>'http://www.amazon.com/dp/',
+         'authenticusid'=>'https://www.authenticus.pt/','bibcode'=>'http://adsabs.harvard.edu/abs/',
+         'cienciaiul'=>'https://ciencia.iscte-iul.pt/id/','dnb'=>'https://d-nb.info/',
+         'doi'=>'https://doi.org/','ethos'=>'http://ethos.bl.uk/OrderDetails.do?uin=','handle'=>'http://hdl.handle.net/',
+         'isbn'=>'https://www.worldcat.org/isbn/', 'issn'=>'https://portal.issn.org/resource/ISSN/','jfm'=>'http://zbmath.org/?format=complete&q=an%3A',
+         'jstor'=>'http://www.jstor.org/stable/','kuid'=>'https://koreamed.org/article/','lccn'=>'http://lccn.loc.gov/','lensid'=>'https://www.lens.org/',
+         'mr'=>'http://www.ams.org/mathscinet-getitem?mr=','oclc'=>'http://www.worldcat.org/oclc/',
+         'ol'=>'http://openlibrary.org/b/', 'osti'=>'http://www.osti.gov/energycitations/product.biblio.jsp?osti_id=',
+          'pdb'=>'http://identifiers.org/pdb/','pmc'=>'https://europepmc.org/articles/','pmid'=>'https://www.ncbi.nlm.nih.gov/pubmed/',
+         'rfc'=>'https://tools.ietf.org/html/','rrid'=>'https://identifiers.org/rrid/','ssrn'=>'http://papers.ssrn.com/abstract_id=',
+          'zbl'=>'http://zbmath.org/?format=complete&q='];
+     const WORK_TYPES=['artistic-performance','book-chapter','book-review','book','conference-abstract','conference-paper','conference-poster', 'data-set',
+         'dictionary-entry','disclosure','dissertation','edited-book','encyclopedia-entry','invention','journal-article','journal-issue','lecture-speech', 'license',
+         'magazine-article','manual','newsletter-article','newspaper-article','online-resource','other','patent','registered-copyright','report','research-technique',
+         'research-tool', 'spin-off-company','standards-and-policy','supervised-student-publication','technical-standard','test','translation','trademark','website','working-paper'];
 
      /**
-      * @var string|int|
+      * @var string|
       */
      protected $putCode;
      /**
@@ -35,23 +57,17 @@ namespace Orcid\Work;
       */
      protected $translatedTitleLanguageCode;
      /**
+      * @var string
+      */
+     protected $subTitle;
+     /**
       * @var array
       */
-     protected $subTitles=[];
-     /**
-      * @var string
-      */
-     protected $journalTitle;
-     /**
-      * @var string
-      */
-
      protected $publicationDate;
      /**
       * @var array
       */
      protected $externals=[];
-
      /**
       * @var string
       */
@@ -62,40 +78,79 @@ namespace Orcid\Work;
      {
      }
 
+     /**
+      * possible to add several external id of the same type
+      * But you are responsible for what you send
+      * @param string $externalIdType
+      * @param string $externalIdValue
+      * @param string $externalIdUrl
+      * @param string $externalIdRelationship
+      * @return $this
+      * @throws \Exception
+      */
      public function addExternalIdent($externalIdType,$externalIdValue,$externalIdUrl,$externalIdRelationship='self'){
-         if(!in_array(strtolower($externalIdRelationship),self::EXTERNAL_ID_RELATION_TYPE)){
-             throw new \Exception(" externalType : ".$externalIdType." , external value : ".$externalIdValue." , external relationship : ".$externalIdRelationship." . The External Ident type of relationship is not valid");
-         }
          $this->externals[]= new ExternalId($externalIdType,$externalIdValue,$externalIdUrl,$externalIdRelationship);
+         return $this;
      }
 
+     /**
+      * possible to add several external id of the same type
+      * But you are responsible for what you send
+      * @param ExternalId $externalId
+      * @return $this
+      */
      public function addNewExternalIdent(ExternalId $externalId){
          $this->externals[]= $externalId;
+         return $this;
      }
+
      /**
+      * you have not to set putcode for sending
+      * putcode is required to update but not to send
+      * if you have decided to set put code check if its not empity
+      * empity value is not accepted
+      * @param string $putCode
+      * @return $this
+      * @throws \Exception
+      */
+     public function setPutCode(string $putCode)
+     {
+         if(empty($putCode)||!is_numeric($putCode)){
+             throw new \Exception("The putcode of work must be numéric and not empity,you try to set a value which is not numercic or is empity");
+         }
+         $this->putCode = $putCode;
+         return $this;
+     }
+
+     /**
+      * type is required , empity value is not accepted
       * @param string $type
       * @return $this
       */
-     public function setType($type)
+     public function setType(string $type)
      {
-         if(empty($type)||!is_string($type)){
-             throw new \Exception("The type of work must be string and not empity,you try to set the value which is not string or empity");
+         $workType= strtolower(str_replace("_", "-", $type));
+         if(empty($type)){
+             throw new \Exception("The type of work must be string and not empity,you try to set empity value");
          }
-         $this->type = $type;
+         if(!in_array($workType,self::WORK_TYPES)){
+             throw new \Exception("The type of work  '".$type."'  you try to set is not valid for orcid work");
+         }
+         $this->type = $workType;
          return $this;
-
      }
 
      /**
+      * title is required , empity value is not accepted
       * @param string $title
       * @param string $translatedTitle
       * @param string $translatedTitleLanguageCode
       * @return $this
       */
-     public function setTitle($title, $translatedTitle='',$translatedTitleLanguageCode='')
+     public function setTitle(string $title, $translatedTitle='',$translatedTitleLanguageCode='')
      {
-         if(empty($title)||!is_string($title)){
-             throw new \Exception("The title of work must be string and not empity,you try to set the value which is not string or empity");
+         if(empty($title)){
+             throw new \Exception("The title of work must be string and not empity,you try to set the value which is empity");
          }
          $this->title = $title;
          $this->setTranslatedTitle($translatedTitle);
@@ -104,68 +159,78 @@ namespace Orcid\Work;
      }
 
      /**
-      * @param string $translatedTitle
+      * if you add empity subtitle or translatedtitle we just won't set it because
+      * we consider that you don't want to add subtitle/translated title
+      * empity subtitle is not useful
+      * Then you don't neead to check if your string is empity to set
+      * @param string $subTitle
       */
-     public function setTranslatedTitle($translatedTitle)
+     public function setSubTitle(string $subTitle)
      {
-         if(!empty($translatedTitle) && is_string($translatedTitle)){
+         if(!empty($subTitle)){
+             $this->subTitle = $subTitle;
+         }
+         return $this;
+     }
+
+     /**
+      * if you add empity translated title we just won't set it because
+      * we consider that you don't want to add translated title
+      * empity translated title is not useful .
+      * Then you don't neead to check if your string is empity to set
+      * if you add transleted title is required to add the langage code
+      * otherwise your transleted title won't be taken into account
+      * @param string $translatedTitle
+      * @return $this
+      */
+     public function setTranslatedTitle(string $translatedTitle)
+     {
+         if(!empty($translatedTitle)){
              $this->translatedTitle = $translatedTitle;
          }
          return $this;
      }
 
-
      /**
-      * @param string $subTitles
-      */
-     public function addSubTitle(string $subTitle)
-     {
-         if(!empty($subTitle)){
-             $this->subTitles[] = $subTitle;
-         }
-         return $this;
-     }
-
-
-     /**
-      * @param $putCode
-      * @return $this
-      */
-     public function setPutCode($putCode)
-     {
-         if(empty($putCode)||!is_numeric($putCode)){
-             throw new \Exception("The putcode of work must be numéric and not empity,you try to set a value which is not numercic or empity");
-         }
-
-         $this->putCode = $putCode;
-
-         return $this;
-     }
-
-     /**
+      * if you send empity string or transleted title languagecode
+      * it won't be taken in account, then even if you add non empity
+      * transleted title it won't be possible to send it because both must
+      * not be empity
       * @param string $translatedTitleLanguageCode
+      * @return $this
+      * @throws \Exception
       */
-     public function setTranslatedTitleLanguageCode($translatedTitleLanguageCode)
+     public function setTranslatedTitleLanguageCode(string $translatedTitleLanguageCode)
      {
-         if(!empty($translatedTitleLanguageCode) && is_string($translatedTitleLanguageCode)) {
+         if(!empty($translatedTitleLanguageCode) && in_array($translatedTitleLanguageCode,self::LANGAGE_CODES)) {
              $this->translatedTitleLanguageCode = $translatedTitleLanguageCode;
+         }elseif (!empty($translatedTitleLanguageCode)&&!in_array($translatedTitleLanguageCode,self::LANGAGE_CODES)){
+             throw new \Exception("The transleted langage code must be a string of two or three character and must respect ISO 3166 rules for country ");
          }
          return $this;
      }
 
 
      /**
-      * @param $date
+      * the publication date is not required but the year must not to be empity if you decided to send publication
+      * date. Check your side if it is not empty before to add it
+      * @param string $year
+      * @param string $month
+      * @param string $day
       * @return $this
+      * @throws \Exception
       */
-     public function setPublicationDate($year,$month='',$day='')
+     public function setPublicationDate(string $year,string $month='',string $day='')
      {
+         if(empty($year)) {
+             $message=" \n The year must not be empity you try to set publication date with empity year ";
+         }
 
-         if(!empty($month)&&(!is_numeric($year)||strlen((string)$year)>4)){
+         if(!is_numeric($year)||mb_strlen($year)>4){
              $message=" \n The year must be a string made up of four numeric characters or be a number of four digits. You have send Year=".$year;
          }
 
-         if( (!empty($month)&&(!is_numeric($month)||strlen((string)$month)>2||(int)$month>12||(int)$month<1))) {
+         if( (!empty($month)&&(!is_numeric($month)||mb_strlen((string)$month)>2||(int)$month>12||(int)$month<1))) {
              $message.=" \n The month must be a numeric string or a integer whose value is between 1 and 12. You have send Month=".$month;
          }
 
@@ -174,9 +239,9 @@ namespace Orcid\Work;
          }
 
          if(isset($message)){
-             throw new Exception($message);
+             throw new \Exception($message);
          }
-         $this->publicationDate = ['year'=>$year,'month'=>$month,'day'=>$day] ;
+         $this->publicationDate = [self::YEAR=>$year,self::MONTH=>$month,self::DAY=>$day] ;
          return $this;
      }
 
@@ -197,6 +262,38 @@ namespace Orcid\Work;
          return $this->type;
      }
 
+     /**
+      * @return string
+      */
+     public function getPutCode()
+     {
+         return $this->putCode;
+     }
+
+
+     /**
+      * @return array
+      */
+     public function getPublicationDate()
+     {
+         return $this->publicationDate;
+     }
+
+     /**
+      * @return string
+      */
+     public function getSubTitle()
+     {
+         return $this->subTitle;
+     }
+
+     /**
+      * @return string
+      */
+     public function getTranslatedTitle()
+     {
+         return $this->translatedTitle;
+     }
      /**
       * @return array
       */

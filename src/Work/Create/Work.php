@@ -33,12 +33,10 @@ class Work extends OAwork
      * @var string
      */
     protected $citation;
-
-
     /**
-     * @var string
+     * @var string []
      */
-    protected $authors=[];
+    protected $authors;
     /**
      * @var string
      */
@@ -56,86 +54,114 @@ class Work extends OAwork
      * @var string
      */
     protected $country;
-
+    /**
+     * @var string
+     */
+    protected $workUrl;
 
     public function __construct()
     {
     }
 
     /**
-     * @param string $authors
-     * @return \Orcid\Work
+     * An empty fullName string value will not be added
+     * to be sure to add an author check on your side that his full name is not empty.
+     * @param string $fullName
+     * @param string $role
+     * @param string $orcidID
+     * @param string $sequence
+     * @return $this
      */
     public function addAuthor(string $fullName,string $role='author',string $orcidID='', string $sequence='')
     {
-        $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID, self::SEQUENCE =>$sequence];
-        return $this;
-    }
-
-
-    /**
-     * @param string $citation
-     * @param string $citationType
-     * @return $this
-     */
-    public function setCitation($citation, string $citationType='formatted-unspecified')
-    {
-          if(!empty($citation)){
-            $this->citation = $citation;
-            if(empty($this->citationType)){
-                $this->setCitationType($citationType); 
-            }
+        if(!empty($fullName)){
+            $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID, self::SEQUENCE =>$sequence];
         }
         return $this;
     }
 
     /**
+     * An empty string value will not be added
      * @param string $journalTitle
      * @return $this
      */
     public function setJournalTitle(string $journalTitle)
     {
-        $this->journalTitle = $journalTitle;
+        if(!empty($journalTitle)) {
+            $this->journalTitle = $journalTitle;
+        }
         return $this;
     }
 
-
     /**
+     * An empty string value will not be added
      * @param string $shortDescription
      * @return $this
+     * @throws \Exception
      */
     public function setShortDescription(string $shortDescription)
     {
-        $this->shortDescription = $shortDescription;
+        if(mb_strlen($shortDescription)>5000){
+            throw new \Exception('The short description length must not be than 5000 characters');
+        }elseif (!empty($shortDescription)) {
+            $this->shortDescription = $shortDescription;
+        }
         return $this;
     }
 
     /**
+     * an exception is thrown if you try to add invalid value
+     * An empty string value will not be added
      * @param string $languageCode
      * @return $this
      * @throws \Exception
      */
     public function setLanguageCode(string $languageCode)
     {
-       if(in_array(strtolower($languageCode) ,self::LANGAGE_CODES)){
+       if(!empty($languageCode)&&in_array(strtolower($languageCode) ,self::LANGAGE_CODES)){
            $this->languageCode = $languageCode;
-           return $this;
-       }else{
+       }elseif(!empty($languageCode)&&!in_array(strtolower($languageCode) ,self::LANGAGE_CODES)){
            throw new \Exception("The langage code must be a string of two or three character and must respect ISO 3166 rules for country ");
        }
+        return $this;
     }
 
     /**
-     * @param string $principalAuthors
+     * An empty string value will not be added
+     * @param string|string[] $principalAuthors
      */
-    public function setPrincipalAuthors(string $principalAuthors)
+    public function setPrincipalAuthors($principalAuthors)
     {
-        $this->principalAuthors = $principalAuthors;
-        return $this;;
+        if(!empty($principalAuthors)){
+            $this->principalAuthors = $principalAuthors;
+        }
+        return $this;
     }
 
     /**
+     * An empty string value will not be added like citation
+     * @param string $citation
      * @param string $citationType
+     * @return $this
+     */
+    public function setCitation(string $citation,$citationType='formatted-unspecified')
+    {
+        if(!empty($citation)){
+            $this->citation = $citation;
+            if(empty($this->citationType)){
+                $this->setCitationType($citationType);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * 1- by default your citation type will be formatted-unspecified
+     * if you add citation without citation-type.
+     * 2-it makes no sense to add citation type without adding citation
+     * @param string $citationType
+     * @return $this
+     * @throws \Exception
      */
     public function setCitationType(string $citationType)
     {
@@ -144,26 +170,101 @@ class Work extends OAwork
         }elseif (!empty($citationType)){
             throw new \Exception("The citation format : ".$citationType."  is not valid");
         }
+        return $this;
     }
 
 
     /**
+     * to be sure to add a country check on your side that it is not empty.
+     * An empty string value will not be added
      * @param string $country
+     * @return $this
      */
     public function setCountry(string $country)
     {
-        $this->country = $country;
+     if(!empty($country)){
+         $this->country = $country;
+     }
         return $this;
     }
 
     /**
-     * @return int|string
+     * to be sure to add a work url check on your side that it is not empty.
+     * An empty string value will not be added
+     * @param string $workUrl
+     * @return $this
      */
-    public function getPutCode()
+    public function setWorkUrl(string $workUrl)
     {
-        return $this->putCode;
+        if(!empty($workUrl)){
+            $this->workUrl = $workUrl;
+        }
+        return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getAuthors()
+    {
+        return $this->authors;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCitationType()
+    {
+        return $this->citationType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWorkUrl()
+    {
+        return $this->workUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCitation()
+    {
+        return $this->citation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortDescription()
+    {
+        return $this->shortDescription;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJournalTitle()
+    {
+        return $this->journalTitle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry(): string
+    {
+        return $this->country;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguageCode()
+    {
+        return $this->languageCode;
+    }
     /**
      * @param DOMDocument $dom
      * @param DOMNode $work
@@ -172,23 +273,26 @@ class Work extends OAwork
     public function addMetaToWorkNode (DOMDocument $dom,DOMNode $work)
     {
         $this->checkMetaValueAndThrowExceptionIfNecessary();
+
         if( isset($this->putCode)){
             $work->setAttribute("put-code", (int)$this->putCode  );
         }
+
+        //add work title
         $workTitle = $work->appendChild( $dom->createElementNS(self::$namespaceWork, "title") );
         $title = $workTitle->appendChild( $dom->createElementNS(self::$namespaceCommon, "title") );
         $title->appendChild( $dom->createCDATASection( $this->title ) ) ;
 
-        if(isset($this->translatedTitle) && isset($this->translatedTitleLanguageCode)){
-            $translatedTitle=  $workTitle->appendChild( $dom->createElementNS(self::$namespaceCommon, "translated-title") );
-            $translatedTitle->setAttribute('language-code',$this->translatedTitleLanguageCode);
+        if(isset($this->subTitle)){
+            $subtitle = $workTitle->appendChild($dom->createElementNS(self::$namespaceCommon,"subtitle") );
+            $subtitle = $subtitle->appendChild($dom->createCDATASection($this->subTitle));
         }
 
-        if(isset($this->subTitles)){
-            $subtitle = $workTitle->appendChild($dom->createElementNS(self::$namespaceCommon,"subtitle") );
-            foreach ($this->subTitles as $subTitle){
-                $subtitle->appendChild( $dom->createCDATASection($subTitle) ) ;
-            }
+        //translatedTitleLanguageCode is required to send translatedTitle
+        if(isset($this->translatedTitle) && isset($this->translatedTitleLanguageCode)){
+            $translatedTitle = $workTitle->appendChild( $dom->createElementNS(self::$namespaceCommon, "translated-title"));
+            $translatedTitle->appendChild($dom->createCDATASection($this->translatedTitle));
+            $translatedTitle->setAttribute('language-code',$this->translatedTitleLanguageCode);
         }
 
         if(isset($this->journalTitle)){
@@ -205,20 +309,19 @@ class Work extends OAwork
             $work->appendChild( $this->nodeCitation($dom,$this->citationType,$this->citation));
         }
 
+        // add work Type
         $work->appendChild( $dom->createElementNS(self::$namespaceWork, "type", $this->type) );
 
+        // add publication date
         if(isset($this->publicationDate)){
-            $year=$this->publicationDate['year'];
-            $month =$this->publicationDate['month'];
-            $day=$this->publicationDate['day'];
+            $year=$this->publicationDate[self::YEAR];
+            $month =$this->publicationDate[self::MONTH];
+            $day=$this->publicationDate[self::DAY];
             $work->appendChild($this->dateNode($dom,$year,$month,$day));
         }
 
-        //rajout des identifiants externes
+        //add external ident
         $externalIds = $work->appendChild( $dom->createElementNS(self::$namespaceCommon, "external-ids" ) );
-
-        if(isset($this->externals)){
-
             foreach ($this->externals as $externalId){
                 /**
                  * @var ExternalId $externalId
@@ -231,18 +334,26 @@ class Work extends OAwork
 
             }
 
+        if(isset($this->workUrl))
+        {
+            $work->appendChild( $dom->createElementNS(self::$namespaceWork, "url",$this->workUrl ) );
         }
 
-       //rajout des auteurs
-        if(isset($this->authors)&& is_array($this->authors)){
+       //add authors
+        if(isset($this->authors) || isset($this->principalAuthors)){
             $contributors = $work->appendChild( $dom->createElementNS(self::$namespaceWork,"contributors") );
-            foreach($this->authors as $author){
-                $contributors->appendChild( $this->nodeContributor($dom,$author[self::FULL_NAME],$author[self::ROLE],$author[self::ORCID_ID],$author[self::SEQUENCE]) );
+            if(isset($this->authors) && is_array($this->authors)){
+                foreach($this->authors as $author){
+                    $contributors->appendChild( $this->nodeContributor($dom,$author[self::FULL_NAME],$author[self::ROLE],$author[self::ORCID_ID],$author[self::SEQUENCE]) );
+                }
             }
-        }
-        if(isset($this->principalAuthors)&&is_array($this->principalAuthors)){
-            foreach($this->principalAuthors as $name){
-                $contributors->appendChild( $this->nodeContributor($dom, $name, "principal-investigator") );
+
+            if(isset($this->principalAuthors) && is_array($this->principalAuthors)){
+                foreach($this->principalAuthors as $name){
+                    $contributors->appendChild( $this->nodeContributor($dom, $name, "principal-investigator") );
+                }
+            }elseif (isset($this->principalAuthors) && is_string($this->principalAuthors)){
+                $contributors->appendChild( $this->nodeContributor($dom, $this->principalAuthors, "principal-investigator") );
             }
         }
 
@@ -250,39 +361,57 @@ class Work extends OAwork
         {
             $work->appendChild( $dom->createElementNS(self::$namespaceCommon, "language-code",$this->languageCode ) );
         }
+
         if(isset($this->country))
         {
             $work->appendChild( $dom->createElementNS(self::$namespaceCommon, "country",$this->country ) );
         }
+
         return $work;
     }
+
     /**
-     * construction d'un noeud d'identifiant externe
+     * built an external identifier node
      * @param DOMDocument $dom
-     * @param $type
-     * @param $value
-     * @param $relationship
+     * @param string $type
+     * @param string $value
+     * @param string $relationship
      * @param string $url
      * @return DOMNode
      */
 
-    protected function externalIdNode(DOMDocument $dom, $type, $value, $url="",$relationship="self")
+    protected function externalIdNode(DOMDocument $dom, string $type, string $value, string $url="",string $relationship="self")
     {
-        $externalId = $dom->createElementNS(self::$namespaceCommon, "external-id");
-        $externalId->appendChild( $dom->createElementNS(self::$namespaceCommon,"external-id-type", $type) );
-        $externalId->appendChild( $dom->createElementNS(self::$namespaceCommon, "external-id-value", $value ) );
+        $externalIdNode = $dom->createElementNS(self::$namespaceCommon, "external-id");
+        //Type Node
+        $externalIdTypeNode=$dom->createElementNS(self::$namespaceCommon,"external-id-type");
+        $externalIdTypeNodeValue=$dom->createTextNode($type);
+        $externalIdTypeNode->appendChild($externalIdTypeNodeValue);
+        $externalIdNode->appendChild( $externalIdTypeNode);
+       // Value Node
+        $externalIdValueNode=$dom->createElementNS(self::$namespaceCommon, "external-id-value");
+        $externalIdValueNodeValue=$dom->createTextNode($value) ;
+        $externalIdValueNode->appendChild($externalIdValueNodeValue);
+        $externalIdNode->appendChild($externalIdValueNode);
+
         if(!empty($url)){
-            $externalId->appendChild( $dom->createElementNS(self::$namespaceCommon, "external-id-url", $url ));
+            //url Node
+            $externalIdUrlNode=$dom->createElementNS(self::$namespaceCommon, "external-id-url" );
+            $externalIdUrlNodeValue=$dom->createTextNode($url);
+            $externalIdUrlNode->appendChild($externalIdUrlNodeValue);
+            $externalIdNode->appendChild($externalIdUrlNode);
         }
-        $externalId->appendChild( $dom->createElementNS(self::$namespaceCommon,"external-id-relationship",$relationship) );
-        return $externalId ;
+
+        $externalIdNode->appendChild( $dom->createElementNS(self::$namespaceCommon,"external-id-relationship",$relationship) );
+
+        return $externalIdNode ;
     }
 
     /**
-     * construction d'un noeud d'autheur
+     * built an author node
      * @param DOMDocument $dom
-     * @param $name
-     * @param $role
+     * @param string $name
+     * @param string $role
      * @return DOMNode
      */
     protected function nodeContributor(DOMDocument $dom, string $name, string $role,string $orcidID='',string $sequence='')
@@ -305,64 +434,63 @@ class Work extends OAwork
     }
 
     /**
-     * construction d'un noeud de citation
+     * built an citation node
      * @param DOMDocument $dom
-     * @param $type
-     * @param $value
+     * @param string $type
+     * @param string $value
      * @return DOMElement
      */
-    protected function nodeCitation(DOMDocument $dom, $type, $value){
+    protected function nodeCitation(DOMDocument $dom, string $type,string $value){
 
         $citation = $dom->createElementNS(self::$namespaceWork, "citation");
         if($type!==''){
             $citation->appendChild($dom->createElementNS(self::$namespaceWork, "citation-type",$type));
         }
-
-        $citation->appendChild($dom->createElementNS(self::$namespaceWork, "citation-value",$value));
+        $citationValue=$dom->createElementNS(self::$namespaceWork, "citation-value");
+        $citationValue->appendChild($dom->createTextNode($value));
+        $citation->appendChild($citationValue);
         return $citation;
     }
 
     /**
-     * construction d'un noeud de date
+     * built an date Node
      * @param DOMDocument $dom
-     * @param $year
-     * @param string $month
-     * @param string $day
+     * @param string  $year
+     * @param string  $month
+     * @param string  $day
      * @return DOMNode
      */
-    protected function dateNode(DOMDocument $dom, $year, $month='', $day=''): DOMNode
+    protected function dateNode(DOMDocument $dom, string $year, string $month='', string $day=''): DOMNode
     {
         $valiDate=1;
         $publicationDate =  $dom->createElementNS(self::$namespaceCommon, "publication-date");
 
-        if (strlen((string)$month) === 1) {
+        if (strlen($month) === 1) {
             $month = '0' . $month;
         }
-        if (strlen((string)$day )=== 1) {
+        if (strlen($day )=== 1) {
             $day =  '0' . $day;
         }
 
-        if(strlen((string)$year)===4){
-            $publicationDate->appendChild( $dom->createElementNS(self::$namespaceCommon, "year", (int)$year ) );
+        if(strlen($year)===4){
+            $publicationDate->appendChild( $dom->createElementNS(self::$namespaceCommon, "year", $year ) );
             $valiDate++;
         }
 
         if($month!==''&&(int)$month>0 &&(int)$month<13 && $valiDate>1) {
-            $publicationDate->appendChild($dom->createElementNS(self::$namespaceCommon, "month", (string)$month));
+            $publicationDate->appendChild($dom->createElementNS(self::$namespaceCommon, "month", $month));
             $valiDate++;
         }
 
         if($day!==''&&(int)$day>0 &&(int)$day<32 && $valiDate>2)  {
-            $publicationDate->appendChild( $dom->createElementNS(self::$namespaceCommon, "day", (string)$day ) );
+            $publicationDate->appendChild( $dom->createElementNS(self::$namespaceCommon, "day", $day ) );
         }
         return  $publicationDate ;
     }
 
 
-
     /**
-     * @param Work $work
-     * @return DOMDocument
+     * @return false|string
      */
     public function getXMLData()
     {
@@ -386,7 +514,9 @@ class Work extends OAwork
         return $dom;
     }
 
-
+    /**
+     * @throws \Exception
+     */
     public function checkMetaValueAndThrowExceptionIfNecessary()
     {
          $reponse="";
@@ -396,7 +526,6 @@ class Work extends OAwork
         if(empty($this->type)) {
             $reponse .=" Work Type recovery failed: Type value cannot be empty";
         }
-
         if(empty($this->externals)) {
             $reponse .=" externals Ident recovery failed: externals values cannot be empty";
         }
@@ -404,6 +533,4 @@ class Work extends OAwork
             throw new \Exception($reponse);
         }
     }
-
-
 }

@@ -10,6 +10,9 @@ use Orcid\WorksCollection;
 
 class Records extends \ArrayIterator
 {
+  /**
+     * @var string 
+     */
     protected $lastModifiedDate;
     /**
      * @var array
@@ -19,8 +22,7 @@ class Records extends \ArrayIterator
      * @var array
      */
     protected $OrcidWorks;
-
-
+    
     /**
      * CollectionWorks constructor.
      * @param Work[] $array
@@ -46,6 +48,7 @@ class Records extends \ArrayIterator
             throw new \Exception("The value you can append must be instance of Record and not null");
         }
     }
+
 
 
     /**
@@ -85,8 +88,14 @@ class Records extends \ArrayIterator
             $summary=$work['work-summary'][0];
             $putCode=$summary['put-code'];
             $source=$summary['source']['source-name']['value'];
+
             $title=$summary['title']['title']['value'];
+            $translatedTitle=isset($summary['title']['translated-title']['value'])?$summary['title']['translated-title']['value']:null;
+            $translatedTitleLanguageCode=isset($summary['title']['translated-title']['language-code'])?$summary['title']['translated-title']['language-code']:null;
+            $subTitle=isset($summary['title']['subtitle']['value'])?$summary['title']['subtitle']['value']:null;
+
             $type=$summary['type'];
+            $visibility=$summary['visibility'];
             $externalIdArray= $summary['external-ids']['external-id'];
             $lastUpdatedate=$summary['last-modified-date']['value'];
             $createdDate=$summary['created-date']['value'];
@@ -103,7 +112,11 @@ class Records extends \ArrayIterator
                 ->setCreatedDate($createdDate)
                 ->setType($workType)
                 ->setPath($workPath)
+                ->setVisibility($visibility)
                 ->setPublicationDate($pubYear,$pubmonth,$pubday);
+            if(!empty($translatedTitle)){ $newRecord->setTranslatedTitle($translatedTitle); }
+            if(!empty($translatedTitleLanguageCode)){$newRecord->setTranslatedTitleLanguageCode($translatedTitleLanguageCode);}
+            if(!empty($subTitle)){$newRecord->setSubTitle($subTitle); }
             foreach( $externalIdArray as $externalId) {
                 $url=$externalId['external-id-url']['value'];
                 $type=$externalId['external-id-type'];
@@ -115,5 +128,11 @@ class Records extends \ArrayIterator
         return $this;
     }
 
-
+    /**
+     * @return bool
+     */
+    public function isEmpity()
+    {
+        return $this->count()===0;
+    }
 }

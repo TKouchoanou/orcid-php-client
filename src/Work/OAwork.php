@@ -213,7 +213,7 @@ namespace Orcid\Work;
 
      /**
       * the publication date is not required but the year must not to be empity if you decided to send publication
-      * date. Check your side if it is not empty before to add it
+      * with empity year it won't be added. Check your side if the year  is not empty before to add it
       * @param string $year
       * @param string $month
       * @param string $day
@@ -223,7 +223,7 @@ namespace Orcid\Work;
      public function setPublicationDate(string $year,string $month='',string $day='')
      {
          if(empty($year)) {
-             $message=" \n The year must not be empity you try to set publication date with empity year ";
+            return $this;
          }
 
          if(!is_numeric($year)||mb_strlen($year)>4){

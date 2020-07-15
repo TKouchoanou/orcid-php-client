@@ -313,7 +313,7 @@ class Work extends OAwork
         $work->appendChild( $dom->createElementNS(self::$namespaceWork, "type", $this->type) );
 
         // add publication date
-        if(isset($this->publicationDate)){
+        if(isset($this->publicationDate) && !empty($this->publicationDate)){
             $year=$this->publicationDate[self::YEAR];
             $month =$this->publicationDate[self::MONTH];
             $day=$this->publicationDate[self::DAY];

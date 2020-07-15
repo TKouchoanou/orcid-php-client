@@ -348,7 +348,7 @@ class Work extends OAwork
                 }
             }
 
-            if(isset($this->principalAuthors) && is_array($this->principalAuthors)){
+            if(isset($this->principalAuthors)){
                 foreach($this->principalAuthors as $name){
                     $contributors->appendChild( $this->nodeContributor($dom, $name, "principal-investigator") );
                 }

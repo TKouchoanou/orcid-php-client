@@ -110,7 +110,7 @@ class OResponse
     }
 
     /**
-     * @return Records
+     * @return Records|null
      */
     public function getWorkRecordList()
     {

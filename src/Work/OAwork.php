@@ -229,6 +229,12 @@ namespace Orcid\Work;
          if(!is_numeric($year)||mb_strlen($year)>4){
              $message=" \n The year must be a string made up of four numeric characters or be a number of four digits. You have send Year=".$year;
          }
+      
+      
+      if((int)$year<1900){
+           $message=" \n The year minimum value for orcid work is 1900. You have send Year=".$year;
+       
+         }
 
          if( (!empty($month)&&(!is_numeric($month)||mb_strlen((string)$month)>2||(int)$month>12||(int)$month<1))) {
              $message.=" \n The month must be a numeric string or a integer whose value is between 1 and 12. You have send Month=".$month;

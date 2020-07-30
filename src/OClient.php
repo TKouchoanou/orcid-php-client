@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @package   orcid-php-client
+ * @author    Theophane Kouchoanou
+ */
 
 namespace Orcid;
 

@@ -118,10 +118,11 @@ class Records extends \ArrayIterator
             if(!empty($translatedTitleLanguageCode)){$newRecord->setTranslatedTitleLanguageCode($translatedTitleLanguageCode);}
             if(!empty($subTitle)){$newRecord->setSubTitle($subTitle); }
             foreach( $externalIdArray as $externalId) {
-                $url=$externalId['external-id-url']['value'];
+                $relationType=isset($externalId['external-id-relationship'])?$externalId['external-id-relationship']:'';
+                $url=isset($externalId['external-id-url']['value'])?$externalId['external-id-url']['value']:'';
                 $type=$externalId['external-id-type'];
                 $value=$externalId['external-id-value'];
-                $newRecord->addExternalIdent($type,$value,$url);
+                $newRecord->addExternalIdent($type,$value,$url,$relationType);
             }
             $this->append($newRecord);
         }

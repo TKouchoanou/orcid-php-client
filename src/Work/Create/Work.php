@@ -86,7 +86,9 @@ class Work extends OAwork
     public function addAuthor(string $fullName,string $role='',string $orcidID='', string $sequence='',bool $orcidFromProductionEnv=true)
     {
         $orcid_id_env=$orcidFromProductionEnv?'':'sandbox.';
-        $role=empty($role)?'author':$role;
+        
+        $role=empty($role)?'author':str_replace('_','-',strtolower($role));
+        
         if(!in_array(strtolower($role),self::AUTHOR_ROLE_TYPE)){
             throw new \Exception('The author '.$fullName.' role '.$role.' is not valid');
         }

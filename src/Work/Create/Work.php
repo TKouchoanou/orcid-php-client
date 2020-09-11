@@ -11,11 +11,12 @@ use Orcid\Work\ExternalId;
 
 class Work extends OAwork
 {
-    const FULL_NAME = 'fullName';
-    const ORCID_ID  = 'orcidID';
-    const ROLE      = 'role';
-    const SEQUENCE  = 'sequence';
-    const HOSTNAME  = 'orcid.org';
+    const FULL_NAME    = 'fullName';
+    const ORCID_ID     = 'orcidID';
+    const ROLE         = 'role';
+    const SEQUENCE     = 'sequence';
+    const ORCID_ID_ENV = 'orcidIdEnv';
+    const HOSTNAME     = 'orcid.org';
 
     public static $namespaceWork= "http://www.orcid.org/ns/work";
     public static $namespaceCommon = "http://www.orcid.org/ns/common";
@@ -59,6 +60,7 @@ class Work extends OAwork
      */
     protected $workUrl;
 
+
     public function __construct()
     {
     }
@@ -66,16 +68,38 @@ class Work extends OAwork
     /**
      * An empty fullName string value will not be added
      * to be sure to add an author check on your side that his full name is not empty.
+     * if you added the author orcid ID and is from sandBox put false
+     * for the last parameter $orcidIdOfProductionEnv (his default value is true)
+     * this value will be use if only you add orcid ID
+     * by default you can put empity string for $role and $sequence
+     * but in this case we will add author for empity role
+     * and we will not add sequence to the sent data
+     * exemple: $work->('authorname','','0000-1111-2222-3333','',false)
      * @param string $fullName
      * @param string $role
      * @param string $orcidID
      * @param string $sequence
+     * @param bool $orcidIdOfProductionEnv
      * @return $this
+     * @throws \Exception
      */
-    public function addAuthor(string $fullName,string $role='author',string $orcidID='', string $sequence='')
+    public function addAuthor(string $fullName,string $role='',string $orcidID='', string $sequence='',bool $orcidFromProductionEnv=true)
     {
+        $orcid_id_env=$orcidFromProductionEnv?'':'sandbox.';
+        $role=empty($role)?'author':$role;
+        if(!in_array(strtolower($role),self::AUTHOR_ROLE_TYPE)){
+            throw new \Exception('The author '.$fullName.' role '.$role.' is not valid');
+        }
+
+        if(!empty($orcidID) && !preg_match("/(\d{4}-){3,}/",$orcidID)){
+            throw new \Exception('The author '.$fullName.' Orcid '.$orcidID.' is not valid');
+        }
+
+        if(!empty($sequence) && !in_array(strtolower($sequence),self::AUTHOR_SEQUENCE_TYPE)){
+            throw new \Exception('The author '.$sequence.' sequence '.$sequence.' is not valid');
+        }
         if(!empty($fullName)){
-            $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID, self::SEQUENCE =>$sequence];
+            $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>strtolower($role),self::ORCID_ID =>$orcidID, self::SEQUENCE =>strtolower($sequence),self::ORCID_ID_ENV=>$orcid_id_env];
         }
         return $this;
     }
@@ -183,7 +207,7 @@ class Work extends OAwork
     public function setCountry(string $country)
     {
      if(!empty($country)){
-         $this->country = $country;
+         $this->country = strtoupper($country);
      }
         return $this;
     }
@@ -275,7 +299,7 @@ class Work extends OAwork
         $this->checkMetaValueAndThrowExceptionIfNecessary();
 
         if( isset($this->putCode)){
-            $work->setAttribute("put-code", (int)$this->putCode  );
+            $work->setAttribute("put-code", (int)$this->putCode);
         }
 
         //add work title
@@ -344,11 +368,11 @@ class Work extends OAwork
             $contributors = $work->appendChild( $dom->createElementNS(self::$namespaceWork,"contributors") );
             if(isset($this->authors) && is_array($this->authors)){
                 foreach($this->authors as $author){
-                    $contributors->appendChild( $this->nodeContributor($dom,$author[self::FULL_NAME],$author[self::ROLE],$author[self::ORCID_ID],$author[self::SEQUENCE]) );
+                    $contributors->appendChild($this->nodeContributor($dom,$author[self::FULL_NAME],$author[self::ROLE],$author[self::ORCID_ID],$author[self::SEQUENCE],$author[self::ORCID_ID_ENV]) );
                 }
             }
 
-            if(isset($this->principalAuthors)){
+            if(isset($this->principalAuthors) && is_array($this->principalAuthors)){
                 foreach($this->principalAuthors as $name){
                     $contributors->appendChild( $this->nodeContributor($dom, $name, "principal-investigator") );
                 }
@@ -414,22 +438,22 @@ class Work extends OAwork
      * @param string $role
      * @return DOMNode
      */
-    protected function nodeContributor(DOMDocument $dom, string $name, string $role,string $orcidID='',string $sequence='')
+    protected function nodeContributor(DOMDocument $dom, string $name, string $role,string $orcidID='',string $sequence='',string $orcidIdEnv='')
     {
         $contributor = $dom->createElementNS(self::$namespaceWork, "contributor");
         if(!empty($orcidID)){
-            $contributorOrcid=$contributor->appendChild($dom->createElementNS(self::$namespaceWork,"contributor-orcid"));
-            $contributorOrcid->appendChild($dom->createElementNS(self::$namespaceWork,"uri",'https://'.self::HOSTNAME.'/'.$orcidID));
-            $contributorOrcid->appendChild($dom->createElementNS(self::$namespaceWork,"path",$orcidID));
-            $contributorOrcid->appendChild($dom->createElementNS(self::$namespaceWork,"host",self::HOSTNAME));
+            $contributorOrcid=$contributor->appendChild($dom->createElementNS(self::$namespaceCommon,"contributor-orcid"));
+            $contributorOrcid->appendChild($dom->createElementNS(self::$namespaceCommon,"uri",'http://'.$orcidIdEnv.self::HOSTNAME.'/'.$orcidID));
+            $contributorOrcid->appendChild($dom->createElementNS(self::$namespaceCommon,"path",$orcidID));
+            $contributorOrcid->appendChild($dom->createElementNS(self::$namespaceCommon,"host",$orcidIdEnv.self::HOSTNAME));
         }
         $creditName = $contributor->appendChild( $dom->createElementNS(self::$namespaceWork,"credit-name"));
         $creditName->appendChild( $dom->createCDATASection( $name ) ) ;
         $attributes = $contributor->appendChild( $dom->createElementNS( self::$namespaceWork,"contributor-attributes" ));
-        $attributes->appendChild($dom->createElementNS( self::$namespaceWork , "contributor-role", $role) );
         if(!empty($sequence)){
             $attributes->appendChild($dom->createElementNS( self::$namespaceWork , "contributor-sequence", $sequence));
         }
+        $attributes->appendChild($dom->createElementNS( self::$namespaceWork , "contributor-role", $role) );
         return $contributor ;
     }
 
@@ -519,7 +543,7 @@ class Work extends OAwork
      */
     public function checkMetaValueAndThrowExceptionIfNecessary()
     {
-         $reponse="";
+        $reponse="";
         if(empty($this->title)) {
             $reponse .=" Title recovery failed: Title value cannot be empty";
         }

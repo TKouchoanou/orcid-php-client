@@ -610,4 +610,12 @@ class Oauth
     {
         $this->authenticateData = $authenticateData;
     }
+    
+     /**
+     * @return string
+     */
+    public function getEnvironment(): string
+    {
+        return $this->environment;
+    }
 }

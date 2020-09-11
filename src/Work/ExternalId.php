@@ -31,9 +31,10 @@ class ExternalId
      * @param string $idRelationship
      * @throws \Exception
      */
-    public function __construct($idType,$idValue,$idUrl,$idRelationship='self')
+    public function __construct($idType,$idValue,$idUrl='',$idRelationship='')
     {
-        if(!in_array(strtolower($idRelationship),OAwork::EXTERNAL_ID_RELATION_TYPE)){
+        $idRelationship=empty($idRelationship)?'self':$idRelationship;
+        if(!in_array(str_replace('_','-',strtolower($idRelationship)),OAwork::EXTERNAL_ID_RELATION_TYPE)){
             throw new \Exception(" externalType : ".$idType." , external value : ".$idValue." , external relationship : ".$idRelationship." . The External Ident type of relationship is not valid");
         }
         $this->setIdRelationship($idRelationship);
@@ -66,7 +67,7 @@ class ExternalId
      */
     public function setIdRelationship(string $idRelationship)
     {
-        $this->idRelationship = $idRelationship;
+        $this->idRelationship = $idRelationship=str_replace('_','-',strtolower($idRelationship));
     }
 
     /**
@@ -133,4 +134,5 @@ class ExternalId
             throw new \Exception('the value of '.$name.' can\'t be empity for valid external Id type') ;
         }
     }
+
 }

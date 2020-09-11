@@ -6,7 +6,8 @@ namespace Orcid\Work;
 
  abstract  class OAwork
 {
-     const ID_TYPE  = 'idType';
+    
+ const ID_TYPE  = 'idType';
      const ID_VALUE = 'idValue';
      const ID_URL   = 'idUrl';
      const YEAR     ='year';
@@ -39,7 +40,8 @@ namespace Orcid\Work;
          'dictionary-entry','disclosure','dissertation','edited-book','encyclopedia-entry','invention','journal-article','journal-issue','lecture-speech', 'license',
          'magazine-article','manual','newsletter-article','newspaper-article','online-resource','other','patent','registered-copyright','report','research-technique',
          'research-tool', 'spin-off-company','standards-and-policy','supervised-student-publication','technical-standard','test','translation','trademark','website','working-paper'];
-
+     const AUTHOR_SEQUENCE_TYPE=['first', 'additional'];
+     const AUTHOR_ROLE_TYPE=['author', 'assignee', 'editor', 'chair-or-translator', 'co-investigator', 'co-inventor', 'graduate-student', 'other-inventor', 'principal-investigator', 'postdoctoral-researcher', 'support-staff'];
      /**
       * @var string|
       */
@@ -88,7 +90,7 @@ namespace Orcid\Work;
       * @return $this
       * @throws \Exception
       */
-     public function addExternalIdent($externalIdType,$externalIdValue,$externalIdUrl,$externalIdRelationship='self'){
+     public function addExternalIdent($externalIdType,$externalIdValue,$externalIdUrl='',$externalIdRelationship=''){
          $this->externals[]= new ExternalId($externalIdType,$externalIdValue,$externalIdUrl,$externalIdRelationship);
          return $this;
      }
@@ -229,11 +231,11 @@ namespace Orcid\Work;
          if(!is_numeric($year)||mb_strlen($year)>4){
              $message=" \n The year must be a string made up of four numeric characters or be a number of four digits. You have send Year=".$year;
          }
-      
+
          if((int)$year<1900 || (int)$year>2100){
-            $message=" The minimum value for orcid work year is 1900 and the maximun value is 2100. You have send Year=".$year;
+            $message=" The minimum value for orcid work year is 1900 and the maximun value  is 2100. You have send Year=".$year;
          }
-      
+
          if( (!empty($month)&&(!is_numeric($month)||mb_strlen((string)$month)>2||(int)$month>12||(int)$month<1))) {
              $message.=" \n The month must be a numeric string or a integer whose value is between 1 and 12. You have send Month=".$month;
          }

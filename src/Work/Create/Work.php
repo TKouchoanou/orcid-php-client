@@ -89,7 +89,7 @@ class Work extends OAwork
         
         $role=empty($role)?'author':str_replace('_','-',strtolower($role));
         
-        if(!in_array(strtolower($role),self::AUTHOR_ROLE_TYPE)){
+        if(!in_array($role,self::AUTHOR_ROLE_TYPE)){
             throw new \Exception('The author '.$fullName.' role '.$role.' is not valid');
         }
 
@@ -101,7 +101,7 @@ class Work extends OAwork
             throw new \Exception('The author '.$sequence.' sequence '.$sequence.' is not valid');
         }
         if(!empty($fullName)){
-            $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>strtolower($role),self::ORCID_ID =>$orcidID, self::SEQUENCE =>strtolower($sequence),self::ORCID_ID_ENV=>$orcid_id_env];
+            $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID, self::SEQUENCE =>strtolower($sequence),self::ORCID_ID_ENV=>$orcid_id_env];
         }
         return $this;
     }

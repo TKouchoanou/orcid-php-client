@@ -488,7 +488,7 @@ class Work extends OAwork
      */
     protected function dateNode(DOMDocument $dom, string $year, string $month='', string $day=''): DOMNode
     {
-        $valiDate=1;
+        $valiDateMonth=false;
         $publicationDate =  $dom->createElementNS(self::$namespaceCommon, "publication-date");
 
         if (strlen($month) === 1) {
@@ -498,19 +498,17 @@ class Work extends OAwork
             $day =  '0' . $day;
         }
 
-        if(strlen($year)===4){
-            $publicationDate->appendChild( $dom->createElementNS(self::$namespaceCommon, "year", $year ) );
-            $valiDate++;
-        }
+        $publicationDate->appendChild( $dom->createElementNS(self::$namespaceCommon, "year", $year ));
 
-        if($month!==''&&(int)$month>0 &&(int)$month<13 && $valiDate>1) {
+        if($month!=='') {
             $publicationDate->appendChild($dom->createElementNS(self::$namespaceCommon, "month", $month));
-            $valiDate++;
+            $valiDateMonth=true;
         }
 
-        if($day!==''&&(int)$day>0 &&(int)$day<32 && $valiDate>2)  {
+        if($day!==''&& $valiDateMonth) {
             $publicationDate->appendChild( $dom->createElementNS(self::$namespaceCommon, "day", $day ) );
         }
+
         return  $publicationDate ;
     }
 

@@ -88,9 +88,11 @@ class OResponse
     protected function setWorkRecordList(){
         $workRecordsArray=null;
         $workRecords= new Records();
+        $this->workRecordList=$workRecords;
         try {
             $workRecordsArray=json_decode($this->getBody(),true);
         }catch (\Exception $e){
+             echo $e;
             return $this;
         }
         if(isset($workRecordsArray)
@@ -99,7 +101,6 @@ class OResponse
             && isset($workRecordsArray['path'])){
             try {
                 $workRecords->buildWorkRecords($workRecordsArray);
-                $this->workRecordList=$workRecords;
             }catch (\Exception $e){
                 echo $e;
                 return $this;
@@ -110,7 +111,7 @@ class OResponse
     }
 
     /**
-     * @return Records|null
+     * @return Records
      */
     public function getWorkRecordList()
     {

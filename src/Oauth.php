@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @package   orcid-php-client
+ * @author    Sam Wilson <samwilson@purdue.edu>
+   modified by Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
+ * @license   http://www.opensource.org/licenses/mit-license.php MIT
+ */
 namespace Orcid;
 
 use Orcid\Http\Curl;

@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * @package   orcid-php-client
+ * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
+ * @license   http://www.opensource.org/licenses/mit-license.php MIT
+ */
 namespace Orcid\Work\Create;
 
 

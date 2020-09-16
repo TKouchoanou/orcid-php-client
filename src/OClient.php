@@ -232,6 +232,4 @@ class OClient
         return  new OResponse($response,$infos);
 
     }
-
-
 }

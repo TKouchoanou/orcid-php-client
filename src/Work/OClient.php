@@ -188,7 +188,7 @@ class OClient
                 'Authorization' => 'Bearer ' . $this->oauth->getAccessToken()
             ])->execute();
 
-        $infos=$this->oauth->http->getInfos();
+        $infos=$this->oauth->http->getResponseInfos();
         return  new Oresponse($response,$infos);
     }
 

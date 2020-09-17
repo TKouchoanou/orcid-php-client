@@ -13,7 +13,7 @@ use Orcid\Work\OAwork;
 class Record extends OAwork
 {
     /**
-     * @var long
+     * @var int
      */
     protected $lastModifiedDate;
     /**
@@ -35,13 +35,11 @@ class Record extends OAwork
     protected $path;
 
 
-
-
     /**
      * @param string $source
      * @return $this
      */
-    public function setSource($source)
+    public function setSource(string $source)
     {
         $this->source = $source;
         return $this;
@@ -71,7 +69,7 @@ class Record extends OAwork
      * @param string $visibility
      * @return $this
      */
-    public function setVisibility($visibility)
+    public function setVisibility(string $visibility)
     {
         $this->visibility = $visibility;
         return $this;
@@ -81,7 +79,7 @@ class Record extends OAwork
      * @param string $path
      * @return Record
      */
-    public function setPath($path)
+    public function setPath(string $path)
     {
         $this->path = $path;
         return $this;
@@ -106,7 +104,7 @@ class Record extends OAwork
     }
 
     /**
-     * @return long
+     * @return int
      */
     public function getLastModifiedDate()
     {

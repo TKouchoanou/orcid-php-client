@@ -81,10 +81,10 @@ class Curl
     /**
      * Sets the url endpoint
      *
-     * @param   string  $url  the url endpoint to set
+     * @param string $url the url endpoint to set
      * @return  $this
-     **/
-    public function setUrl($url)
+     */
+    public function setUrl(string $url)
     {
         return $this->setOpt(CURLOPT_URL, $url);
     }
@@ -92,10 +92,10 @@ class Curl
     /**
      * Sets the post fields (and implicitly implies a post request)
      *
-     * @param   array  $fields  the post fields to set on the request
+     * @param array $fields the post fields to set on the request
      * @return  $this
-     **/
-    public function setPostFields($fields)
+     */
+    public function setPostFields(array $fields)
     {
         // Form raw string version of fields
         $raw   = '';
@@ -119,6 +119,7 @@ class Curl
 
     /**
      * @param $data
+     * @return Curl
      */
     public function setPostData($data)
     {
@@ -126,7 +127,6 @@ class Curl
     }
 
     /**
-     * @param $data
      * @return $this
      */
     public function setPut()
@@ -135,7 +135,6 @@ class Curl
     }
 
     /**
-     * @param $data
      * @return $this
      */
     public function setDelete()

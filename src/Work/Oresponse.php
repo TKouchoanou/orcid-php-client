@@ -19,24 +19,47 @@ class Oresponse
      * @var string
      */
     protected $headers;
+    /**
+     * @var string
+     */
     protected $headerSize;
+    /**
+     * @var string
+     */
     protected $body='';
+    /**
+     * @var array
+     */
     protected $infos=[];
+    /**
+     * @var array
+     */
     protected $bodyInfos;
+    /**
+     * @var string
+     */
     protected $fullResponse;
+    /**
+     * @var string
+     */
     protected $developperMessage;
+    /**
+     * @var string
+     */
     protected $userMessage;
+    /**
+     * @var string
+     */
     protected $errorCode;
+    /**
+     * @var string
+     */
     protected $moreInfo;
     /**
      * @var Records
      */
 
     protected $workRecordList;
-    /**
-     * @var |null
-     */
-    protected $readedWorks;
 
     /**
      * Oresponse constructor.
@@ -49,12 +72,15 @@ class Oresponse
         $this->infos=$responseInfos;
         $this->init();
     }
+
+    /**
+     *
+     */
     private function init(){
         $this->headerSize=$this->getparamInfos('header_size',false);
         $this->code=$this->getparamInfos('http_code',false);
         $this->headers=substr($this->fullResponse, 0, $this->headerSize);
         $this->body=substr($this->fullResponse, $this->headerSize);
-        $this->readedWorks=null;
         $jsonString=$this->body;
         //
         if(self::isXmlString($jsonString)){
@@ -143,7 +169,7 @@ class Oresponse
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getBodyInfos()
     {
@@ -167,7 +193,7 @@ class Oresponse
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getErrorCode()
     {
@@ -183,7 +209,7 @@ class Oresponse
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUserMessage()
     {
@@ -207,7 +233,7 @@ class Oresponse
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getHeaderSize()
     {
@@ -215,7 +241,7 @@ class Oresponse
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getMoreInfo()
     {
@@ -232,17 +258,30 @@ class Oresponse
         return '';
     }
 
+    /**
+     * @return bool
+     */
     public function hasError(){
         return !empty($this->getErrorCode());
     }
 
+    /**
+     * @return bool
+     */
     public function hasSuccess(){
         return in_array($this->code,self::SUCCESS_CODE);
     }
+
+    /**
+     * @return bool
+     */
     public function hasConflict(){
         return$this->code==409;
     }
 
+    /**
+     * @return bool
+     */
     public function hasNotFound(){
         return$this->code==404;
     }

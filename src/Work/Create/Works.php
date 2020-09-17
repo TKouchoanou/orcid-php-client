@@ -14,6 +14,10 @@ use Exception;
 
 class Works extends ArrayIterator
 {
+    /**
+     * @param Work $value
+     * @throws Exception
+     */
 public function append($value)
 {
     if(!is_null($value) && ($value instanceof Work)){
@@ -35,7 +39,11 @@ public  function getXMLData(){
              * @var Work $work
              */
             $workNode=$bulk->appendChild($dom->createElementNS(work::$namespaceWork,"work:work"));
-            $work->addMetaToWorkNode($dom,$workNode);
+            try {
+                $work->addMetaToWorkNode($dom, $workNode);
+            } catch (Exception $e) {
+                echo $e;
+            }
         }
 
         return $dom->saveXML() ;

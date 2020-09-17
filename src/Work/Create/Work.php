@@ -84,7 +84,7 @@ class Work extends OAwork
      * @return $this
      * @throws Exception
      */
-    public function addAuthor(string $fullName,$role='', $orcidID='',  $sequence='', $orcidFromProductionEnv=true)
+    public function addAuthor(string $fullName,string $role='', string $orcidID='',  string $sequence='', $orcidFromProductionEnv=true)
     {
         $orcid_id_env=$orcidFromProductionEnv?'':'sandbox.';
         
@@ -154,8 +154,8 @@ class Work extends OAwork
     }
 
     /**
-     * An empty string value will not be added
-     * @param string|string[] $principalAuthors
+     * @param string | string[] $principalAuthors
+     * @return $this
      */
     public function setPrincipalAuthors($principalAuthors)
     {
@@ -410,7 +410,7 @@ class Work extends OAwork
      * @return DOMNode
      */
 
-    protected function externalIdNode(DOMDocument $dom, string $type, string $value, $url="", $relationship="self")
+    protected function externalIdNode(DOMDocument $dom, string $type, string $value, string $url="", string $relationship="self")
     {
         $externalIdNode = $dom->createElementNS(self::$namespaceCommon, "external-id");
         //Type Node
@@ -447,7 +447,7 @@ class Work extends OAwork
      * @param string $orcidIdEnv
      * @return DOMNode
      */
-    protected function nodeContributor(DOMDocument $dom, string $name, string $role, $orcidID='', $sequence='', $orcidIdEnv='')
+    protected function nodeContributor(DOMDocument $dom, string $name, string $role, string $orcidID='', string $sequence='',string $orcidIdEnv='')
     {
         $contributor = $dom->createElementNS(self::$namespaceWork, "contributor");
         if(!empty($orcidID)){
@@ -493,7 +493,7 @@ class Work extends OAwork
      * @param string $day
      * @return DOMNode
      */
-    protected function dateNode(DOMDocument $dom, string $year,  $month='', $day='')
+    protected function dateNode(DOMDocument $dom, string $year, string $month='', string $day='')
     {
         $valiDateMonth=false;
         $publicationDate =  $dom->createElementNS(self::$namespaceCommon, "publication-date");

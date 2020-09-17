@@ -23,11 +23,16 @@ class OClient
 
     public function __construct(Oauth $oauth)
     {
-        $this->setOauth($oauth);
+        try {
+            $this->setOauth($oauth);
+        } catch (Exception $e) {
+            echo $e;
+        }
     }
 
     /**
      * @param Oauth $oauth
+     * @throws Exception
      */
     protected function setOauth(Oauth $oauth)
     {
@@ -60,7 +65,7 @@ class OClient
 
     /**
      * @param $putCode
-     * @param bool $jsonformat
+     * @param bool $dataIsJsonFormat
      * @return Oresponse
      */
     public function readSingle($putCode,$dataIsJsonFormat=true){
@@ -79,13 +84,14 @@ class OClient
      * @param array $worksIdArray
      * @param bool $dataIsJsonFormat
      * @return Oresponse
+     * @throws Exception
      */
     public function readMultiple(array $worksIdArray,$dataIsJsonFormat=true){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         if(empty($worksIdArray)){
             throw new Exception("the work put-code array (worksIdArray) must not be empity");
         }
-        if($worksIdArray->length>50){
+        if(count($worksIdArray)>50){
             throw new Exception("you can't read more than 50 Work yourwork id array length is more than 50");
         }
 
@@ -107,6 +113,7 @@ class OClient
     /**
      * @param int|string|array $putCode
      * @return Oresponse
+     * @throws Exception
      */
     public function read($putCode){
         if(is_array($putCode)){
@@ -119,7 +126,7 @@ class OClient
     /**
      * @param Work|Works|Work[] $works
      * @return Oresponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function  send($works){
 
@@ -135,19 +142,19 @@ class OClient
                 if ($work instanceof Work){
                     $newWorks->append($work);
                 }else{
-                    throw new \Exception("All values of your array must be instance of Work");
+                    throw new Exception("All values of your array must be instance of Work");
                 }
             }
             $data=$newWorks->getXMLData();
           return  $this->postMultiple($data);
         }else{
-            throw new \Exception("Oclient Send Method parameter can  be :
+            throw new Exception("Oclient Send Method parameter can  be :
              instance of Work, instance of works or array of work instance. Your work(s) type is not accepted ");
         }
     }
 
     /**
-     * @param Work $work
+     * @param $data
      * @param bool $dataIsJsonFormat
      * @return Oresponse
      */
@@ -188,7 +195,7 @@ class OClient
     /**
      * @param Work $work
      * @return Oresponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(Work $work){
         $putCode=$work->getPutCode();

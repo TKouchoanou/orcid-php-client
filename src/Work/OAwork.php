@@ -170,6 +170,7 @@ namespace Orcid\Work;
       * empity subtitle is not useful
       * Then you don't neead to check if your string is empity to set
       * @param string $subTitle
+      * @return OAwork
       */
      public function setSubTitle(string $subTitle)
      {

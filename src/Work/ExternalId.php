@@ -136,6 +136,11 @@ class ExternalId
         return $this->idValue;
     }
 
+    /**
+     * @param $value
+     * @param $name
+     * @throws Exception
+     */
     private function checkisNotEmptyValue($value,$name)
     {
         if(empty($value)){

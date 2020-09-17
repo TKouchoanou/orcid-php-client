@@ -1,7 +1,7 @@
 {
     "name": "tkouchoanou/orcid-php-client",
     "description": "Library for ORCID web services",
-    "keywords": ["orcid", "php", "oauth"],
+    "keywords": ["orcid", "php", "oauth","client","work","record"],
     "license": "MIT",
     "require": {
         "php": ">=7.0.0",

@@ -10,6 +10,7 @@ namespace Orcid\Work\Create;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
+use Exception;
 use Orcid\Work\OAwork;
 use Orcid\Work\ExternalId;
 
@@ -65,10 +66,6 @@ class Work extends OAwork
     protected $workUrl;
 
 
-    public function __construct()
-    {
-    }
-
     /**
      * An empty fullName string value will not be added
      * to be sure to add an author check on your side that his full name is not empty.
@@ -83,26 +80,26 @@ class Work extends OAwork
      * @param string $role
      * @param string $orcidID
      * @param string $sequence
-     * @param bool $orcidIdOfProductionEnv
+     * @param bool $orcidFromProductionEnv
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      */
-    public function addAuthor(string $fullName,string $role='',string $orcidID='', string $sequence='',bool $orcidFromProductionEnv=true)
+    public function addAuthor(string $fullName,$role='', $orcidID='',  $sequence='', $orcidFromProductionEnv=true)
     {
         $orcid_id_env=$orcidFromProductionEnv?'':'sandbox.';
         
         $role=empty($role)?'author':str_replace('_','-',strtolower($role));
         
         if(!in_array($role,self::AUTHOR_ROLE_TYPE)){
-            throw new \Exception('The author '.$fullName.' role '.$role.' is not valid');
+            throw new Exception('The author '.$fullName.' role '.$role.' is not valid');
         }
 
         if(!empty($orcidID) && !preg_match("/(\d{4}-){3,}/",$orcidID)){
-            throw new \Exception('The author '.$fullName.' Orcid '.$orcidID.' is not valid');
+            throw new Exception('The author '.$fullName.' Orcid '.$orcidID.' is not valid');
         }
 
         if(!empty($sequence) && !in_array(strtolower($sequence),self::AUTHOR_SEQUENCE_TYPE)){
-            throw new \Exception('The author '.$sequence.' sequence '.$sequence.' is not valid');
+            throw new Exception('The author '.$sequence.' sequence '.$sequence.' is not valid');
         }
         if(!empty($fullName)){
             $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID, self::SEQUENCE =>strtolower($sequence),self::ORCID_ID_ENV=>$orcid_id_env];
@@ -127,12 +124,12 @@ class Work extends OAwork
      * An empty string value will not be added
      * @param string $shortDescription
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      */
     public function setShortDescription(string $shortDescription)
     {
         if(mb_strlen($shortDescription)>5000){
-            throw new \Exception('The short description length must not be than 5000 characters');
+            throw new Exception('The short description length must not be than 5000 characters');
         }elseif (!empty($shortDescription)) {
             $this->shortDescription = $shortDescription;
         }
@@ -144,14 +141,14 @@ class Work extends OAwork
      * An empty string value will not be added
      * @param string $languageCode
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      */
     public function setLanguageCode(string $languageCode)
     {
        if(!empty($languageCode)&&in_array(strtolower($languageCode) ,self::LANGAGE_CODES)){
            $this->languageCode = $languageCode;
        }elseif(!empty($languageCode)&&!in_array(strtolower($languageCode) ,self::LANGAGE_CODES)){
-           throw new \Exception("The langage code must be a string of two or three character and must respect ISO 3166 rules for country ");
+           throw new Exception("The langage code must be a string of two or three character and must respect ISO 3166 rules for country ");
        }
         return $this;
     }
@@ -173,6 +170,7 @@ class Work extends OAwork
      * @param string $citation
      * @param string $citationType
      * @return $this
+     * @throws Exception
      */
     public function setCitation(string $citation,$citationType='formatted-unspecified')
     {
@@ -191,14 +189,14 @@ class Work extends OAwork
      * 2-it makes no sense to add citation type without adding citation
      * @param string $citationType
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      */
     public function setCitationType(string $citationType)
     {
         if (!empty($citationType) && in_array(strtolower($citationType),self::CITATION_FORMATS)) {
             $this->citationType = $citationType;
         }elseif (!empty($citationType)){
-            throw new \Exception("The citation format : ".$citationType."  is not valid");
+            throw new Exception("The citation format : ".$citationType."  is not valid");
         }
         return $this;
     }
@@ -233,7 +231,7 @@ class Work extends OAwork
     }
 
     /**
-     * @return string
+     * @return string[]
      */
     public function getAuthors()
     {
@@ -283,7 +281,7 @@ class Work extends OAwork
     /**
      * @return string
      */
-    public function getCountry(): string
+    public function getCountry()
     {
         return $this->country;
     }
@@ -295,10 +293,12 @@ class Work extends OAwork
     {
         return $this->languageCode;
     }
+
     /**
      * @param DOMDocument $dom
      * @param DOMNode $work
      * @return DOMNode
+     * @throws Exception
      */
     public function addMetaToWorkNode (DOMDocument $dom,DOMNode $work)
     {
@@ -315,7 +315,7 @@ class Work extends OAwork
 
         if(isset($this->subTitle)){
             $subtitle = $workTitle->appendChild($dom->createElementNS(self::$namespaceCommon,"subtitle") );
-            $subtitle = $subtitle->appendChild($dom->createCDATASection($this->subTitle));
+            $subtitle->appendChild($dom->createCDATASection($this->subTitle));
         }
 
         //translatedTitleLanguageCode is required to send translatedTitle
@@ -405,12 +405,12 @@ class Work extends OAwork
      * @param DOMDocument $dom
      * @param string $type
      * @param string $value
-     * @param string $relationship
      * @param string $url
+     * @param string $relationship
      * @return DOMNode
      */
 
-    protected function externalIdNode(DOMDocument $dom, string $type, string $value, string $url="",string $relationship="self")
+    protected function externalIdNode(DOMDocument $dom, string $type, string $value, $url="", $relationship="self")
     {
         $externalIdNode = $dom->createElementNS(self::$namespaceCommon, "external-id");
         //Type Node
@@ -442,9 +442,12 @@ class Work extends OAwork
      * @param DOMDocument $dom
      * @param string $name
      * @param string $role
+     * @param string $orcidID
+     * @param string $sequence
+     * @param string $orcidIdEnv
      * @return DOMNode
      */
-    protected function nodeContributor(DOMDocument $dom, string $name, string $role,string $orcidID='',string $sequence='',string $orcidIdEnv='')
+    protected function nodeContributor(DOMDocument $dom, string $name, string $role, $orcidID='', $sequence='', $orcidIdEnv='')
     {
         $contributor = $dom->createElementNS(self::$namespaceWork, "contributor");
         if(!empty($orcidID)){
@@ -485,12 +488,12 @@ class Work extends OAwork
     /**
      * built an date Node
      * @param DOMDocument $dom
-     * @param string  $year
-     * @param string  $month
-     * @param string  $day
+     * @param string $year
+     * @param string $month
+     * @param string $day
      * @return DOMNode
      */
-    protected function dateNode(DOMDocument $dom, string $year, string $month='', string $day=''): DOMNode
+    protected function dateNode(DOMDocument $dom, string $year,  $month='', $day='')
     {
         $valiDateMonth=false;
         $publicationDate =  $dom->createElementNS(self::$namespaceCommon, "publication-date");
@@ -519,6 +522,7 @@ class Work extends OAwork
 
     /**
      * @return false|string
+     * @throws Exception
      */
     public function getXMLData()
     {
@@ -535,7 +539,7 @@ class Work extends OAwork
      * @param bool $formatOutput
      * @return DOMDocument
      */
-    public static function getNewOrcidCommonDomDocument(bool $preserveWhiteSpace=false,bool $formatOutput=true){
+    public static function getNewOrcidCommonDomDocument( $preserveWhiteSpace=false, $formatOutput=true){
         $dom = new DOMDocument("1.0", "UTF-8");
         $dom->preserveWhiteSpace = $preserveWhiteSpace;
         $dom->formatOutput = $formatOutput;
@@ -543,7 +547,7 @@ class Work extends OAwork
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkMetaValueAndThrowExceptionIfNecessary()
     {
@@ -558,7 +562,7 @@ class Work extends OAwork
             $reponse .=" externals Ident recovery failed: externals values cannot be empty";
         }
         if($reponse!==""){
-            throw new \Exception($reponse);
+            throw new Exception($reponse);
         }
     }
 }

@@ -35,9 +35,6 @@ class Record extends OAwork
     protected $path;
 
 
-    public function __construct()
-    {
-    }
 
 
     /**
@@ -82,6 +79,7 @@ class Record extends OAwork
 
     /**
      * @param string $path
+     * @return Record
      */
     public function setPath($path)
     {
@@ -102,13 +100,13 @@ class Record extends OAwork
     /**
      * @return string
      */
-    public function getSource(): string
+    public function getSource()
     {
         return $this->source;
     }
 
     /**
-     * @return int
+     * @return long
      */
     public function getLastModifiedDate()
     {

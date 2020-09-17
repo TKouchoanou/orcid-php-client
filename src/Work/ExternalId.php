@@ -8,6 +8,8 @@
 namespace Orcid\Work;
 
 
+use Exception;
+
 class ExternalId
 { 
     /**
@@ -33,13 +35,13 @@ class ExternalId
      * @param string |int $idValue
      * @param string $idUrl
      * @param string $idRelationship
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct($idType,$idValue,$idUrl='',$idRelationship='')
     {
         $idRelationship=empty($idRelationship)?'self':$idRelationship;
         if(!in_array(str_replace('_','-',strtolower($idRelationship)),OAwork::EXTERNAL_ID_RELATION_TYPE)){
-            throw new \Exception(" externalType : ".$idType." , external value : ".$idValue." , external relationship : ".$idRelationship." . The External Ident type of relationship is not valid");
+            throw new Exception(" externalType : ".$idType." , external value : ".$idValue." , external relationship : ".$idRelationship." . The External Ident type of relationship is not valid");
         }
         $this->setIdRelationship($idRelationship);
         $this->setIdType($idType);
@@ -76,6 +78,7 @@ class ExternalId
 
     /**
      * @param string $idType
+     * @throws Exception
      */
     public function setIdType(string $idType)
     {
@@ -93,6 +96,7 @@ class ExternalId
 
     /**
      * @param string $idValue
+     * @throws Exception
      */
     public function setIdValue(string $idValue)
     {
@@ -135,7 +139,7 @@ class ExternalId
     private function checkisNotEmptyValue($value,$name)
     {
         if(empty($value)){
-            throw new \Exception('the value of '.$name.' can\'t be empity for valid external Id type') ;
+            throw new Exception('the value of '.$name.' can\'t be empity for valid external Id type') ;
         }
     }
 

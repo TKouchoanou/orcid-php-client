@@ -1,18 +1,17 @@
 <?php
 /**
- * @package   orcid-php
+ * @package   orcid-php-client
  * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
 namespace Orcid\Work;
 
-use Orcid\Work\Create\Works;
 use Orcid\Work\Read\Records;
-use XMLReader;
-class OResponse
+
+class Oresponse
 {
-    const successCode=[200,201,202,203,204];
+    const SUCCESS_CODE=[200,201,202,203,204];
     
     protected $code;
     /**
@@ -33,7 +32,10 @@ class OResponse
      */
 
     protected $workRecordList;
-
+    /**
+     * @var |null
+     */
+    protected $readedWorks;
 
 
     public function __construct(string $fullResponse,array $responseInfos)
@@ -220,7 +222,7 @@ class OResponse
     }
 
     public function hasSuccess(){
-        return in_array($this->code,self::successCode);
+        return in_array($this->code,self::SUCCESS_CODE);
     }
     public function hasConflict(){
         return$this->code==409;

@@ -141,7 +141,6 @@ class Oauth
      *
      * @param   object  $http  a request tranport object to inject
      * @return  void
-     * @uses    Orcid\Http\Curl
      **/
     public function __construct($http = null)
     {
@@ -309,6 +308,7 @@ class Oauth
 
     /**
      * @param string $refreshToken
+     * @return Oauth
      */
     public function setRefreshToken(string $refreshToken)
     {
@@ -319,7 +319,7 @@ class Oauth
     /**
      * @return string
      */
-    public function getRefreshToken(): string
+    public function getRefreshToken()
     {
         return $this->refreshToken;
     }
@@ -328,7 +328,7 @@ class Oauth
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -336,13 +336,14 @@ class Oauth
     /**
      * @return int
      */
-    public function getExpireIn(): int
+    public function getExpireIn()
     {
         return $this->expireIn;
     }
 
     /**
      * @param int $expireIn
+     * @return Oauth
      */
     public function setExpireIn(int $expireIn)
     {
@@ -352,6 +353,7 @@ class Oauth
 
     /**
      * @param string $name
+     * @return Oauth
      */
     public function setName(string $name)
     {
@@ -373,7 +375,7 @@ class Oauth
     /**
      * @return object
      */
-    public function getHttp(): object
+    public function getHttp()
     {
         return $this->http;
     }
@@ -443,7 +445,9 @@ class Oauth
      * Gets the authorization URL based on the instance parameters
      *
      * @return  string
-     **/
+     *
+     * @throws Exception
+     */
     public function getAuthorizationUrl()
     {
         // Check for required items
@@ -497,9 +501,11 @@ class Oauth
         if (!$this->clientSecret) {
             throw new Exception('Client secret is required');
         }
-        if (!$this->redirectUri) {
-             //      throw new Exception('Redirect URI is required');
+       /**
+        * if (!$this->redirectUri) {
+                  throw new Exception('Redirect URI is required');
         }
+        * */
 
         $fields = [
             'client_id'     => $this->clientId,
@@ -619,7 +625,7 @@ class Oauth
      /**
      * @return string
      */
-    public function getEnvironment(): string
+    public function getEnvironment()
     {
         return $this->environment;
     }

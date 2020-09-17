@@ -8,7 +8,8 @@
 namespace Orcid\Work;
 
 
-use Orcid\Http\Curl;
+use Exception;
+use Orcid\Oauth;
 use Orcid\Work\Create\Work;
 use Orcid\Work\Create\Works;
 
@@ -40,7 +41,7 @@ class OClient
 
     /**
      * @param bool $dataIsJsonFormat
-     * @return OResponse
+     * @return Oresponse
      */
     public function ReadSummary($dataIsJsonFormat=true)
     {
@@ -53,14 +54,14 @@ class OClient
             ])->execute();
 
         $infos=$this->oauth->http->getResponseInfos();
-       return  new OResponse($response,$infos);
+       return  new Oresponse($response,$infos);
 
     }
 
     /**
      * @param $putCode
      * @param bool $jsonformat
-     * @return OResponse
+     * @return Oresponse
      */
     public function readSingle($putCode,$dataIsJsonFormat=true){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
@@ -71,13 +72,13 @@ class OClient
                 'Content-Type'  => $contentType
             ])->execute();
         $infos=$this->oauth->http->getResponseInfos();
-        return  new OResponse($response,$infos);
+        return  new Oresponse($response,$infos);
     }
 
     /**
      * @param array $worksIdArray
      * @param bool $dataIsJsonFormat
-     * @return OResponse
+     * @return Oresponse
      */
     public function readMultiple(array $worksIdArray,$dataIsJsonFormat=true){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
@@ -100,12 +101,12 @@ class OClient
                 'Authorization' => 'Bearer ' . $this->oauth->getAccessToken()
             ])->execute();
         $infos=$this->oauth->http->getResponseInfos();
-        return  new OResponse($response,$infos);
+        return  new Oresponse($response,$infos);
     }
 
     /**
      * @param int|string|array $putCode
-     * @return OResponse
+     * @return Oresponse
      */
     public function read($putCode){
         if(is_array($putCode)){
@@ -117,7 +118,7 @@ class OClient
 
     /**
      * @param Work|Works|Work[] $works
-     * @return OResponse
+     * @return Oresponse
      * @throws \Exception
      */
     public function  send($works){
@@ -148,7 +149,7 @@ class OClient
     /**
      * @param Work $work
      * @param bool $dataIsJsonFormat
-     * @return OResponse
+     * @return Oresponse
      */
     protected function postOne($data,$dataIsJsonFormat=false){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
@@ -162,13 +163,13 @@ class OClient
             ->execute();
 
         $infos=$this->oauth->http->getResponseInfos();
-        return  new OResponse($response,$infos);
+        return  new Oresponse($response,$infos);
     }
 
     /**
      * @param $data
      * @param bool $dataIsJsonFormat
-     * @return OResponse
+     * @return Oresponse
      */
     protected function postMultiple($data,$dataIsJsonFormat=false){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
@@ -181,12 +182,12 @@ class OClient
             ])->execute();
 
         $infos=$this->oauth->http->getInfos();
-        return  new OResponse($response,$infos);
+        return  new Oresponse($response,$infos);
     }
 
     /**
      * @param Work $work
-     * @return OResponse
+     * @return Oresponse
      * @throws \Exception
      */
     public function update(Work $work){
@@ -198,7 +199,7 @@ class OClient
     /**
      * @param string $data //xml string
      * @param bool $dataIsJsonFormat
-     * @return OResponse
+     * @return Oresponse
      */
     protected function updateOneWork($data,$putCode,$dataIsJsonFormat=false){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
@@ -211,13 +212,13 @@ class OClient
             ])->execute();
 
         $infos=$this->oauth->http->getResponseInfos();
-        return  new OResponse($response,$infos);
+        return  new Oresponse($response,$infos);
     }
 
     /**
      * @param $putCode
      * @param bool $dataIsJsonFormat
-     * @return OResponse
+     * @return Oresponse
      */
     public function delete($putCode,$dataIsJsonFormat=true){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
@@ -229,7 +230,7 @@ class OClient
             ])->execute();
 
         $infos=$this->oauth->http->getResponseInfos();
-        return  new OResponse($response,$infos);
+        return  new Oresponse($response,$infos);
 
     }
 }

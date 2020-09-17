@@ -8,12 +8,10 @@
 namespace Orcid\Work;
 
 
+ use Exception;
+
  abstract  class OAwork
 {
-    
- const ID_TYPE  = 'idType';
-     const ID_VALUE = 'idValue';
-     const ID_URL   = 'idUrl';
      const YEAR     ='year';
      const MONTH    = 'month';
      const DAY      ='day';
@@ -92,7 +90,7 @@ namespace Orcid\Work;
       * @param string $externalIdUrl
       * @param string $externalIdRelationship
       * @return $this
-      * @throws \Exception
+      * @throws Exception
       */
      public function addExternalIdent($externalIdType,$externalIdValue,$externalIdUrl='',$externalIdRelationship=''){
          $this->externals[]= new ExternalId($externalIdType,$externalIdValue,$externalIdUrl,$externalIdRelationship);
@@ -117,12 +115,12 @@ namespace Orcid\Work;
       * empity value is not accepted
       * @param string $putCode
       * @return $this
-      * @throws \Exception
+      * @throws Exception
       */
      public function setPutCode(string $putCode)
      {
          if(empty($putCode)||!is_numeric($putCode)){
-             throw new \Exception("The putcode of work must be numéric and not empity,you try to set a value which is not numercic or is empity");
+             throw new Exception("The putcode of work must be numéric and not empity,you try to set a value which is not numercic or is empity");
          }
          $this->putCode = $putCode;
          return $this;
@@ -132,15 +130,16 @@ namespace Orcid\Work;
       * type is required , empity value is not accepted
       * @param string $type
       * @return $this
+      * @throws Exception
       */
      public function setType(string $type)
      {
          $workType= strtolower(str_replace("_", "-", $type));
          if(empty($type)){
-             throw new \Exception("The type of work must be string and not empity,you try to set empity value");
+             throw new Exception("The type of work must be string and not empity,you try to set empity value");
          }
          if(!in_array($workType,self::WORK_TYPES)){
-             throw new \Exception("The type of work  '".$type."'  you try to set is not valid for orcid work");
+             throw new Exception("The type of work  '".$type."'  you try to set is not valid for orcid work");
          }
          $this->type = $workType;
          return $this;
@@ -152,11 +151,12 @@ namespace Orcid\Work;
       * @param string $translatedTitle
       * @param string $translatedTitleLanguageCode
       * @return $this
+      * @throws Exception
       */
      public function setTitle(string $title, $translatedTitle='',$translatedTitleLanguageCode='')
      {
          if(empty($title)){
-             throw new \Exception("The title of work must be string and not empity,you try to set the value which is empity");
+             throw new Exception("The title of work must be string and not empity,you try to set the value which is empity");
          }
          $this->title = $title;
          $this->setTranslatedTitle($translatedTitle);
@@ -204,14 +204,14 @@ namespace Orcid\Work;
       * not be empity
       * @param string $translatedTitleLanguageCode
       * @return $this
-      * @throws \Exception
+      * @throws Exception
       */
      public function setTranslatedTitleLanguageCode(string $translatedTitleLanguageCode)
      {
          if(!empty($translatedTitleLanguageCode) && in_array($translatedTitleLanguageCode,self::LANGAGE_CODES)) {
              $this->translatedTitleLanguageCode = $translatedTitleLanguageCode;
          }elseif (!empty($translatedTitleLanguageCode)&&!in_array($translatedTitleLanguageCode,self::LANGAGE_CODES)){
-             throw new \Exception("The transleted langage code must be a string of two or three character and must respect ISO 3166 rules for country ");
+             throw new Exception("The transleted langage code must be a string of two or three character and must respect ISO 3166 rules for country ");
          }
          return $this;
      }
@@ -224,9 +224,9 @@ namespace Orcid\Work;
       * @param string $month
       * @param string $day
       * @return $this
-      * @throws \Exception
+      * @throws Exception
       */
-     public function setPublicationDate(string $year,string $month='',string $day='')
+     public function setPublicationDate(string $year,$month='', $day='')
      {
          if(empty($year)) {
             return $this;
@@ -249,7 +249,7 @@ namespace Orcid\Work;
          }
 
          if(isset($message)){
-             throw new \Exception($message);
+             throw new Exception($message);
          }
          $this->publicationDate = [self::YEAR=>$year,self::MONTH=>$month,self::DAY=>$day] ;
          return $this;
@@ -307,7 +307,7 @@ namespace Orcid\Work;
      /**
       * @return array
       */
-     public function getExternals(): array
+     public function getExternals()
      {
          return $this->externals;
      }

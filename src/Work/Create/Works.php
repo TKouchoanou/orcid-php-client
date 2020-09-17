@@ -9,14 +9,17 @@ namespace Orcid\Work\Create;
 
 
 
-class Works extends \ArrayIterator
+use ArrayIterator;
+use Exception;
+
+class Works extends ArrayIterator
 {
 public function append($value)
 {
     if(!is_null($value) && ($value instanceof Work)){
         parent::append($value);
     }else{
-        throw new \Exception("The value you can append must be instance of Work and not null");
+        throw new Exception("The value you can append must be instance of Work and not null");
     }
 }
 

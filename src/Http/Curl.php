@@ -15,14 +15,13 @@ class Curl
 {
     /**
      * The connection resource
-     *
-     * @var  object
+     * @var  resource
      **/
     private $resource = null;
     /**
-     * @var string
+     * @var array
      */
-    private $response_infos=null;
+    private $response_infos=[];
     /**
      * @var int
      */
@@ -40,8 +39,9 @@ class Curl
     /**
      * Initializes the resource
      *
+     * @param bool $withHeader
      * @return  $this
-     **/
+     */
     public function initialize($withHeader=false)
     {
         $this->resource = curl_init();
@@ -171,8 +171,7 @@ class Curl
     }
     /**
      * Executes the request
-     *
-     * @return  array
+     * @return  string
      **/
     public function execute()
     {
@@ -198,20 +197,18 @@ class Curl
     /**
      * @return int
      */
-    public function getResponseCode(): int
+    public function getResponseCode()
     {
         return $this->response_code;
     }
 
-    public function getInfos(){
-        return $this->response_infos;
-    }
 
     /**
      * Resets the curl resource to be used again
      *
+     * @param bool $withHeader
      * @return  $this
-     **/
+     */
     public function reset($withHeader=false)
     {
         $this->close()
@@ -233,7 +230,7 @@ class Curl
     }
 
     /**
-     * @return object
+     * @return resource
      */
     public function getResource()
     {

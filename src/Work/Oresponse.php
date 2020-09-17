@@ -13,7 +13,9 @@ use Orcid\Work\Read\Records;
 class Oresponse
 {
     const SUCCESS_CODE=[200,201,202,203,204];
-    
+    /**
+     * @var int
+     */
     protected $code;
     /**
      * @var string
@@ -177,7 +179,7 @@ class Oresponse
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getCode()
     {
@@ -185,7 +187,7 @@ class Oresponse
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDevelopperMessage()
     {

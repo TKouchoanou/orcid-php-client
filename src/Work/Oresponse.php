@@ -7,6 +7,7 @@
 
 namespace Orcid\Work;
 
+use Exception;
 use Orcid\Work\Read\Records;
 
 class Oresponse
@@ -37,7 +38,11 @@ class Oresponse
      */
     protected $readedWorks;
 
-
+    /**
+     * Oresponse constructor.
+     * @param string $fullResponse
+     * @param array $responseInfos
+     */
     public function __construct(string $fullResponse,array $responseInfos)
     {
         $this->fullResponse=$fullResponse;
@@ -72,10 +77,20 @@ class Oresponse
         return $this->body;
     }
 
+    /**
+     * @param string $key
+     * @param $default
+     * @return mixed
+     */
     protected function getParamInfos(string $key,$default){
         return self::getParamValueByKey($this->infos,$key,$default) ;
      }
 
+    /**
+     * @param string $key
+     * @param $default
+     * @return mixed
+     */
     protected function getParamBodyInfos(string $key,$default){
         return self::getParamValueByKey($this->bodyInfos,$key,$default) ;
     }
@@ -97,7 +112,7 @@ class Oresponse
         $this->workRecordList=$workRecords;
         try {
             $workRecordsArray=json_decode($this->getBody(),true);
-        }catch (\Exception $e){
+        }catch (Exception $e){
              echo $e;
             return $this;
         }
@@ -107,13 +122,13 @@ class Oresponse
             && isset($workRecordsArray['path'])){
             try {
                 $workRecords->buildWorkRecords($workRecordsArray);
-            }catch (\Exception $e){
+            }catch (Exception $e){
                 echo $e;
                 return $this;
             }
-            return $this;
-        }
 
+        }
+        return $this;
     }
 
     /**

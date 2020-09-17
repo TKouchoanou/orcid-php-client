@@ -5,7 +5,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
-namespace Orcid;
+namespace Orcid\Work;
 
 
 use Orcid\Http\Curl;

@@ -110,7 +110,7 @@ Work is a class that allows you to create a publication on your orcid account. T
         $work=new Work();
         $work->setTitle("Les stalagmites du réseau du trou Noir")
 	     ->setTranslatedTitle('The stalagmites of the Black hole network')
-             ->setTranslatedTitleLanguageCode('en');
+             ->setTranslatedTitleLanguageCode('en')
              ->setType("Work-paper")
 	     ->setWorkUrl("the work url")
              ->setJournalTitle("naturephysic")
@@ -142,7 +142,7 @@ The minimum configuration for sending an Orcid Work is to define the title, the 
 ```
 In the case of a work modification, Put-code is required .
 ```php
-    $putCode =14563
+    $putCode =14563; 
     $work->setPutCode($putCode); 
 ```
 ### Works

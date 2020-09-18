@@ -567,6 +567,9 @@ class Oauth
      **/
     public function getProfile($orcid = null)
     {
+        if(!is_resource($this->http->getResource()))
+            $this->http->initialize();
+
         $this->http->setUrl($this->getApiEndpoint('record', $orcid));
 
         if ($this->level == 'api') {

@@ -112,43 +112,43 @@ Work is a class that allows you to create a publication on your orcid account. T
 	     ->setTranslatedTitle('The stalagmites of the Black hole network')
              ->setTranslatedTitleLanguageCode('en');
              ->setType("Work-paper")
+	     ->setWorkUrl("the work url")
              ->setJournalTitle("naturephysic")
              ->setCitation("The work citation....")//if you don't set citationType formatted-unspecified will be set
 	     ->setCitationType('the citation type')
-             ->setShortDescription("the work description...") 
+             ->setShortDescription("the work description...") // the descript must be  less than 500 characters
 	     ->setPublicationDate('1998','09','20')// the first parameter year is required if you want to set date
-	     ->setLanguageCode('FR')
-	     ->setCountry('US')
-            //add Authors with Author FullName and role, by default the role 'author' will be chosen
-             ->addAuthor("Benjamin Lans","author")
-             ->addAuthor("Richard Maire","Director")
+	     ->setLanguageCode('fr')
+	     ->setCountry('us')
+            //add Authors with Author FullName and role, by default the role 'author' will be chosen your can also add the orcidID and the sequence of author
+             ->addAuthor("Benjamin Lans","author","1111-OOOO-2543-3333","first")
+             ->addAuthor("Richard Maire","editor")
              ->addAuthor("Richard Ortega","Collaborator")
-             ->addAuthor("Guillaume Devès")
-            //add subtitles
-             ->addSubTitle("subtitle one ")
-             ->addSubTitle("subtitle two")
+             ->addAuthor("Guillaume Devès","co-investigator","OOOO-1111-2222-3333","additional")
+            //add subtitle
              ->addSubTitle("subtitle three")
-            // add External Ident 
+            // add External Ident the type , the value, the url, the relationship by default url willbe empity and relationship will be self . idtype and idValue   are required
              ->addExternalIdent("doi","10.1038/nphys1170","https://www.nature.com/articles/nphys1170","self")
-             ->addExternalIdent("uri","00199711","","https://hal.archives-ouvertes.fr/hal-00199711");
+             ->addExternalIdent("uri","00199711");
   
 ```
 The minimum configuration for sending an Orcid Work is to define the title, the type of document and add at least an external identifier.
 ```php
  // minimum configuration to create an Orcid work
         $work=new Work();
-        $work->setTitle($title)->setType($workType)
-              ->addExternalIdent($idType,$idValue,$idUrl,$idRelationShip);  
+        $work->setTitle('title')
+	     ->setType('workType')
+             ->addExternalIdent('idType','idValue');  
 ```
-In the case of a work modification, the identifier of the orcid work called Put-code must be added to this minimum configuration.
+In the case of a work modification, Put-code is required .
 ```php
-    $work->setPutCode(14563); 
+    $putCode =14563
+    $work->setPutCode($putCode); 
 ```
-The add methods allow you to add several values ​​for the same parameter, by adding a new array case containing the value to the parameter array.
 ### Works
-Works is a class that inherits from arrayIterator. It is a list of orcid jobs to which we can add instances of type Work with the append method 
+Works is a class that inherits from arrayIterator. It is a list of orcid works to which we can add instances of type Work with the append method 
 ```php
-    $worksList=new Works();
+        $worksList=new Works();
         $worksList->append($firstwork);
         $worksList->append($secondwork);
         $worksList->append($thirdwork);
@@ -159,7 +159,7 @@ and on which we can iterate with foreach for example
             /**
              * @var Work $work
              */
-            $work->addAuthor("Author fullname"); 
+            $work->addAuthor("Authorfullname","Author role","Author orcid ID","Author sequence"); 
         }
 ```
 

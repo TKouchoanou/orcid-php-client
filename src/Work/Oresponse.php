@@ -94,7 +94,9 @@ class Oresponse
         $this->userMessage=$this->getParamBodyInfos('user-message','');
         $this->errorCode=$this->getParamBodyInfos('error-code','');
         $this->moreInfo=$this->getParamBodyInfos('more-info','');
-
+        if(empty($this->developperMessage)&&!empty($this->getParamBodyInfos('error',''))){
+            $this->developperMessage=$this->getParamBodyInfos('error','');
+        }
     }
 
     /**
@@ -171,6 +173,17 @@ class Oresponse
     }
 
     /**
+     * @return array|mixed
+     */
+    public function getSingleReadWork(){
+        $workSingleReadWork=json_decode($this->getBody(),true);
+        if($workSingleReadWork){
+            return $workSingleReadWork;
+        }
+        return [];
+    }
+
+    /**
      * @return array
      */
     public function getBodyInfos()
@@ -199,6 +212,10 @@ class Oresponse
      */
     public function getErrorCode()
     {
+        if(empty($this->errorCode) && !$this->hasSuccess()
+            && !$this->hasConflict()){
+            return $this->code;
+        }
         return $this->errorCode;
     }
 
@@ -255,7 +272,7 @@ class Oresponse
      */
     public function getReadedWorkXML()
     {
-        if($this->isXmlString($this->getBody()) && empty($this->getErrorCode()))
+        if(self::isXmlString($this->getBody()) && empty($this->getErrorCode()))
         {return $this->body; }
         return '';
     }
@@ -292,7 +309,7 @@ class Oresponse
      * @param string $xmlString
      * @return false|int
      */
-    private function isXmlString(string $xmlString){
+    private static function isXmlString(string $xmlString){
         $regex="/<\?xml .+\?>/";
         return  preg_match($regex,$xmlString);
 

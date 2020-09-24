@@ -21,9 +21,10 @@ class OClient
     private $oauth = null;
    
 
-    public function __construct(Oauth $oauth)
+    public function __construct(Oauth $oauth,$useMemberApi=true)
     {
         try {
+            $useMemberApi ? $oauth->useMembersApi() : $oauth->usePublicApi();
             $this->setOauth($oauth);
         } catch (Exception $e) {
             echo $e;
@@ -39,7 +40,6 @@ class OClient
         if (!$oauth->getAccessToken()) {
             throw new Exception('You must first set an access token or authenticate to exchange Work with ORCID');
         }
-        $oauth->useMembersApi();
         $this->oauth = $oauth;
     }
 

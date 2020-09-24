@@ -27,7 +27,10 @@ class Records extends ArrayIterator
      */
     protected $OrcidWorks;
 
-
+    /**
+     * @var string
+     */
+    protected $path;
 
     /**
      * @param mixed $lastModifiedDate
@@ -69,6 +72,21 @@ class Records extends ArrayIterator
     }
 
     /**
+     * @param string $path
+     */
+    public function setPath(string $path)
+    {
+        $this->path = $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+    /**
      * @param array $OrcidWorks
      */
     public function setOrcidWorks(array $OrcidWorks)
@@ -81,9 +99,11 @@ class Records extends ArrayIterator
         //orcid records in associative array
         $groups=$orcidRecords['group'];
         $lastModifiedDate=$orcidRecords['last-modified-date']['value'];
+        $path=$orcidRecords['path'];
         $this->setLastModifiedDate($lastModifiedDate);
         $this->setOrcidWorks($orcidRecords);
         $this->setGroup($groups);
+        $this->setPath($path);
         foreach( $groups as $work) {
             $newRecord= new Record();
             $summary=$work['work-summary'][0];

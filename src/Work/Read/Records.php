@@ -2,7 +2,7 @@
 
 /**
  * @package   orcid-php-client
- * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
+ * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 namespace Orcid\Work\Read;
@@ -94,7 +94,11 @@ class Records extends ArrayIterator
         $this->OrcidWorks = $OrcidWorks;
     }
 
-    public function buildWorkRecords($orcidRecords){
+    /**
+     * @param array $orcidRecords
+     * @return $this
+     */
+    public function buildWorkRecords(array $orcidRecords){
 
         //orcid records in associative array
         $groups=$orcidRecords['group'];
@@ -116,50 +120,44 @@ class Records extends ArrayIterator
             $subTitle=isset($summary['title']['subtitle']['value'])?$summary['title']['subtitle']['value']:null;
 
             $externalIdArray= $summary['external-ids']['external-id'];
-            $lastUpdatedate=$summary['last-modified-date']['value'];
+            $lastUpdateDate=$summary['last-modified-date']['value'];
             $createdDate=$summary['created-date']['value'];
             $workType=$summary['type'];
             $visibility=$summary['visibility'];
             $workPath=$summary['path'];
             $pubYear=isset($summary['publication-date']['year']['value'])?$summary['publication-date']['year']['value']:'';
-            $pubmonth=isset($summary['publication-date']['month']['value'])?$summary['publication-date']['month']['value']:'';
-            $pubday=isset($summary['publication-date']['day']['value'])?$summary['publication-date']['day']['value']:'';
+            $pubMonth=isset($summary['publication-date']['month']['value'])?$summary['publication-date']['month']['value']:'';
+            $pubDay=isset($summary['publication-date']['day']['value'])?$summary['publication-date']['day']['value']:'';
             try {
                 $newRecord->setPutCode($putCode)
                     ->setTitle($title)
                     ->setSource($source)
-                    ->setLastModifiedDate($lastUpdatedate)
+                    ->setLastModifiedDate($lastUpdateDate)
                     ->setCreatedDate($createdDate)
                     ->setType($workType)
                     ->setPath($workPath)
                     ->setVisibility($visibility)
-                    ->setPublicationDate($pubYear, $pubmonth, $pubday);
-            } catch (Exception $e) {
-                echo $e;
-            }
-            if(!empty($translatedTitle)){ $newRecord->setTranslatedTitle($translatedTitle); }
-            if(!empty($translatedTitleLanguageCode)){
-                try {
+                    ->setPublicationDate($pubYear, $pubMonth, $pubDay);
+                if(!empty($translatedTitle)){
+                    $newRecord->setTranslatedTitle($translatedTitle);
+                }
+                if(!empty($translatedTitleLanguageCode)){
                     $newRecord->setTranslatedTitleLanguageCode($translatedTitleLanguageCode);
-                } catch (Exception $e) {
                 }
-            }
-            if(!empty($subTitle)){$newRecord->setSubTitle($subTitle); }
-            foreach( $externalIdArray as $externalId) {
-                $relationType=isset($externalId['external-id-relationship'])?$externalId['external-id-relationship']:'';
-                $url=isset($externalId['external-id-url']['value'])?$externalId['external-id-url']['value']:'';
-                $type=$externalId['external-id-type'];
-                $value=$externalId['external-id-value'];
-                try {
+                if(!empty($subTitle)){
+                    $newRecord->setSubTitle($subTitle);
+                }
+                foreach( $externalIdArray as $externalId) {
+                    $relationType=isset($externalId['external-id-relationship'])?$externalId['external-id-relationship']:'';
+                    $url=isset($externalId['external-id-url']['value'])?$externalId['external-id-url']['value']:'';
+                    $type=$externalId['external-id-type'];
+                    $value=$externalId['external-id-value'];
                     $newRecord->addExternalIdent($type, $value, $url, $relationType);
-                } catch (Exception $e) {
-                    echo $e;
+
                 }
-            }
-            try {
                 $this->append($newRecord);
             } catch (Exception $e) {
-                echo $e;
+                error_log("Panic in ".get_class($this)." : ".$e->getMessage());
             }
         }
         return $this;
@@ -168,7 +166,7 @@ class Records extends ArrayIterator
     /**
      * @return bool
      */
-    public function isEmpity()
+    public function isEmpty()
     {
         return $this->count()===0;
     }

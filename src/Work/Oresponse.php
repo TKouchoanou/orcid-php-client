@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   orcid-php-client
- * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
+ * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
@@ -143,20 +143,14 @@ class Oresponse
         try {
             $workRecordsArray=json_decode($this->getBody(),true);
         }catch (Exception $e){
-             echo $e;
+            error_log("Panic in ".get_class($this)." : ".$e->getMessage());
             return $this;
         }
         if(isset($workRecordsArray)
             && isset($workRecordsArray['last-modified-date'])
             && isset($workRecordsArray['group'])
             && isset($workRecordsArray['path'])){
-            try {
-                $workRecords->buildWorkRecords($workRecordsArray);
-            }catch (Exception $e){
-                echo $e;
-                return $this;
-            }
-
+            $workRecords->buildWorkRecords($workRecordsArray);
         }
         return $this;
     }
@@ -270,7 +264,7 @@ class Oresponse
     /**
      * @return string
      */
-    public function getReadedWorkXML()
+    public function getReadWorkXML()
     {
         if(self::isXmlString($this->getBody()) && empty($this->getErrorCode()))
         {return $this->body; }

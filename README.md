@@ -279,7 +279,7 @@ represents an external identifier and contains the four properties $ idType, $ i
 
             /** @var ExternalId $externalId */
             
-                $idType=$externalId->getIdValue();
+                $idType=$externalId->getIdType();
                 $idValue= $externalId->getIdValue(); 
                 $idUrl=$externalId->getIdUrl(); 
                 $idRelationship=$externalId->getIdRelationship();

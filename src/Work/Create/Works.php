@@ -27,27 +27,26 @@ public function append($value)
     }
 }
 
+    /**
+     * @return false|string
+     * @throws Exception
+     */
 public  function getXMLData(){
 
         $dom= work::getNewOrcidCommonDomDocument();
-        $bulk = $dom->appendChild( $dom->createElementNS(work::$namespacebulk,"bulk:bulk"));
+        $bulk = $dom->appendChild( $dom->createElementNS(work::$namespaceBulk,"bulk:bulk"));
         $dom->createAttributeNS(work::$namespaceWork, "work:work");
         $dom->createAttributeNS(work::$namespaceCommon, "common:common");
-        $bulk->setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation", work::$namespacebulk . " ../ bulk-3.0.xsd");
+        $bulk->setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation", work::$namespaceBulk . " ../ bulk-3.0.xsd");
         foreach ($this as $work){
             /**
              * @var Work $work
              */
             $workNode=$bulk->appendChild($dom->createElementNS(work::$namespaceWork,"work:work"));
-            try {
+
                 $work->addMetaToWorkNode($dom, $workNode);
-            } catch (Exception $e) {
-                echo $e;
-            }
         }
 
         return $dom->saveXML() ;
     }
-
-
 }

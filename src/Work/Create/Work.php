@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   orcid-php-client
- * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
+ * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
@@ -25,7 +25,7 @@ class Work extends OAwork
 
     public static $namespaceWork= "http://www.orcid.org/ns/work";
     public static $namespaceCommon = "http://www.orcid.org/ns/common";
-    public static $namespacebulk ="http://www.orcid.org/ns/bulk";
+    public static $namespaceBulk ="http://www.orcid.org/ns/bulk";
 
     /**
      * @var string
@@ -72,10 +72,10 @@ class Work extends OAwork
      * if you added the author orcid ID and is from sandBox put false
      * for the last parameter $orcidIdOfProductionEnv (his default value is true)
      * this value will be use if only you add orcid ID
-     * by default you can put empity string for $role and $sequence
-     * but in this case we will add author for empity role
+     * by default you can put empty string for $role and $sequence
+     * but in this case we will add author for empty role
      * and we will not add sequence to the sent data
-     * exemple: $work->('authorname','','0000-1111-2222-3333','',false)
+     * example : $work->('authorName','','0000-1111-2222-3333','',false)
      * @param string $fullName
      * @param string $role
      * @param string $orcidID
@@ -88,21 +88,24 @@ class Work extends OAwork
     {
         $orcid_id_env=$orcidFromProductionEnv?'':'sandbox.';
         
-        $role=empty($role)?'author':str_replace('_','-',strtolower($role));
+        $role=empty($role)?'author':self::tryToNormalizeAuthorRole($role);
         
         if(!in_array($role,self::AUTHOR_ROLE_TYPE)){
-            throw new Exception('The author '.$fullName.' role '.$role.' is not valid');
+            throw new Exception('The author '.$fullName.' role '.$role.' is not valid here are author valid role: ['.
+                implode(",",self::AUTHOR_ROLE_TYPE)."]");
         }
 
         if(!empty($orcidID) && !preg_match("/(\d{4}-){3,}/",$orcidID)){
             throw new Exception('The author '.$fullName.' Orcid '.$orcidID.' is not valid');
         }
 
-        if(!empty($sequence) && !in_array(strtolower($sequence),self::AUTHOR_SEQUENCE_TYPE)){
-            throw new Exception('The author '.$sequence.' sequence '.$sequence.' is not valid');
+        if(!empty($sequence) && !in_array(self::tryToNormalizeAuthorSequence($sequence),self::AUTHOR_SEQUENCE_TYPE)){
+            throw new Exception('The author '.$fullName.' sequence '.$sequence.' is not valid here are sequence valid values : ['
+                .implode(",",self::AUTHOR_SEQUENCE_TYPE).']');
         }
         if(!empty($fullName)){
-            $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID, self::SEQUENCE =>strtolower($sequence),self::ORCID_ID_ENV=>$orcid_id_env];
+            $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID,
+                self::SEQUENCE =>self::tryToNormalizeAuthorSequence($sequence),self::ORCID_ID_ENV=>$orcid_id_env];
         }
         return $this;
     }
@@ -145,10 +148,13 @@ class Work extends OAwork
      */
     public function setLanguageCode(string $languageCode)
     {
-       if(!empty($languageCode)&&in_array(strtolower($languageCode) ,self::LANGAGE_CODES)){
-           $this->languageCode = $languageCode;
-       }elseif(!empty($languageCode)&&!in_array(strtolower($languageCode) ,self::LANGAGE_CODES)){
-           throw new Exception("The langage code must be a string of two or three character and must respect ISO 3166 rules for country ");
+       if(!empty($languageCode)){
+           if(self::isValidLanguageCode($languageCode)){
+               $this->languageCode = self::tryToNormalizeLanguageCode($languageCode);
+           }else{
+               throw new Exception("Your language code is not valid. here are valid language code: [".implode(",",self::LANGAGE_CODES)."] ".
+                   "if you want to set it by force use the method setPropertyByForce('property','value')");
+           }
        }
         return $this;
     }
@@ -193,10 +199,13 @@ class Work extends OAwork
      */
     public function setCitationType(string $citationType)
     {
-        if (!empty($citationType) && in_array(strtolower($citationType),self::CITATION_FORMATS)) {
-            $this->citationType = $citationType;
-        }elseif (!empty($citationType)){
-            throw new Exception("The citation format : ".$citationType."  is not valid");
+        if (!empty($citationType)) {
+            if(self::isValidCitationType($citationType)){
+                $this->citationType = self::tryToNormalizeCitationType($citationType);
+            }else{
+                throw new Exception("The citation format : ".$citationType."  is not valid here are the valid values : [".
+                    implode(",",self::CITATION_FORMATS)."] if you want to set it by force use the method setPropertyByForce('property','value')");
+            }
         }
         return $this;
     }
@@ -207,11 +216,18 @@ class Work extends OAwork
      * An empty string value will not be added
      * @param string $country
      * @return $this
+     * @throws Exception
      */
     public function setCountry(string $country)
     {
      if(!empty($country)){
-         $this->country = strtoupper($country);
+         if(self::isValidCountryCode($country)){
+             $this->country = self::tryToNormalizeCountryCode($country);
+         }else{
+             throw new Exception("The country is not valid it must be a  code of  two characters and must respect ISO 3166 standard for country.".
+                 " here are valid values : [" .implode(",",self::COUNTRY_CODES).
+                 "] if you want to set it by force use the method setPropertyByForce('property','value')");
+         }
      }
         return $this;
     }
@@ -495,7 +511,7 @@ class Work extends OAwork
      */
     protected function dateNode(DOMDocument $dom, string $year, string $month='', string $day='')
     {
-        $valiDateMonth=false;
+        $validDateMonth=false;
         $publicationDate =  $dom->createElementNS(self::$namespaceCommon, "publication-date");
 
         if (strlen($month) === 1) {
@@ -509,10 +525,10 @@ class Work extends OAwork
 
         if($month!=='') {
             $publicationDate->appendChild($dom->createElementNS(self::$namespaceCommon, "month", $month));
-            $valiDateMonth=true;
+            $validDateMonth=true;
         }
 
-        if($day!==''&& $valiDateMonth) {
+        if($day!==''&& $validDateMonth) {
             $publicationDate->appendChild( $dom->createElementNS(self::$namespaceCommon, "day", $day ) );
         }
 
@@ -551,18 +567,18 @@ class Work extends OAwork
      */
     public function checkMetaValueAndThrowExceptionIfNecessary()
     {
-        $reponse="";
+        $response="";
         if(empty($this->title)) {
-            $reponse .=" Title recovery failed: Title value cannot be empty";
+            $response .=" Title recovery failed: Title value cannot be empty";
         }
         if(empty($this->type)) {
-            $reponse .=" Work Type recovery failed: Type value cannot be empty";
+            $response .=" Work Type recovery failed: Type value cannot be empty";
         }
         if(empty($this->externals)) {
-            $reponse .=" externals Ident recovery failed: externals values cannot be empty";
+            $response .=" externals Ident recovery failed: externals values cannot be empty";
         }
-        if($reponse!==""){
-            throw new Exception($reponse);
+        if($response!==""){
+            throw new Exception($response);
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   orcid-php-client
- * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
+ * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
@@ -37,12 +37,8 @@ class ExternalId
      * @param string $idRelationship
      * @throws Exception
      */
-    public function __construct($idType,$idValue,$idUrl='',$idRelationship='')
+    public function __construct(string $idType, string $idValue, $idUrl='', $idRelationship='')
     {
-        $idRelationship=empty($idRelationship)?'self':$idRelationship;
-        if(!in_array(str_replace('_','-',strtolower($idRelationship)),OAwork::EXTERNAL_ID_RELATION_TYPE)){
-            throw new Exception(" externalType : ".$idType." , external value : ".$idValue." , external relationship : ".$idRelationship." . The External Ident type of relationship is not valid");
-        }
         $this->setIdRelationship($idRelationship);
         $this->setIdType($idType);
         $this->setIdValue($idValue);
@@ -70,20 +66,28 @@ class ExternalId
 
     /**
      * @param string $idRelationship
+     * @throws Exception
      */
-    public function setIdRelationship(string $idRelationship)
-    {
-        $this->idRelationship = $idRelationship=str_replace('_','-',strtolower($idRelationship));
+    public function setIdRelationship(string $idRelationship="")
+    {  $idRelationship=empty($idRelationship)?'self':$idRelationship;
+        if(OAwork::isValidExternalIdRelationType($idRelationship)){
+            $this->idRelationship = OAwork::tryToNormalizeExternalIdRelationType($idRelationship);
+        }else{
+            throw new Exception("the relationship value is not valid here are relationship valid value ["
+                .implode(",",OAwork::EXTERNAL_ID_RELATION_TYPE)."].");
+        }
+
     }
 
     /**
+     * we don't control the idtType here because the list is evolving
      * @param string $idType
      * @throws Exception
      */
     public function setIdType(string $idType)
     {
-        $this->checkisNotEmptyValue($idType,'idType');
-        $this->idType = $idType;
+        $this->checkIsNotEmptyValue($idType,'idType');
+        $this->idType = OAwork::tryToNormalizeExternalIdType($idType);
     }
 
     /**
@@ -100,7 +104,7 @@ class ExternalId
      */
     public function setIdValue(string $idValue)
     {
-        $this->checkisNotEmptyValue($idValue,'idValue');
+        $this->checkIsNotEmptyValue($idValue,'idValue');
         $this->idValue = $idValue;
     }
 
@@ -141,10 +145,10 @@ class ExternalId
      * @param $name
      * @throws Exception
      */
-    private function checkisNotEmptyValue($value,$name)
+    private function checkIsNotEmptyValue($value,$name)
     {
         if(empty($value)){
-            throw new Exception('the value of '.$name.' can\'t be empity for valid external Id type') ;
+            throw new Exception('the value of '.$name.' can\'t be empty for valid external Id type') ;
         }
     }
 

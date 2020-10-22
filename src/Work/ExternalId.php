@@ -70,11 +70,11 @@ class ExternalId
      */
     public function setIdRelationship(string $idRelationship="")
     {  $idRelationship=empty($idRelationship)?'self':$idRelationship;
-        if(OAwork::isValidExternalIdRelationType($idRelationship)){
-            $this->idRelationship = OAwork::tryToNormalizeExternalIdRelationType($idRelationship);
+        if(OAbstractWork::isValidExternalIdRelationType($idRelationship)){
+            $this->idRelationship = OAbstractWork::filterExternalIdRelationType($idRelationship);
         }else{
             throw new Exception("the relationship value is not valid here are relationship valid value ["
-                .implode(",",OAwork::EXTERNAL_ID_RELATION_TYPE)."].");
+                .implode(",",OAbstractWork::EXTERNAL_ID_RELATION_TYPE)."].");
         }
 
     }
@@ -87,7 +87,7 @@ class ExternalId
     public function setIdType(string $idType)
     {
         $this->checkIsNotEmptyValue($idType,'idType');
-        $this->idType = OAwork::tryToNormalizeExternalIdType($idType);
+        $this->idType = $idType;
     }
 
     /**

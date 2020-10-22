@@ -61,7 +61,7 @@ class Oresponse
      * @var Records
      */
 
-    protected $workRecordList;
+    protected $summaryReadWorks;
 
     /**
      * Oresponse constructor.
@@ -136,10 +136,10 @@ class Oresponse
     /**
      * @return $this
      */
-    protected function setWorkRecordList(){
+    protected function setSummaryReadWorks(){
         $workRecordsArray=null;
         $workRecords= new Records();
-        $this->workRecordList=$workRecords;
+        $this->summaryReadWorks=$workRecords;
         try {
             $workRecordsArray=json_decode($this->getBody(),true);
         }catch (Exception $e){
@@ -158,21 +158,30 @@ class Oresponse
     /**
      * @return Records
      */
-    public function getWorkRecordList()
+    public function getSummaryReadWorks()
     {
-        if(empty($this->workRecordList)){
-            $this->setWorkRecordList();
+        if(empty($this->summaryReadWorks)){
+            $this->setSummaryReadWorks();
         }
-        return $this->workRecordList;
+        return $this->summaryReadWorks;
     }
 
     /**
-     * @return array|mixed
+     * @return Read\Full\Record
+     * @throws Exception
      */
     public function getSingleReadWork(){
         $workSingleReadWork=json_decode($this->getBody(),true);
         if($workSingleReadWork){
-            return $workSingleReadWork;
+            return (new \Orcid\Work\Read\Full\Record())->buildRecord($workSingleReadWork);
+        }
+        return null;
+    }
+
+    public function getMultipleReadWorks(){
+        $workMultipleReadWork=json_decode($this->getBody(),true);
+        if($workMultipleReadWork){
+            return (new \Orcid\Work\Read\Full\Records())->buildWorkRecords($workMultipleReadWork);
         }
         return [];
     }

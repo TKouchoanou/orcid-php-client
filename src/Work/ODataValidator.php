@@ -6,84 +6,113 @@ namespace Orcid\Work;
 
 trait ODataValidator
 {
-    //data validator
+    /**
+     * @param $putCode
+     * @return bool
+     */
+    public static function isValidPutCode($putCode)
+    {
+        return !empty($putCode) && is_numeric($putCode);
+    }
+    /**
+     * @param $languageCode
+     * @return bool
+     */
     public static function isValidLanguageCode($languageCode)
     {
-        return in_array(self::tryToNormalizeLanguageCode($languageCode),OAwork::LANGAGE_CODES);
+        return in_array($languageCode,OAbstractWork::LANGUAGE_CODES);
     }
 
+    /**
+     * @param $country
+     * @return bool
+     */
     public static function isValidCountryCode($country)
     {
-        return in_array(self::tryToNormalizeCountryCode($country),OAwork::COUNTRY_CODES);
+        return in_array($country,OAbstractWork::COUNTRY_CODES);
     }
 
+    /**
+     * @param $type
+     * @return bool
+     */
     public static function isValidWorkType($type)
-
-
     {
-        return in_array(self::tryToNormalizeWorkType($type),OAwork::WORK_TYPES);
+        return in_array($type,OAbstractWork::WORK_TYPES);
     }
 
-    public static function isValidAuthorRole($role)
+    /**
+     * @param $role
+     * @return bool
+     */
+    public static function isValidContributorRole($role)
     {
-        return in_array(self::tryToNormalizeAuthorRole($role), OAwork::AUTHOR_ROLE_TYPE);
+        return in_array($role, OAbstractWork::AUTHOR_ROLE_TYPE);
     }
 
+    /**
+     * @param $sequence
+     * @return bool
+     */
+    public static function isValidContributorSequence($sequence){
+        return in_array($sequence, OAbstractWork::AUTHOR_SEQUENCE_TYPE);
+    }
+
+    /**
+     * @param $orcidID
+     * @return false|int
+     */
+    public static function isValidOrcid($orcidID){
+        return preg_match("/(\d{4}-){3,}/",$orcidID);
+    }
+
+    /**
+     * @param $citationType
+     * @return bool
+     */
     public static function isValidCitationType($citationType)
     {
-        return in_array(self::tryToNormalizeCitationType($citationType), OAwork::CITATION_FORMATS);
+        return in_array($citationType, OAbstractWork::CITATION_FORMATS);
     }
 
-    public static function isValidAuthorSequence($sequence){
-        return in_array(self::tryToNormalizeAuthorSequence($sequence), OAwork::AUTHOR_SEQUENCE_TYPE);
-    }
+    /**
+     * @param $idType
+     * @return bool
+     */
     public static function isValidExternalIdType($idType){
-        return in_array(self::tryToNormalizeExternalIdType($idType), OAwork::EXTENAL_ID_TYPE);
+        return in_array($idType, OAbstractWork::EXTERNAL_ID_TYPE);
     }
 
+    /**
+     * @param $idType
+     * @return bool
+     */
     public static function isValidExternalIdRelationType($idType){
-        return in_array(self::tryToNormalizeExternalIdRelationType($idType), OAwork::EXTERNAL_ID_RELATION_TYPE);
+        return in_array($idType, OAbstractWork::EXTERNAL_ID_RELATION_TYPE);
     }
 
-
-
-
-
-    //data normalizer
-    protected static function tryToNormalizeLanguageCode($languageCode)
-    {
-        $language_code=str_replace("-", "_", strtolower(trim($languageCode)));
-        return array_key_exists($language_code, OAwork::SPECIAL_LANGAGE_CODES)?OAwork::SPECIAL_LANGAGE_CODES[$language_code]:$language_code;
+    /**
+     * @param string $shortDescription
+     * @return bool
+     */
+    public static function isValidShortDescription(string $shortDescription){
+        return mb_strlen($shortDescription)<=OAbstractWork::SHORT_DESCRIPTION_AUTHORIZE_MAX_LENGTH;
     }
 
-    protected static function tryToNormalizeCountryCode($country)
-    {
-        return strtoupper(trim($country));
+    /**
+     * @param string $publicationYear
+     * @return bool
+     */
+    public static function isValidPublicationYear(string $publicationYear){
+        return is_numeric($publicationYear) && mb_strlen($publicationYear) <= 4
+               && (int)$publicationYear >= OAbstractWork::PUBLICATION_DATE_MIN_YEAR && (int)$publicationYear <= OAbstractWork::PUBLICATION_DATE_MAX_YEAR;
     }
 
-    protected static function tryToNormalizeWorkType($type)
-    {
-        return str_replace("_", "-", strtolower(trim($type)));
-    }
-
-    protected static function tryToNormalizeAuthorRole($role)
-    {
-        return str_replace('_', '-', strtolower(trim($role)));
-    }
-
-    protected static function tryToNormalizeCitationType($citationType)
-    {
-        return str_replace('_', '-', strtolower(trim($citationType)));
-    }
-
-    protected static function tryToNormalizeAuthorSequence($sequence){
-        return strtolower(trim($sequence));
-    }
-
-    public static function tryToNormalizeExternalIdType($extIdType){
-         return str_replace('_', '-', strtolower(trim($extIdType)));
-    }
-    public static function tryToNormalizeExternalIdRelationType($type){
-        return str_replace('_', '-', strtolower(trim($type)));
+    /**
+     * @param string $citation
+     * @return bool
+     */
+    public static function isValidCitation(string $citation){
+        return mb_strlen($citation)<=OAbstractWork::CITATION_MAX_LENGTH;
     }
 }

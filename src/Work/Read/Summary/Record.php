@@ -5,16 +5,17 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
-namespace Orcid\Work\Read;
+namespace Orcid\Work\Read\Summary;
 
 
 use Orcid\Work\OAbstractWork;
+use Orcid\Work\Read\SingleRecord;
 
 /**
  * Class Record
  * @package Orcid\Work\Read
  */
-class Record extends OAbstractWork
+class Record extends OAbstractWork implements SingleRecord
 {
     /**
      * @var int

@@ -11,304 +11,16 @@ use DOMDocument;
 use DOMElement;
 use DOMNode;
 use Exception;
-use Orcid\Work\OAwork;
+use Orcid\Work\Contributor;
 use Orcid\Work\ExternalId;
 
-class Work extends OAwork
+class Work extends CreateAbstractWork
 {
-    const FULL_NAME    = 'fullName';
-    const ORCID_ID     = 'orcidID';
-    const ROLE         = 'role';
-    const SEQUENCE     = 'sequence';
-    const ORCID_ID_ENV = 'orcidIdEnv';
-    const HOSTNAME     = 'orcid.org';
 
+    const HOSTNAME     = 'orcid.org';
     public static $namespaceWork= "http://www.orcid.org/ns/work";
     public static $namespaceCommon = "http://www.orcid.org/ns/common";
     public static $namespaceBulk ="http://www.orcid.org/ns/bulk";
-
-    /**
-     * @var string
-     */
-    protected $journalTitle;
-    /**
-     * @var string
-     */
-    protected $shortDescription;
-    /**
-     * @var string
-     */
-    protected $citation;
-    /**
-     * @var string []
-     */
-    protected $authors;
-    /**
-     * @var string
-     */
-    protected $principalAuthors;
-    /**
-     * @var string
-     */
-    protected $languageCode;
-    /**
-     * @var string
-     */
-    protected $citationType;
-
-    /**
-     * @var string
-     */
-    protected $country;
-    /**
-     * @var string
-     */
-    protected $workUrl;
-
-
-    /**
-     * An empty fullName string value will not be added
-     * to be sure to add an author check on your side that his full name is not empty.
-     * if you added the author orcid ID and is from sandBox put false
-     * for the last parameter $orcidIdOfProductionEnv (his default value is true)
-     * this value will be use if only you add orcid ID
-     * by default you can put empty string for $role and $sequence
-     * but in this case we will add author for empty role
-     * and we will not add sequence to the sent data
-     * example : $work->('authorName','','0000-1111-2222-3333','',false)
-     * @param string $fullName
-     * @param string $role
-     * @param string $orcidID
-     * @param string $sequence
-     * @param bool $orcidFromProductionEnv
-     * @return $this
-     * @throws Exception
-     */
-    public function addAuthor(string $fullName,string $role='', string $orcidID='',  string $sequence='', $orcidFromProductionEnv=true)
-    {
-        $orcid_id_env=$orcidFromProductionEnv?'':'sandbox.';
-        
-        $role=empty($role)?'author':self::tryToNormalizeAuthorRole($role);
-        
-        if(!in_array($role,self::AUTHOR_ROLE_TYPE)){
-            throw new Exception('The author '.$fullName.' role '.$role.' is not valid here are author valid role: ['.
-                implode(",",self::AUTHOR_ROLE_TYPE)."]");
-        }
-
-        if(!empty($orcidID) && !preg_match("/(\d{4}-){3,}/",$orcidID)){
-            throw new Exception('The author '.$fullName.' Orcid '.$orcidID.' is not valid');
-        }
-
-        if(!empty($sequence) && !in_array(self::tryToNormalizeAuthorSequence($sequence),self::AUTHOR_SEQUENCE_TYPE)){
-            throw new Exception('The author '.$fullName.' sequence '.$sequence.' is not valid here are sequence valid values : ['
-                .implode(",",self::AUTHOR_SEQUENCE_TYPE).']');
-        }
-        if(!empty($fullName)){
-            $this->authors []= [self::FULL_NAME =>$fullName, self::ROLE=>$role,self::ORCID_ID =>$orcidID,
-                self::SEQUENCE =>self::tryToNormalizeAuthorSequence($sequence),self::ORCID_ID_ENV=>$orcid_id_env];
-        }
-        return $this;
-    }
-
-    /**
-     * An empty string value will not be added
-     * @param string $journalTitle
-     * @return $this
-     */
-    public function setJournalTitle(string $journalTitle)
-    {
-        if(!empty($journalTitle)) {
-            $this->journalTitle = $journalTitle;
-        }
-        return $this;
-    }
-
-    /**
-     * An empty string value will not be added
-     * @param string $shortDescription
-     * @return $this
-     * @throws Exception
-     */
-    public function setShortDescription(string $shortDescription)
-    {
-        if(mb_strlen($shortDescription)>5000){
-            throw new Exception('The short description length must not be than 5000 characters');
-        }elseif (!empty($shortDescription)) {
-            $this->shortDescription = $shortDescription;
-        }
-        return $this;
-    }
-
-    /**
-     * an exception is thrown if you try to add invalid value
-     * An empty string value will not be added
-     * @param string $languageCode
-     * @return $this
-     * @throws Exception
-     */
-    public function setLanguageCode(string $languageCode)
-    {
-       if(!empty($languageCode)){
-           if(self::isValidLanguageCode($languageCode)){
-               $this->languageCode = self::tryToNormalizeLanguageCode($languageCode);
-           }else{
-               throw new Exception("Your language code is not valid. here are valid language code: [".implode(",",self::LANGAGE_CODES)."] ".
-                   "if you want to set it by force use the method setPropertyByForce('property','value')");
-           }
-       }
-        return $this;
-    }
-
-    /**
-     * @param string | string[] $principalAuthors
-     * @return $this
-     */
-    public function setPrincipalAuthors($principalAuthors)
-    {
-        if(!empty($principalAuthors)){
-            $this->principalAuthors = $principalAuthors;
-        }
-        return $this;
-    }
-
-    /**
-     * An empty string value will not be added like citation
-     * @param string $citation
-     * @param string $citationType
-     * @return $this
-     * @throws Exception
-     */
-    public function setCitation(string $citation,$citationType='formatted-unspecified')
-    {
-        if(!empty($citation)){
-            $this->citation = $citation;
-            if(empty($this->citationType)){
-                $this->setCitationType($citationType);
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * 1- by default your citation type will be formatted-unspecified
-     * if you add citation without citation-type.
-     * 2-it makes no sense to add citation type without adding citation
-     * @param string $citationType
-     * @return $this
-     * @throws Exception
-     */
-    public function setCitationType(string $citationType)
-    {
-        if (!empty($citationType)) {
-            if(self::isValidCitationType($citationType)){
-                $this->citationType = self::tryToNormalizeCitationType($citationType);
-            }else{
-                throw new Exception("The citation format : ".$citationType."  is not valid here are the valid values : [".
-                    implode(",",self::CITATION_FORMATS)."] if you want to set it by force use the method setPropertyByForce('property','value')");
-            }
-        }
-        return $this;
-    }
-
-
-    /**
-     * to be sure to add a country check on your side that it is not empty.
-     * An empty string value will not be added
-     * @param string $country
-     * @return $this
-     * @throws Exception
-     */
-    public function setCountry(string $country)
-    {
-     if(!empty($country)){
-         if(self::isValidCountryCode($country)){
-             $this->country = self::tryToNormalizeCountryCode($country);
-         }else{
-             throw new Exception("The country is not valid it must be a  code of  two characters and must respect ISO 3166 standard for country.".
-                 " here are valid values : [" .implode(",",self::COUNTRY_CODES).
-                 "] if you want to set it by force use the method setPropertyByForce('property','value')");
-         }
-     }
-        return $this;
-    }
-
-    /**
-     * to be sure to add a work url check on your side that it is not empty.
-     * An empty string value will not be added
-     * @param string $workUrl
-     * @return $this
-     */
-    public function setWorkUrl(string $workUrl)
-    {
-        if(!empty($workUrl)){
-            $this->workUrl = $workUrl;
-        }
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getAuthors()
-    {
-        return $this->authors;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCitationType()
-    {
-        return $this->citationType;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWorkUrl()
-    {
-        return $this->workUrl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCitation()
-    {
-        return $this->citation;
-    }
-
-    /**
-     * @return string
-     */
-    public function getShortDescription()
-    {
-        return $this->shortDescription;
-    }
-
-    /**
-     * @return string
-     */
-    public function getJournalTitle()
-    {
-        return $this->journalTitle;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLanguageCode()
-    {
-        return $this->languageCode;
-    }
 
     /**
      * @param DOMDocument $dom
@@ -360,9 +72,9 @@ class Work extends OAwork
 
         // add publication date
         if(isset($this->publicationDate)){
-            $year=$this->publicationDate[self::YEAR];
-            $month =$this->publicationDate[self::MONTH];
-            $day=$this->publicationDate[self::DAY];
+            $year=$this->publicationDate->getYear();
+            $month =$this->publicationDate->getMonth();
+            $day=$this->publicationDate->getDay();
             $work->appendChild($this->dateNode($dom,$year,$month,$day));
         }
 
@@ -385,22 +97,18 @@ class Work extends OAwork
             $work->appendChild( $dom->createElementNS(self::$namespaceWork, "url",$this->workUrl ) );
         }
 
-       //add authors
-        if(isset($this->authors) || isset($this->principalAuthors)){
+       //add authors (contributor)
+        if(isset($this->authors)){
             $contributors = $work->appendChild( $dom->createElementNS(self::$namespaceWork,"contributors") );
             if(isset($this->authors) && is_array($this->authors)){
+                /**
+                 * @var Contributor $author
+                 */
                 foreach($this->authors as $author){
-                    $contributors->appendChild($this->nodeContributor($dom,$author[self::FULL_NAME],$author[self::ROLE],$author[self::ORCID_ID],$author[self::SEQUENCE],$author[self::ORCID_ID_ENV]) );
+                    $contributors->appendChild($this->nodeContributor($dom,$author->getCreditName(),$author->getRole(),$author->getOrcid(),$author->getSequence(),$author->getEnv()) );
                 }
             }
 
-            if(isset($this->principalAuthors) && is_array($this->principalAuthors)){
-                foreach($this->principalAuthors as $name){
-                    $contributors->appendChild( $this->nodeContributor($dom, $name, "principal-investigator") );
-                }
-            }elseif (isset($this->principalAuthors) && is_string($this->principalAuthors)){
-                $contributors->appendChild( $this->nodeContributor($dom, $this->principalAuthors, "principal-investigator") );
-            }
         }
 
         if(isset($this->languageCode))
@@ -580,5 +288,12 @@ class Work extends OAwork
         if($response!==""){
             throw new Exception($response);
         }
+    }
+
+    /**
+     * @return Work
+     */
+    public static function  getCreateWorkInstanceWithDataFilter(){
+        return (new Work())->setFilterData(true);
     }
 }

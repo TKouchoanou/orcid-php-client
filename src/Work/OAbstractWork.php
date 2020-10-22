@@ -9,26 +9,27 @@ namespace Orcid\Work;
 
 
  use Exception;
- abstract  class OAwork
- {
-     use ODataValidator;
-     const YEAR = 'year';
-     const MONTH = 'month';
-     const DAY = 'day';
 
+ abstract  class OAbstractWork
+ {
+     use ODataValidator; use ODataFilter;
+     const PUBLICATION_DATE_MIN_YEAR=1900;
+     const PUBLICATION_DATE_MAX_YEAR=2100;
+     const SHORT_DESCRIPTION_AUTHORIZE_MAX_LENGTH=5000;
+     const CITATION_MAX_LENGTH=1000;
      const EXTERNAL_ID_RELATION_TYPE = ['self', 'part-of'];
      const CITATION_FORMATS = ['formatted-unspecified', 'bibtex', 'ris', 'formatted-apa', 'formatted-harvard', 'formatted-ieee', 'formatted-mla', 'formatted-vancouver', 'formatted-chicago'];
      /**
       *language code which is accepted by orcid  don't contains: zh Sino-Tibetan Chinese, he Afro-Asiatic Hebrew ,id Austronesian Indonesian,yi  Indo-European Yiddish
       */
-     const LANGAGE_CODES = ['en', 'ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'zh_CN', 'zh_TW', 'cu',
+     const LANGUAGE_CODES = ['en', 'ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'zh_CN', 'zh_TW', 'cu',
          'cv', 'kw', 'co', 'cr', 'hr', 'cs', 'da', 'dv', 'nl', 'dz', 'en', 'eo', 'et', 'ee', 'fo', 'fj', 'fi', 'fr', 'fy', 'ff', 'gl', 'lg', 'ka', 'de', 'el', 'kl', 'gn', 'gu', 'ht', 'ha', 'iw', 'hz', 'hi', 'ho', 'hu', 'is',
          'io', 'ig', 'in', 'ia', 'ie', 'iu', 'ik', 'ga', 'it', 'ja', 'jv', 'kn', 'kr', 'ks', 'kk', 'km', 'ki', 'rw', 'ky', 'kv', 'kg', 'ko', 'ku', 'kj', 'lo', 'la', 'lv', 'li', 'ln', 'lt', 'lu', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt'
          , 'gv', 'mi', 'mr', 'mh', 'mo', 'mn', 'na', 'nv', 'ng', 'ne', 'nd', 'se', 'no', 'nb', 'nn', 'ny', 'oc', 'oj', 'or', 'om', 'os', 'pi', 'pa', 'fa', 'pl', 'pt', 'ps', 'qu', 'rm', 'ro', 'rn', 'ru', 'sm', 'sg', 'sa', 'sc', 'gd'
          , 'sr', 'sn', 'ii', 'sd', 'si', 'sk', 'sl', 'so', 'nr', 'st', 'es', 'su', 'sw', 'ss', 'sv', 'tl', 'ty', 'tg', 'ta', 'tt', 'te', 'th', 'bo', 'ti', 'to', 'ts', 'tn', 'tr', 'tk', 'tw', 'ug', 'uk', 'ur', 'uz', 've', 'vi',
          'vo', 'wa', 'cy', 'wo', 'xh', 'ji', 'yo', 'za', 'zu'];
 
-     const SPECIAL_LANGAGE_CODES = ['zh_cn' => 'zh_CN', 'ZH_CN' => 'zh_CN', 'zh_tw' => 'zh_TW', 'ZH_TW' => 'zh_TW'];
+     const SPECIAL_LANGUAGE_CODES = ['zh_cn' => 'zh_CN', 'ZH_CN' => 'zh_CN', 'zh_tw' => 'zh_TW', 'ZH_TW' => 'zh_TW'];
 
      /** orcid accepts countries that meet the standard iso-3166-country-or-empty http://documentation.abes.fr/sudoc/formats/CodesPays.htm */
      const COUNTRY_CODES = ['AF', 'AX', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'AG', 'AR', 'AM', 'AW', 'AU', 'AT', 'AZ', 'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BM', 'BT', 'BO', 'BQ', 'BA', 'BW', 'BV', 'BR', 'IO', 'BN', 'BG', 'BF', 'BI', 'CV', 'KH', 'CM', 'CA', 'KY',
@@ -38,7 +39,7 @@ namespace Orcid\Work;
          'QA', 'RE', 'RO', 'RU', 'RW', 'BL', 'SH', 'KN', 'LC', 'MF', 'PM', 'VC', 'WS', 'SM', 'ST', 'SA', 'SN', 'RS', 'SC', 'SL', 'SG', 'SX', 'SK', 'SI', 'SB', 'SO', 'ZA', 'GS', 'SS', 'ES', 'LK', 'SD', 'SR', 'SJ', 'SE', 'CH', 'SY', 'TW', 'TJ', 'TZ', 'TH', 'TL', 'TG', 'TK', 'TO', 'TT',
          'TN', 'TR', 'TM', 'TC', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UM', 'UY', 'UZ', 'VU', 'VE', 'VN', 'VG', 'VI', 'WF', 'EH', 'YE', 'ZM', 'ZW'];
 
-     const EXTENAL_ID_TYPE = ['agr', 'ark', 'arxiv', 'asin', 'asin-tld', 'authenticusid', 'bibcode', 'cba', 'cienciaiul', 'cit', 'ctx', 'dnb', 'doi', 'eid', 'ethos',
+     const EXTERNAL_ID_TYPE = ['agr', 'ark', 'arxiv', 'asin', 'asin-tld', 'authenticusid', 'bibcode', 'cba', 'cienciaiul', 'cit', 'ctx', 'dnb', 'doi', 'eid', 'ethos',
          'grant_number', 'handle','hal', 'hir', 'isbn', 'issn', 'jfm', 'jstor', 'kuid', 'lccn', 'lensid', 'mr', 'oclc', 'ol', 'osti', 'other-id', 'pat', 'pdb', 'pmc', 'pmid',
          'proposal-id', 'rfc', 'rrid', 'source-work-id', 'ssrn', 'uri', 'urn', 'wosuid', 'zbl'];
      const EXTERNAL_URL_BY_IDTYPE = ['arxiv' => 'https://arxiv.org/abs/', 'asin' => 'http://www.amazon.com/dp/',
@@ -79,7 +80,7 @@ namespace Orcid\Work;
       */
      protected $subTitle;
      /**
-      * @var array
+      * @var PublicationDate
       */
      protected $publicationDate;
      /**
@@ -90,6 +91,10 @@ namespace Orcid\Work;
       * @var string
       */
      protected $type;
+     /**
+      * @var bool
+      */
+     protected $filterData=true;
 
 
      public function __construct()
@@ -108,6 +113,10 @@ namespace Orcid\Work;
       */
      public function addExternalIdent(string $externalIdType, string $externalIdValue, $externalIdUrl = '', $externalIdRelationship = '')
      {
+         if($this->isFilterData()){
+             $externalIdType =self::filterExternalIdType($externalIdType);
+             $externalIdRelationship=self::filterExternalIdRelationType($externalIdRelationship);
+         }
          $this->externals[] = new ExternalId($externalIdType, $externalIdValue, $externalIdUrl, $externalIdRelationship);
          return $this;
      }
@@ -117,45 +126,51 @@ namespace Orcid\Work;
       * But you are responsible for what you send
       * @param ExternalId $externalId
       * @return $this
+      * @throws Exception
       */
      public function addNewExternalIdent(ExternalId $externalId)
-     {
+     { if($this->isFilterData()){
+         $externalId->setIdRelationship(self::filterExternalIdRelationType($externalId->getIdRelationship()));
+         $externalId->setIdType(self::filterExternalIdType($externalId->getIdType()));
+       }
          $this->externals[] = $externalId;
          return $this;
      }
 
      /**
-      * you have not to set putcode for sending
-      * putcode is required to update but not to send
-      * if you have decided to set put code check if its not empity
-      * empity value is not accepted
+      * you have not to set put-code for sending
+      * put-code is required to update but not to send
+      * if you have decided to set put code check if its not empty
+      * empty value is not accepted
       * @param string $putCode
       * @return $this
       * @throws Exception
       */
      public function setPutCode(string $putCode)
      {
-         if (empty($putCode) || !is_numeric($putCode)) {
-             throw new Exception("The putcode of work must be numéric and not empity,you try to set a value which is not numercic or is empity");
+         if (!self::isValidPutCode($putCode)) {
+             throw new Exception("The put-code of work must be numeric and not empty,you try to set a value which is not numeric or is empty");
          }
          $this->putCode = $putCode;
          return $this;
      }
 
      /**
-      * type is required , empity value is not accepted
-      * @param string $type
+      * type is required , empty value is not accepted
+      * @param string $workType
       * @return $this
       * @throws Exception
       */
-     public function setType(string $type)
+     public function setType(string $workType)
      {
-         $workType = self::tryToNormalizeWorkType($type);
-         if (empty($type)) {
-             throw new Exception("The type of work must be string and not empity,you try to set empity value");
+         if (empty($workType)) {
+             throw new Exception("The type of work must be string and not empty,you try to set empty value");
          }
-         if (!in_array($workType, self::WORK_TYPES)) {
-             throw new Exception("The type of work  '" . $type . "'  you try to set is not valid for orcid work, here are the valid worktype: [".
+         if ($this->isFilterData()){
+             $workType = self::filterWorkType($workType);
+         }
+         if (!self::isValidWorkType($workType)) {
+             throw new Exception("The type of work  '" . $workType . "'  you try to set is not valid for orcid work, here are the valid work-type: [".
              implode(",",self::WORK_TYPES)."].");
          }
          $this->type = $workType;
@@ -163,7 +178,7 @@ namespace Orcid\Work;
      }
 
      /**
-      * title is required , empity value is not accepted
+      * title is required , empty value is not accepted
       * @param string $title
       * @param string $translatedTitle
       * @param string $translatedTitleLanguageCode
@@ -173,7 +188,7 @@ namespace Orcid\Work;
      public function setTitle(string $title, $translatedTitle = '', $translatedTitleLanguageCode = '')
      {
          if (empty($title)) {
-             throw new Exception("The title of work must be string and not empity,you try to set the value which is empity");
+             throw new Exception("The title of work must be string and not empty,you try to set the value which is empty");
          }
          $this->title = $title;
          $this->setTranslatedTitle($translatedTitle);
@@ -182,12 +197,12 @@ namespace Orcid\Work;
      }
 
      /**
-      * if you add empity subtitle or translatedtitle we just won't set it because
+      * if you add empty subtitle or translated title we just won't set it because
       * we consider that you don't want to add subtitle/translated title
-      * empity subtitle is not useful
-      * Then you don't neead to check if your string is empity to set
+      * empty subtitle is not useful
+      * Then you don't need to check if your string is empty to set
       * @param string $subTitle
-      * @return OAwork
+      * @return OAbstractWork
       */
      public function setSubTitle(string $subTitle)
      {
@@ -198,12 +213,12 @@ namespace Orcid\Work;
      }
 
      /**
-      * if you add empity translated title we just won't set it because
+      * if you add empty translated title we just won't set it because
       * we consider that you don't want to add translated title
-      * empity translated title is not useful .
-      * Then you don't neead to check if your string is empity to set
-      * if you add transleted title is required to add the langage code
-      * otherwise your transleted title won't be taken into account
+      * empty translated title is not useful .
+      * Then you don't need to check if your string is empty to set
+      * if you add translated title is required to add the language code
+      * otherwise your translated title won't be taken into account
       * @param string $translatedTitle
       * @return $this
       */
@@ -216,31 +231,35 @@ namespace Orcid\Work;
      }
 
      /**
-      * if you send empity string or transleted title languagecode
-      * it won't be taken in account, then even if you add non empity
-      * transleted title it won't be possible to send it because both must
-      * not be empity
+      * if you send empty string or translated title languageCode
+      * it won't be taken in account, then even if you add non empty
+      * translated title it won't be possible to send it because both must
+      * not be empty
       * @param string $translatedTitleLanguageCode
       * @return $this
       * @throws Exception
       */
      public function setTranslatedTitleLanguageCode(string $translatedTitleLanguageCode)
      {
+
          if (!empty($translatedTitleLanguageCode)) {
-             if(self::isValidLanguageCode($translatedTitleLanguageCode)){
-                 $this->translatedTitleLanguageCode = self::tryToNormalizeLanguageCode($translatedTitleLanguageCode);
-             }else{
-                 throw new Exception("Your language code is not valid. here are valid langage code: [".implode(",",self::LANGAGE_CODES)."] ".
+             if($this->isFilterData()){
+                 $translatedTitleLanguageCode=self::filterLanguageCode($translatedTitleLanguageCode);
+             }
+             if(!self::isValidLanguageCode($translatedTitleLanguageCode)){
+                 throw new Exception("Your language code is not valid. here are valid language code: [".implode(",",self::LANGUAGE_CODES)."] ".
                      "if you want to set it by force use the method setPropertyByForce('property','value')");
              }
+             $this->translatedTitleLanguageCode=$translatedTitleLanguageCode;
          }
          return $this;
      }
 
 
      /**
-      * the publication date is not required but the year must not to be empity if you decided to send publication
-      * with empity year it won't be added. Check your side if the year  is not empty before to add it
+      * the publication date is not required but the year must not to be empty if you decided to send publication
+      * with empty year it won't be added. Check your side if the year  is not empty before to add it. if you set non empty day
+      * but empty month , your day won't be send to orcid , just the year will be send like publication date
       * @param string $year
       * @param string $month
       * @param string $day
@@ -249,30 +268,9 @@ namespace Orcid\Work;
       */
      public function setPublicationDate(string $year, $month = '', $day = '')
      {
-         if (empty($year)) {
-             return $this;
+         if (!empty($year)) {
+             $this->publicationDate = new PublicationDate($year,$month,$day);
          }
-
-         if (!is_numeric($year) || mb_strlen($year) > 4) {
-             $message = " \n The year must be a string made up of four numeric characters or be a number of four digits. You have send Year=" . $year;
-         }
-
-         if ((int)$year < 1900 || (int)$year > 2100) {
-             $message = " The minimum value for orcid work year is 1900 and the maximun value  is 2100. You have send Year=" . $year;
-         }
-
-         if ((!empty($month) && (!is_numeric($month) || mb_strlen((string)$month) > 2 || (int)$month > 12 || (int)$month < 1))) {
-             $message .= " \n The month must be a numeric string or a integer whose value is between 1 and 12. You have send Month=" . $month;
-         }
-
-         if (!empty($day) && (!is_numeric($day) || strlen((string)$day) > 2 || (int)$day > 31 || (int)$day < 1)) {
-             $message .= " \n The day must be a numeric string or a number whose value is between 1 and 31. You have send Day=" . $day;
-         }
-
-         if (isset($message)) {
-             throw new Exception($message);
-         }
-         $this->publicationDate = [self::YEAR => $year, self::MONTH => $month, self::DAY => $day];
          return $this;
      }
 
@@ -280,7 +278,7 @@ namespace Orcid\Work;
       * Consciously allows you to put any value in a property without checking the validity with orcid
       * @param string $property
       * @param $value
-      * @return OAwork
+      * @return OAbstractWork
       * @throws Exception
       */
     public function setPropertyByForce(string $property,$value){
@@ -292,6 +290,24 @@ namespace Orcid\Work;
       }
       return $this;
     }
+
+     /**
+      * @param bool $filterData
+      * @return OAbstractWork
+      */
+     public function setFilterData(bool $filterData)
+     {
+         $this->filterData = $filterData;
+         return $this;
+     }
+
+     /**
+      * @return bool
+      */
+     public function isFilterData(): bool
+     {
+         return $this->filterData;
+     }
      /**
       * @return string
       */
@@ -318,7 +334,7 @@ namespace Orcid\Work;
 
 
      /**
-      * @return array
+      * @return PublicationDate
       */
      public function getPublicationDate()
      {
@@ -348,8 +364,4 @@ namespace Orcid\Work;
      {
          return $this->externals;
      }
-
-
-
-
 }

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Orcid\Work;
+namespace Orcid\Work\Data\Data;
 
 
 use Exception;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
+use Orcid\Work\Work\OAbstractWork;
 
 class Contributor
 {
@@ -50,6 +50,7 @@ class Contributor
      * @param string $sequence
      * @param string $email
      * @param bool $countOfProdEnv
+     * @param bool $filterData
      * @throws Exception
      */
     public function __construct(string $creditName, string $role, $orcid='',$sequence='', $email='',$countOfProdEnv=true,$filterData=true)
@@ -144,6 +145,7 @@ class Contributor
 
     /**
      * @param bool $filterData
+     * @return Contributor
      */
     public function setFilterData(bool $filterData){
         $this->filterData=$filterData;

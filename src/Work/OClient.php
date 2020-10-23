@@ -10,8 +10,8 @@ namespace Orcid\Work;
 
 use Exception;
 use Orcid\Oauth;
-use Orcid\Work\Create\Work;
-use Orcid\Work\Create\Works;
+use Orcid\Work\Work\Create\Work;
+use Orcid\Work\Work\Create\Works;
 
 class OClient
 {

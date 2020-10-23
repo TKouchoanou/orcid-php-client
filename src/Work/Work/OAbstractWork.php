@@ -5,10 +5,14 @@
  * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
-namespace Orcid\Work;
+namespace Orcid\Work\Work;
 
 
  use Exception;
+ use Orcid\Work\Data\Data\ExternalId;
+ use Orcid\Work\Data\ODataFilter;
+ use Orcid\Work\Data\ODataValidator;
+ use Orcid\Work\Data\Data\PublicationDate;
 
  abstract  class OAbstractWork
  {

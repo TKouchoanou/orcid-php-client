@@ -1,10 +1,11 @@
 <?php
 
 
-namespace Orcid\Work;
+namespace Orcid\Work\Data\Data;
 
 
 use Exception;
+use Orcid\Work\Work\OAbstractWork;
 
 class PublicationDate
 {

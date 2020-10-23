@@ -5,19 +5,19 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
-namespace Orcid\Work\Read\Full;
+namespace Orcid\Work\Work\Read\Full;
 
 
 use Exception;
-use Orcid\Work\Contributor;
-use Orcid\Work\Create\CreateAbstractWork;
-use Orcid\Work\Read\SingleRecord;
+use Orcid\Work\Data\Data\Contributor;
+use Orcid\Work\Work\Create\AbstractWork;
+use Orcid\Work\Work\Read\SingleRecord;
 
 /**
  * Class Record
  * @package Orcid\Work\Read
  */
-class Record extends CreateAbstractWork implements SingleRecord
+class Record extends AbstractWork implements SingleRecord
 {
     /**
      * @var int

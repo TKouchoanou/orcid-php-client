@@ -8,7 +8,10 @@
 namespace Orcid\Work;
 
 use Exception;
-use Orcid\Work\Read\Records;
+use Orcid\Work\Work\Read\Full\Record;
+use Orcid\Work\Work\Read\Full\Records;
+use Orcid\Work\Work\Read\Summary\Record as SRecord;
+use Orcid\Work\Work\Read\Summary\Records as SRecords;
 
 class Oresponse
 {
@@ -135,10 +138,11 @@ class Oresponse
 
     /**
      * @return $this
+     * @throws Exception
      */
     protected function setSummaryReadWorks(){
         $workRecordsArray=null;
-        $workRecords= new Records();
+        $workRecords= new SRecords();
         $this->summaryReadWorks=$workRecords;
         try {
             $workRecordsArray=json_decode($this->getBody(),true);
@@ -157,6 +161,7 @@ class Oresponse
 
     /**
      * @return Records
+     * @throws Exception
      */
     public function getSummaryReadWorks()
     {
@@ -167,21 +172,25 @@ class Oresponse
     }
 
     /**
-     * @return Read\Full\Record
+     * @return Work\Read\Full\Record
      * @throws Exception
      */
     public function getSingleReadWork(){
         $workSingleReadWork=json_decode($this->getBody(),true);
         if($workSingleReadWork){
-            return (new \Orcid\Work\Read\Full\Record())->buildRecord($workSingleReadWork);
+            return (new Record())->buildRecord($workSingleReadWork);
         }
         return null;
     }
 
+    /**
+     * @return array|Records
+     * @throws Exception
+     */
     public function getMultipleReadWorks(){
         $workMultipleReadWork=json_decode($this->getBody(),true);
         if($workMultipleReadWork){
-            return (new \Orcid\Work\Read\Full\Records())->buildWorkRecords($workMultipleReadWork);
+            return (new Records())->buildWorkRecords($workMultipleReadWork);
         }
         return [];
     }

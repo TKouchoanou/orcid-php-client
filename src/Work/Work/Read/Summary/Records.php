@@ -5,44 +5,19 @@
  * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
-namespace Orcid\Work\Read;
+namespace Orcid\Work\Work\Read\Summary;
 
 
 
-use ArrayIterator;
 use Exception;
+use Orcid\Work\Work\Read\AbstractRecordList;
 
 /**
  * Class Records
  * @package Orcid\Work\Read
  */
-class Records extends ArrayIterator
+class Records extends AbstractRecordList
 {
-  /**
-     * @var string 
-     */
-    protected $lastModifiedDate;
-    /**
-     * @var array
-     */
-    protected $group;
-    /**
-     * @var array
-     */
-    protected $OrcidWorks;
-
-    /**
-     * @var string
-     */
-    protected $path;
-
-    /**
-     * @param mixed $lastModifiedDate
-     */
-    public function setLastModifiedDate($lastModifiedDate)
-    {
-        $this->lastModifiedDate = $lastModifiedDate;
-    }
 
     /**
      * @param Record $value
@@ -56,48 +31,6 @@ class Records extends ArrayIterator
             throw new Exception("The value you can append must be instance of Record and not null");
         }
     }
-
-
-
-    /**
-     * @param mixed $group
-     */
-    public function setGroup($group)
-    {
-        $this->group = $group;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrcidWorks()
-    {
-        return $this->OrcidWorks;
-    }
-
-    /**
-     * @param string $path
-     */
-    public function setPath(string $path)
-    {
-        $this->path = $path;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-    /**
-     * @param array $OrcidWorks
-     */
-    public function setOrcidWorks(array $OrcidWorks)
-    {
-        $this->OrcidWorks = $OrcidWorks;
-    }
-
     /**
      * @param array $orcidRecords
      * @return $this

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Orcid\Work\Read;
+namespace Orcid\Work\Work\Read;
 
 
 use ArrayIterator;

@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Orcid\Work\Read;
+namespace Orcid\Work\Work\Read;
 
 
-use Orcid\Work\Read\Summary\Record;
+use Orcid\Work\Work\Read\Summary\Record;
 
 interface SingleRecord
 {

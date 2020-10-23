@@ -5,12 +5,12 @@
  * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
-namespace Orcid\Work\Read\Full;
+namespace Orcid\Work\Work\Read\Full;
 
 
 
 use Exception;
-use Orcid\Work\Read\AbstractRecordList;
+use Orcid\Work\Work\Read\AbstractRecordList;
 
 /**
  * Class Records
@@ -36,6 +36,7 @@ class Records extends AbstractRecordList
     /**
      * @param array $orcidRecords
      * @return $this
+     * @throws Exception
      */
     public function buildWorkRecords(array $orcidRecords){
         $bulk=$orcidRecords['bulk'];

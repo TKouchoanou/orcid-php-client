@@ -5,16 +5,17 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
-namespace Orcid\Work\Create;
+namespace Orcid\Work\Work\Create;
 
 use DOMDocument;
 use DOMElement;
 use DOMNode;
 use Exception;
-use Orcid\Work\Contributor;
-use Orcid\Work\ExternalId;
+use Orcid\Work\Data\Data\Contributor;
+use Orcid\Work\Data\Data\ExternalId;
 
-class Work extends CreateAbstractWork
+
+class Work extends AbstractWork
 {
 
     const HOSTNAME     = 'orcid.org';

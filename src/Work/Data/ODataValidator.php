@@ -1,8 +1,10 @@
 <?php
 
 
-namespace Orcid\Work;
+namespace Orcid\Work\Data;
 
+
+use Orcid\Work\Work\OAbstractWork;
 
 trait ODataValidator
 {

@@ -1,12 +1,13 @@
 <?php
 
 
-namespace Orcid\Work;
+namespace Orcid\Work\Data;
 
+
+use Orcid\Work\Work\OAbstractWork;
 
 trait ODataFilter
 {
-
     /**
      * @param string $languageCode
      * @return string

@@ -1,12 +1,13 @@
 <?php
 
 
-namespace Orcid\Work\Create;
+namespace Orcid\Work\Work\Create;
 
 use Exception;
-use Orcid\Work\Contributor;
-use Orcid\Work\OAbstractWork;
-class CreateAbstractWork extends OAbstractWork
+use Orcid\Work\Data\Data\Contributor;
+use Orcid\Work\Work\OAbstractWork;
+
+class AbstractWork extends OAbstractWork
 {
     /**
      * @var string

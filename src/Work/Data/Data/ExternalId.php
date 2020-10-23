@@ -5,10 +5,11 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
-namespace Orcid\Work;
+namespace Orcid\Work\Data\Data;
 
 
 use Exception;
+use Orcid\Work\Work\OAbstractWork;
 
 class ExternalId
 { 

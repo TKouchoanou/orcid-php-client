@@ -34,19 +34,18 @@ class Records extends AbstractRecordList
 
 
     /**
-     * @param array $orcidRecords
-     * @return $this
+     * @param $orcidRecords
+     * @return Records
      * @throws Exception
      */
-    public function buildWorkRecords(array $orcidRecords){
+    public static function loadInstanceFromOrcidArray($orcidRecords)
+    {
+        $records=new Records();
         $bulk=$orcidRecords['bulk'];
         foreach ($bulk as $work){
-            $newRecord= new Record();
-            $newRecord->buildRecord($work['work']);
-            $this->append($newRecord);
+            $newRecord= Record::loadInstanceFromOrcidArray(($work['work']));
+            $records->append($newRecord);
         }
-        return $this;
+        return $records;
     }
-
-
 }

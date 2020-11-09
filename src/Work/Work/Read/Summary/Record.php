@@ -7,6 +7,10 @@
 
 namespace Orcid\Work\Work\Read\Summary;
 
+use Exception;
+use Orcid\Work\Data\Data\ExternalId;
+use Orcid\Work\Data\Data\PublicationDate;
+use Orcid\Work\Data\Data\Title;
 use Orcid\Work\Work\OAbstractWork;
 use Orcid\Work\Work\Read\SingleRecord;
 
@@ -37,13 +41,15 @@ class Record extends OAbstractWork implements SingleRecord
      * @var string
      */
     protected $path;
-
-
     /**
-     * @param string $source
+     * @var bool
+     */
+    protected $filter=true;
+    /**
+     * @param $source
      * @return $this
      */
-    public function setSource(string $source)
+    public function setSource($source)
     {
         $this->source = $source;
         return $this;
@@ -70,20 +76,20 @@ class Record extends OAbstractWork implements SingleRecord
     }
 
     /**
-     * @param string $visibility
+     * @param $visibility
      * @return $this
      */
-    public function setVisibility(string $visibility)
+    public function setVisibility($visibility)
     {
         $this->visibility = $visibility;
         return $this;
     }
 
     /**
-     * @param string $path
+     * @param $path
      * @return Record
      */
-    public function setPath(string $path)
+    public function setPath($path)
     {
         $this->path = $path;
         return $this;
@@ -131,4 +137,44 @@ class Record extends OAbstractWork implements SingleRecord
         return $this->visibility;
     }
 
+    /**
+     * @param $work
+     * @return Record
+     */
+    public static function loadInstanceFromOrcidArray($work)
+    {
+
+        try {
+            $newRecord= new Record();
+            $summary=$work['work-summary'][0];
+            $putCode=$summary['put-code'];
+            $source=$summary['source']['source-name']['value'];
+            $externalIdArray= $summary['external-ids']['external-id'];
+            $lastUpdateDate=$summary['last-modified-date']['value'];
+            $createdDate=$summary['created-date']['value'];
+            $workType=$summary['type'];
+            $visibility=$summary['visibility'];
+            $workPath=$summary['path'];
+            $publicationDate=isset($summary['publication-date'])?PublicationDate::loadInstanceFromOrcidArray($summary['publication-date']):null;
+            if(!empty($publicationDate)){
+                $newRecord->setPubDate($publicationDate);
+            }
+            $titles=Title::loadInstanceFromOrcidArray($summary['title']);
+            $newRecord->setPutCode($putCode)
+                ->setTitles($titles)
+                ->setSource($source)
+                ->setLastModifiedDate($lastUpdateDate)
+                ->setCreatedDate($createdDate)
+                ->setType($workType)
+                ->setPath($workPath)
+                ->setVisibility($visibility);
+            foreach( $externalIdArray as $externalId) {
+                $newExternalId=ExternalId::loadInstanceFromOrcidArray($externalId);
+                $newRecord->addNewExternalIdent($newExternalId);
+            }
+        } catch (Exception $e) {
+            error_log("Panic in ".get_class($newRecord)." : ".$e->getMessage());
+        }
+        return $newRecord;
+    }
 }

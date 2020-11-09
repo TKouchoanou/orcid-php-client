@@ -8,10 +8,9 @@
 namespace Orcid\Work;
 
 use Exception;
-use Orcid\Work\Work\Read\Full\Record;
-use Orcid\Work\Work\Read\Full\Records;
-use Orcid\Work\Work\Read\Summary\Record as SRecord;
-use Orcid\Work\Work\Read\Summary\Records as SRecords;
+use Orcid\Work\Work\Read\Full\Record as FullSingleRecord;
+use Orcid\Work\Work\Read\Full\Records as FullRecords;
+use Orcid\Work\Work\Read\Summary\Records as SummaryRecords;
 
 class Oresponse
 {
@@ -61,10 +60,10 @@ class Oresponse
      */
     protected $moreInfo;
     /**
-     * @var Records
+     * @var SummaryRecords
      */
 
-    protected $summaryReadWorks;
+    protected $summaryRecords;
 
     /**
      * Oresponse constructor.
@@ -140,10 +139,10 @@ class Oresponse
      * @return $this
      * @throws Exception
      */
-    protected function setSummaryReadWorks(){
+    protected function setSummary(){
         $workRecordsArray=null;
-        $workRecords= new SRecords();
-        $this->summaryReadWorks=$workRecords;
+        $workRecords= new SummaryRecords();
+        $this->summaryRecords=$workRecords;
         try {
             $workRecordsArray=json_decode($this->getBody(),true);
         }catch (Exception $e){
@@ -154,43 +153,52 @@ class Oresponse
             && isset($workRecordsArray['last-modified-date'])
             && isset($workRecordsArray['group'])
             && isset($workRecordsArray['path'])){
-            $workRecords->buildWorkRecords($workRecordsArray);
+            $this->summaryRecords= SummaryRecords::loadInstanceFromOrcidArray($workRecordsArray);
         }
         return $this;
     }
 
     /**
-     * @return Records
+     *  You must call this function only after having read Summary of all items/works  in user account
+     *  with $Oclient->readSummary() method of the client
+     * this method return a Summary Records
+     * @return SummaryRecords
      * @throws Exception
      */
-    public function getSummaryReadWorks()
+    public function getSummary()
     {
-        if(empty($this->summaryReadWorks)){
-            $this->setSummaryReadWorks();
+        if(empty($this->summaryRecords)){
+            $this->setSummary();
         }
-        return $this->summaryReadWorks;
+        return $this->summaryRecords;
     }
 
     /**
+     * You must call this function only after having read a single item/work with its put code in using
+     * $Oclient->readSingle($putCode) method of the client 
+     * this method return a Full Record
      * @return Work\Read\Full\Record
      * @throws Exception
      */
-    public function getSingleReadWork(){
+    public function getSingleRecord(){
         $workSingleReadWork=json_decode($this->getBody(),true);
         if($workSingleReadWork){
-            return (new Record())->buildRecord($workSingleReadWork);
+            return FullSingleRecord::loadInstanceFromOrcidArray($workSingleReadWork);
         }
         return null;
     }
 
     /**
-     * @return array|Records
+     * You must call this function only after having read Many items/works with its putcode with
+     * $Oclient->readMany($putCodesArray) method of the client. 
+     * This method return a Full Records
+     * @return array|FullRecords
      * @throws Exception
      */
-    public function getMultipleReadWorks(){
+    public function getManyRecord(){
         $workMultipleReadWork=json_decode($this->getBody(),true);
         if($workMultipleReadWork){
-            return (new Records())->buildWorkRecords($workMultipleReadWork);
+            return  FullRecords::loadInstanceFromOrcidArray($workMultipleReadWork);
         }
         return [];
     }
@@ -277,16 +285,6 @@ class Oresponse
     public function getMoreInfo()
     {
         return $this->moreInfo;
-    }
-
-    /**
-     * @return string
-     */
-    public function getReadWorkXML()
-    {
-        if(self::isXmlString($this->getBody()) && empty($this->getErrorCode()))
-        {return $this->body; }
-        return '';
     }
 
     /**

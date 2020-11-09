@@ -5,8 +5,9 @@ namespace Orcid\Work\Work\Read;
 
 
 use ArrayIterator;
+use Orcid\Work\Loader;
 
-abstract class AbstractRecordList extends ArrayIterator
+abstract class AbstractRecordList extends ArrayIterator implements Loader
 {
     /**
      * @var string
@@ -72,12 +73,6 @@ abstract class AbstractRecordList extends ArrayIterator
     {
         $this->OrcidWorks = $OrcidWorks;
     }
-
-    /**
-     * @param array $orcidRecords
-     * @return $this
-     */
-    public abstract function buildWorkRecords(array $orcidRecords);
 
     /**
      * @return bool

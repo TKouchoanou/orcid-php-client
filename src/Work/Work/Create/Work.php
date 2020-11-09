@@ -40,18 +40,18 @@ class Work extends AbstractWork
         //add work title
         $workTitle = $work->appendChild( $dom->createElementNS(self::$namespaceWork, "title") );
         $title = $workTitle->appendChild( $dom->createElementNS(self::$namespaceCommon, "title") );
-        $title->appendChild( $dom->createCDATASection( $this->title ) ) ;
+        $title->appendChild( $dom->createCDATASection( $this->getTitle() ) ) ;
 
-        if(isset($this->subTitle)){
+        if(!empty($this->getSubtitle())){
             $subtitle = $workTitle->appendChild($dom->createElementNS(self::$namespaceCommon,"subtitle") );
-            $subtitle->appendChild($dom->createCDATASection($this->subTitle));
+            $subtitle->appendChild($dom->createCDATASection($this->getSubtitle()));
         }
 
         //translatedTitleLanguageCode is required to send translatedTitle
-        if(isset($this->translatedTitle) && isset($this->translatedTitleLanguageCode)){
+        if(!empty($this->getTranslatedTitle()) && !empty($this->getTranslatedTitleLanguageCode())){
             $translatedTitle = $workTitle->appendChild( $dom->createElementNS(self::$namespaceCommon, "translated-title"));
-            $translatedTitle->appendChild($dom->createCDATASection($this->translatedTitle));
-            $translatedTitle->setAttribute('language-code',$this->translatedTitleLanguageCode);
+            $translatedTitle->appendChild($dom->createCDATASection($this->getTranslatedTitle()));
+            $translatedTitle->setAttribute('language-code',$this->getTranslatedTitleLanguageCode());
         }
 
         if(isset($this->journalTitle)){
@@ -64,8 +64,8 @@ class Work extends AbstractWork
             $shortDescription->appendChild( $dom->createCDATASection($this->shortDescription ) ) ;
         }
 
-        if(isset($this->citation)){
-            $work->appendChild( $this->nodeCitation($dom,$this->citationType,$this->citation));
+        if(isset($this->citations)){
+            $work->appendChild( $this->nodeCitation($dom,$this->getCitationType(),$this->getCitation()));
         }
 
         // add work Type
@@ -81,7 +81,7 @@ class Work extends AbstractWork
 
         //add external ident
         $externalIds = $work->appendChild( $dom->createElementNS(self::$namespaceCommon, "external-ids" ) );
-            foreach ($this->externals as $externalId){
+            foreach ($this->externalIds as $externalId){
                 /**
                  * @var ExternalId $externalId
                  */
@@ -277,13 +277,13 @@ class Work extends AbstractWork
     public function checkMetaValueAndThrowExceptionIfNecessary()
     {
         $response="";
-        if(empty($this->title)) {
+        if(empty($this->titles) && !empty($this->getTitle())) {
             $response .=" Title recovery failed: Title value cannot be empty";
         }
         if(empty($this->type)) {
             $response .=" Work Type recovery failed: Type value cannot be empty";
         }
-        if(empty($this->externals)) {
+        if(empty($this->externalIds)) {
             $response .=" externals Ident recovery failed: externals values cannot be empty";
         }
         if($response!==""){
@@ -294,7 +294,7 @@ class Work extends AbstractWork
     /**
      * @return Work
      */
-    public static function  getCreateWorkInstanceWithDataFilter(){
-        return (new Work())->setFilterData(true);
+    public static function  getSelfInstanceWithDataFilter(){
+        return (new Work())->setFilter();
     }
 }

@@ -108,25 +108,26 @@ Work is a class that allows you to create a publication on your orcid account. T
 ```php
    // creation of an Orcid work
         $work=new Work();
-        $work->setTitle("Les stalagmites du réseau du trou Noir")
-	     ->setTranslatedTitle('The stalagmites of the Black hole network')
+        $work->setFilter() //to filter data
+             ->setTitle("Les stalagmites du réseau du trou Noir")
+	         ->setTranslatedTitle('The stalagmites of the Black hole network')
              ->setTranslatedTitleLanguageCode('en')
              ->setType("Work-paper")
-	     ->setWorkUrl("the work url")
+	         ->setWorkUrl("the work url")
              ->setJournalTitle("naturephysic")
              ->setCitation("The work citation....")//if you don't set citationType formatted-unspecified will be set
-	     ->setCitationType('the citation type')
+	         ->setCitationType('the citation type')
              ->setShortDescription("the work description...") // the descript must be  less than 500 characters
-	     ->setPublicationDate('1998','09','20')// the first parameter year is required if you want to set date
-	     ->setLanguageCode('fr')
-	     ->setCountry('us')
+	         ->setPublicationDate('1998','09','20')// the first parameter year is required if you want to set date
+	         ->setLanguageCode('fr')
+	         ->setCountry('us')
             //add Authors with Author FullName and role, by default the role 'author' will be chosen your can also add the orcidID and the sequence of author
-             ->addAuthor("Benjamin Lans","author","1111-OOOO-2543-3333","first")
-             ->addAuthor("Richard Maire","editor")
-             ->addAuthor("Richard Ortega","Collaborator")
-             ->addAuthor("Guillaume Devès","co-investigator","OOOO-1111-2222-3333","additional")
+             ->addContributor("Benjamin Lans","author","1111-OOOO-2543-3333","first")
+             ->addContributor("Richard Maire","editor")
+             ->addContributor("Richard Ortega","Collaborator")
+             ->addContributor("Guillaume Devès","co-investigator","OOOO-1111-2222-3333","additional")
             //add subtitle
-             ->addSubTitle("subtitle three")
+             ->setSubTitle("subtitle three")
             // add External Ident the type , the value, the url, the relationship by default url willbe empity and relationship will be self . idtype and idValue   are required
              ->addExternalIdent("doi","10.1038/nphys1170","https://www.nature.com/articles/nphys1170","self")
              ->addExternalIdent("uri","00199711");
@@ -137,7 +138,7 @@ The minimum configuration for sending an Orcid Work is to define the title, the 
  // minimum configuration to create an Orcid work
         $work=new Work();
         $work->setTitle('title')
-	     ->setType('workType')
+	         ->setType('workType')
              ->addExternalIdent('idType','idValue');  
 ```
 In the case of a work modification, Put-code is required .
@@ -159,7 +160,7 @@ and on which we can iterate with foreach for example
             /**
              * @var Work $work
              */
-            $work->addAuthor("Authorfullname","Author role","Author orcid ID","Author sequence"); 
+            $work->addContributor("Authorfullname","Author role","Author orcid ID","Author sequence"); 
         }
 ```
 
@@ -200,21 +201,30 @@ Delete: allows you to delete a job. It takes as parameter the putCode of work on
 ReadSummary: Allows you to read all the works present Orcid registration of the account holder represented by $ oauth. 
   ```php 
      // read Summary
-     $OrcidClient->ReadSummary()
+     $OrcidClient->readSummary()
 ```
 Read : Allows you to read one or more records by taking its parameter a putCode of type int or string or an array of putCode. The putCode must be a numeric value, it is returned by orcid
   ```php 
-     // read work(s)
-      /**
-         * @var int|string|array $putCode
+     
+     // case of reading of many works items (it's an array of putCode that you passed in parameter) of read($putCode)
+             /**
+              * @var array $putCodes
+              */
+            $Oresponse= $OrcidClient->read($putCodes);
+            $fullRecords=$oresponse->getManyRecord(); 
+    // case of reading of single item (it's one putCode that you passed in parameter) of read($putCode)
+        /**
+         * @var int|string $putCode
          */
-        $OrcidClient->read($putCode);
+       $Oresponse= $OrcidClient->read($putCode);
+       $fullRecord=$oresponse->getSingleRecord()
+
 ```
 
 ### Oresponse
 It is a response object returned by Oclient methods. It contains the information of the response returned by Orcid . Requests are made with curl
   ```php 
-    $OResponse= $OrcidClient->ReadSummary();
+        $OResponse= $OrcidClient->readSummary();
         $code=$OResponse->getCode();
         $header=$OResponse->getHeaders();
         $body=$OResponse->getBody();
@@ -229,11 +239,11 @@ in case of error Orcid returns data which can be retrieved by these methods whic
         }
 	
    ```
-   In the case of reading all the work records in an orcid account with the ReadSummary method Oresponse has a method which returns the list of Orcid records read This method returns null if Oresponse is not the response to a call to the ReadSummary method
+   In the case of reading all the work records in an orcid account with the readSummary method Oresponse has a method which returns the list of Orcid records read This method returns null if Oresponse is not the response to a call to the ReadSummary method
    ```php       
       if($OResponse->hasSuccess()){
          /** @var Records $recordWorkList */
-            $recordWorkList=$OResponse->getWorkRecordList(); 
+            $recordWorkList=$OResponse->getSummary(); 
         }
  ```
  This method returns an instance of Records which is a list of Record instances
@@ -249,7 +259,7 @@ It is an instance whose set of properties represents an orcid work from the user
         $groupelastModifiedDate=$records->getLastModifiedDate(); 
 	
 	// returns a complex associative array coming directly from Orcid and containing the information on the work read
-        $group=$records->getOrcidWorks(); 
+        $group=$records->getSummary(); 
 	
         foreach ($records as $record){
             /**
@@ -265,16 +275,26 @@ It is an instance whose set of properties represents an orcid work from the user
             /** @var ExternalId [] $externalIds */
             $externalIds= $record->getExternals();
         }
+      //here are the two type of record and theirs colletcion records.
+       use Orcid\Work\Work\Read\Full\Record as FullSingleRecord;
+       use Orcid\Work\Work\Read\Full\Records as FullRecords;
+       use Orcid\Work\Work\Read\Summaru\Record as FullSingleRecord;
+       use Orcid\Work\Work\Read\Summary\Records as SummaryRecords;
  ```
- 
+ Please note that there are two types of Record and therefore two of Records (Record collection). The full record and the Summary record.
+ You can get a FullRecord after reading an orcid item with the $ oclient-> readSingle ($putcode)  or oclient-> read($putcode) 
+ method and an instance of FullRecords after reading many items with the function (oclient-> readMany($putCodesArray) or oclient-> read ($putCodesArray) . A full record contains all the data on the record item while a Summary record contains just the essentials ie: type, title and external identifiers.You will get a list of summary record (SummaryRecords) after reading the summary of all jobs in a user's orci account with the client's readSummary $ oclient-> readSummary () method.
 ### ExternalId
 represents an external identifier and contains the four properties $ idType, $ idValue, $ idUrl, $ idRelationship
 
 ```php
+        use \Orcid\Work\Data\Data\ExternalId; 
+        use Orcid\Work\Work\Read\SingleRecord; // can be SummaryRecord or FullRecord
+         
        /**
          * @var Record $record
          */
-        $externalIds= $record->getExternals();
+        $externalIds= $record->getExternalIds()();
         foreach ($externalIds as $externalId){
 
             /** @var ExternalId $externalId */
@@ -285,3 +305,37 @@ represents an external identifier and contains the four properties $ idType, $ i
                 $idRelationship=$externalId->getIdRelationship();
         }
 ```
+### check Data Validity before to send 
+```php
+      use Orcid\Work\Work\Create\Work;
+       $work=new Work();
+              $title="the title"; 
+              $workType="The work type"; 
+              $extIdType="idType"; 
+              $exIdValue="idValue";
+              
+              if(\Orcid\Work\Data\Data::isValidTitle($title)){
+                  $work->setTitle($title); 
+              }
+              if(\Orcid\Work\Data\Data::isValidWorkType($workType)){
+                  $work->setType($workType);
+              }
+              if(\Orcid\Work\Data\Data::isValidExternalIdType($extIdType)){
+                  $work->addExternalIdent($extIdType,$exIdValue); 
+              }
+```
+ 
+
+#### Curent Evolution 
+
+reorganization of the code: the complex data of an item are transformed into an object to facilitate access to properties (sub-data) and the evolution of sub-data. The added Classes are: Contributor, PublicationDate, ExternalId, Title, Source and Citation. For example: Title contains the properties like (the title value, the subtitle, the translated-title and the translated-language-code) and Citation contains (the citation value, the citation type).
+
+Added functionality to have a full record instance after reading a single record and a full record collection instance after reading Many Records. A full record contains all the data on the record while a Summary record contains just the essentials, ie: the type, title and external identifiers.
+
+Addition of validation and filter functions for the data of an orcid item with the static class: Orcid \ Work \ Data \ Data.
+
+
+Addition of the possibility of requesting that they be given to be filtered by activating $ work-> setFilter () and the possibility of removing the filter with $ work-> removeFilter ()
+
+Addition of the possibility of forcibly setting the value of a property of an object. This method makes it possible to force the request to send a value without it being validated. Indeed, I try to check the validity of the data based on lists of values ​​accepted by meta and the rules of values, before sending. But since allowed lists of values ​​evolve and the rules can change, it is possible that the validation rules are obsolete or that the list of values ​​accepted for a meta (eg: work-type) has changed compared to the version of the library that you have in your project and that the validation of a valid metadata is refused. In this case you can use the $ work → setPropertyByForce ('type', 'newOrcidWorkType')
+

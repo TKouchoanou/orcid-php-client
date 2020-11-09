@@ -3,11 +3,9 @@
 
 namespace Orcid\Work\Data;
 
-
-use Orcid\Work\Work\OAbstractWork;
-
 trait ODataFilter
 {
+    public $date="";
     /**
      * @param string $languageCode
      * @return string
@@ -15,7 +13,7 @@ trait ODataFilter
     public static function filterLanguageCode(string $languageCode)
     {
         $language_code=str_replace("-", "_", strtolower(trim($languageCode)));
-        return array_key_exists($language_code, OAbstractWork::SPECIAL_LANGUAGE_CODES)?OAbstractWork::SPECIAL_LANGUAGE_CODES[$language_code]:$language_code;
+        return array_key_exists($language_code, Data::SPECIAL_LANGUAGE_CODES)?Data::SPECIAL_LANGUAGE_CODES[$language_code]:$language_code;
     }
 
     /**

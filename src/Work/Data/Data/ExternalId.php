@@ -9,9 +9,10 @@ namespace Orcid\Work\Data\Data;
 
 
 use Exception;
-use Orcid\Work\Work\OAbstractWork;
+use Orcid\Work\Data\Common;
+use Orcid\Work\Data\Data;
 
-class ExternalId
+class ExternalId extends Common
 { 
     /**
      * @var string
@@ -36,10 +37,12 @@ class ExternalId
      * @param string |int $idValue
      * @param string $idUrl
      * @param string $idRelationship
+     * @param bool $filterData
      * @throws Exception
      */
-    public function __construct(string $idType, string $idValue, $idUrl='', $idRelationship='')
+    public function __construct(string $idType, string $idValue, $idUrl='', $idRelationship='',$filterData=true)
     {
+        $filterData?$this->setFilter():$this->removeFilter();
         $this->setIdRelationship($idRelationship);
         $this->setIdType($idType);
         $this->setIdValue($idValue);
@@ -67,46 +70,56 @@ class ExternalId
 
     /**
      * @param string $idRelationship
+     * @return ExternalId
      * @throws Exception
      */
     public function setIdRelationship(string $idRelationship="")
     {  $idRelationship=empty($idRelationship)?'self':$idRelationship;
-        if(OAbstractWork::isValidExternalIdRelationType($idRelationship)){
-            $this->idRelationship = OAbstractWork::filterExternalIdRelationType($idRelationship);
+        if($this->hasFilter()){
+            $idRelationship=Data::filterExternalIdRelationType($idRelationship);
+        }
+        if(Data::isValidExternalIdRelationType($idRelationship)){
+            $this->idRelationship = $idRelationship;
         }else{
             throw new Exception("the relationship value is not valid here are relationship valid value ["
-                .implode(",",OAbstractWork::EXTERNAL_ID_RELATION_TYPE)."].");
+                .implode(",",Data::EXTERNAL_ID_RELATION_TYPE)."].");
         }
-
+        return $this;
     }
 
     /**
      * we don't control the idtType here because the list is evolving
      * @param string $idType
+     * @return ExternalId
      * @throws Exception
      */
     public function setIdType(string $idType)
     {
         $this->checkIsNotEmptyValue($idType,'idType');
         $this->idType = $idType;
+        return $this;
     }
 
     /**
      * @param string $idUrl
+     * @return ExternalId
      */
     public function setIdUrl(string $idUrl)
     {
         $this->idUrl = $idUrl;
+        return $this;
     }
 
     /**
      * @param string $idValue
+     * @return ExternalId
      * @throws Exception
      */
     public function setIdValue(string $idValue)
     {
         $this->checkIsNotEmptyValue($idValue,'idValue');
         $this->idValue = $idValue;
+        return $this;
     }
 
     /**
@@ -153,4 +166,20 @@ class ExternalId
         }
     }
 
+    public static function loadInstanceFromOrcidArray($orcidExternalIdArray)
+    {
+        $relationType=isset($orcidExternalIdArray['external-id-relationship'])?$orcidExternalIdArray['external-id-relationship']:'';
+        $url=isset($orcidExternalIdArray['external-id-url']['value'])?$orcidExternalIdArray['external-id-url']['value']:'';
+        $type=$orcidExternalIdArray['external-id-type'];
+        $value=$orcidExternalIdArray['external-id-value'];
+        return new ExternalId($type,$value,$url,$relationType);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        return true;
+    }
 }

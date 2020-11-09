@@ -51,10 +51,12 @@ class OClient
 
 
     /**
+     * Read the summary of all the jobs present in the orcid account of $ oauth
+     * to get Summary call $Oesponse->getSummary()
      * @param bool $dataIsJsonFormat
      * @return Oresponse
      */
-    public function ReadSummary($dataIsJsonFormat=true)
+    public function readSummary($dataIsJsonFormat=true)
     {
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
         $this->oauth->http->initialize(true);
@@ -70,6 +72,8 @@ class OClient
     }
 
     /**
+     * Allows to read an item whose putCode is passed as a parameter
+     * to get the Full singleRecord call $Oesponse->getSingleRecord()
      * @param int|string $putCode
      * @param bool $dataIsJsonFormat
      * @return Oresponse
@@ -87,23 +91,26 @@ class OClient
     }
 
     /**
-     * @param array $worksIdArray
+     * Read the full jobs present in the orcid account of
+     * $oauth whose put codes are contained in the array passed as a parameter
+     * to get the Full Records call $Oesponse->getManyRecord()
+     * @param array $putCodesArray
      * @param bool $dataIsJsonFormat
      * @return Oresponse
      * @throws Exception
      */
-    public function readMultiple(array $worksIdArray,$dataIsJsonFormat=true){
+    public function readMany(array $putCodesArray, $dataIsJsonFormat=true){
         $contentType=$dataIsJsonFormat?'application/vnd.orcid+json':'application/vnd.orcid+xml';
-        if(empty($worksIdArray)){
+        if(empty($putCodesArray)){
             throw new Exception("the work put-code array (worksIdArray) must not be empty");
         }
-        if(count($worksIdArray)>50){
+        if(count($putCodesArray)>50){
             throw new Exception("you can't read more than 50 Work your work id array length is more than 50");
         }
 
         $workList="";
-        foreach ($worksIdArray as $workId){
-            $workList.=(string)$workId.',';
+        foreach ($putCodesArray as $putCode){
+            $workList.=(string)$putCode.',';
         }
         $workList=rtrim($workList,',');
         $response=$this->oauth->http->initialize(true)
@@ -123,7 +130,7 @@ class OClient
      */
     public function read($putCode){
         if(is_array($putCode)){
-           return  $this->readMultiple($putCode);
+           return  $this->readMany($putCode);
         }
         return $this->readSingle($putCode); 
     }

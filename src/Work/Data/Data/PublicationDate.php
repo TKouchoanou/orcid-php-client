@@ -5,9 +5,10 @@ namespace Orcid\Work\Data\Data;
 
 
 use Exception;
-use Orcid\Work\Work\OAbstractWork;
+use Orcid\Work\Data\Common;
+use Orcid\Work\Data\Data;
 
-class PublicationDate
+class PublicationDate extends Common
 {
     /**
      * @var string
@@ -68,9 +69,9 @@ class PublicationDate
      */
     public function setYear(string $year)
     {
-        if(!OAbstractWork::isValidPublicationYear($year)){
+        if(!Data::isValidPublicationYear($year)){
             throw new Exception(" \n The year must be a string made up of four numeric characters or be a number of four digits.
-             The min value for orcid work year is ".OAbstractWork::PUBLICATION_DATE_MIN_YEAR. " and the max value  is ".OAbstractWork::PUBLICATION_DATE_MAX_YEAR.". You have send Year=" . $year);
+             The min value for orcid work year is ".Data::PUBLICATION_DATE_MIN_YEAR. " and the max value  is ".Data::PUBLICATION_DATE_MAX_YEAR.". You have send Year=" . $year);
         }
         $this->year = $year;
         return $this;
@@ -98,5 +99,26 @@ class PublicationDate
     public function getDay()
     {
         return $this->day;
+    }
+
+    /**
+     * @param $orcidPubDateArray
+     * @return PublicationDate
+     * @throws Exception
+     */
+    public static function loadInstanceFromOrcidArray($orcidPubDateArray)
+    {
+        $pubYear=isset($orcidPubDateArray['year']['value'])?$orcidPubDateArray['year']['value']:'';
+        $pubMonth=isset($orcidPubDateArray['month']['value'])?$orcidPubDateArray['month']['value']:'';
+        $pubDay=isset($orcidPubDateArray['day']['value'])?$orcidPubDateArray['day']['value']:'';
+        return new self($pubYear,$pubMonth,$pubDay);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        return !empty($this->getYear());
     }
 }

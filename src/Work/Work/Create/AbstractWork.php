@@ -4,6 +4,7 @@
 namespace Orcid\Work\Work\Create;
 
 use Exception;
+use Orcid\Work\Data\Data;
 use Orcid\Work\Data\Data\Contributor;
 use Orcid\Work\Work\OAbstractWork;
 
@@ -18,9 +19,9 @@ class AbstractWork extends OAbstractWork
      */
     protected $shortDescription;
     /**
-     * @var string
+     * @var Data\Citation
      */
-    protected $citation;
+    protected $citations;
     /**
      * @var string []
      */
@@ -30,10 +31,6 @@ class AbstractWork extends OAbstractWork
      * @var string
      */
     protected $languageCode;
-    /**
-     * @var string
-     */
-    protected $citationType;
 
     /**
      * @var string
@@ -67,10 +64,10 @@ class AbstractWork extends OAbstractWork
     public function addContributor(string $creditName, string $role='', string $orcidId='', string $sequence='', $orcidFromProductionEnv=true)
     {
         if(!empty($creditName)){
-            if($this->isFilterData()){
-             $role=self::filterContributorRole($role);
-             $sequence=self::filterContributorSequence($sequence);
-             $orcidId=self::filterOrcid($orcidId);
+            if($this->hasFilter()){
+             $role=Data::filterContributorRole($role);
+             $sequence=Data::filterContributorSequence($sequence);
+             $orcidId=Data::filterOrcid($orcidId);
             }
             $this->authors []= new Contributor($creditName,$role,$orcidId,$sequence,'',$orcidFromProductionEnv);}
         return $this;
@@ -88,10 +85,10 @@ class AbstractWork extends OAbstractWork
      */
     public function addNewContributor(Contributor $contributor)
     {
-        if($this->isFilterData()){
-            $contributor->setRole(self::filterContributorRole($contributor->getRole()))
-                        ->setSequence(self::filterContributorSequence($contributor->getSequence()))
-                        ->setOrcid(self::filterOrcid($contributor->getOrcid()));
+        if($this->hasFilter()){
+            $contributor->setRole(Data::filterContributorRole($contributor->getRole()))
+                        ->setSequence(Data::filterContributorSequence($contributor->getSequence()))
+                        ->setOrcid(Data::filterOrcid($contributor->getOrcid()));
         }
         $this->authors []=$contributor;
     }
@@ -118,7 +115,7 @@ class AbstractWork extends OAbstractWork
     public function setShortDescription(string $shortDescription)
     {
         if(!empty($shortDescription)) {
-            if (!self::isValidShortDescription($shortDescription)) {
+            if (!Data::isValidShortDescription($shortDescription)) {
                 throw new Exception('The short description length must not be than 5000 characters');
             }
             $this->shortDescription = $shortDescription;
@@ -136,11 +133,11 @@ class AbstractWork extends OAbstractWork
     public function setLanguageCode(string $languageCode)
     {
         if(!empty($languageCode)){
-            if($this->isFilterData()){
-                $languageCode=self::filterLanguageCode($languageCode);
+            if($this->hasFilter()){
+                $languageCode=Data::filterLanguageCode($languageCode);
             }
-            if(!self::isValidLanguageCode($languageCode)){
-                throw new Exception("Your language code is not valid. here are valid language code: [".implode(",",self::LANGUAGE_CODES)."] ".
+            if(!Data::isValidLanguageCode($languageCode)){
+                throw new Exception("Your language code is not valid. here are valid language code: [".implode(",",Data::LANGUAGE_CODES)."] ".
                     "if you want to set it by force use the method setPropertyByForce('property','value')");
             }
             $this->languageCode = $languageCode;
@@ -155,17 +152,24 @@ class AbstractWork extends OAbstractWork
      * @return $this
      * @throws Exception
      */
-    public function setCitation(string $citation,$citationType='formatted-unspecified')
+    public function setCitation(string $citation,$citationType='')
     {
-        if(!empty($citation)){
-            if(!self::isValidCitation($citation)){
-                throw new Exception("The citation sent is not valid. The max length of a citation is : ".self::CITATION_MAX_LENGTH);
-            }
-            $this->citation = $citation;
-            if(empty($this->citationType)){
-                $this->setCitationType($citationType);
+        if(!empty($citation))   {
+            $this->getCitations()->setValue($citation);
+            if(!empty($citationType)){
+                $this->getCitations()->setType($citationType);
             }
         }
+        return $this;
+    }
+
+    /**
+     * @param Data\Citation $citations
+     * @return $this
+     */
+    public function setCitations(Data\Citation $citations)
+    {
+        $this->citations = $citations;
         return $this;
     }
 
@@ -174,21 +178,11 @@ class AbstractWork extends OAbstractWork
      * if you add citation without citation-type.
      * 2-it makes no sense to add citation type without adding citation
      * @param string $citationType
-     * @return $this
-     * @throws Exception
+     * @return AbstractWork
      */
     public function setCitationType(string $citationType)
     {
-        if (!empty($citationType)) {
-            if ($this->isFilterData()){
-                $citationType=self::filterCitationType($citationType);
-            }
-            if(!self::isValidCitationType($citationType)){
-                throw new Exception("The citation format : ".$citationType."  is not valid here are the valid values : [".
-                    implode(",",self::CITATION_FORMATS)."] if you want to set it by force use the method setPropertyByForce('property','value')");
-            }
-            $this->citationType = $citationType;
-        }
+        $this->getCitations()->setType($citationType);
         return $this;
     }
 
@@ -203,12 +197,12 @@ class AbstractWork extends OAbstractWork
     public function setCountry(string $country)
     {
         if(!empty($country)){
-            if($this->isFilterData()){
-                $country=self::filterCountryCode($country);
+            if($this->hasFilter()){
+                $country=Data::filterCountryCode($country);
             }
-            if(!self::isValidCountryCode($country)){
+            if(!Data::isValidCountryCode($country)){
                 throw new Exception("The country is not valid it must be a  code of  two characters and must respect ISO 3166 standard for country.".
-                    " here are valid values : [" .implode(",",self::COUNTRY_CODES).
+                    " here are valid values : [" .implode(",",Data::COUNTRY_CODES).
                     "] if you want to set it by force use the method setPropertyByForce('property','value')");
             }
             $this->country = $country;
@@ -243,9 +237,24 @@ class AbstractWork extends OAbstractWork
      */
     public function getCitationType()
     {
-        return $this->citationType;
+        return $this->getCitations()->getType();
     }
 
+    /**
+     * @return string
+     */
+    public function getCitation()
+    {
+        return $this->getCitations()->getValue();
+    }
+
+    /**
+     * @return Data\Citation
+     */
+    public function getCitations(): Data\Citation
+    {
+        return isset($this->citations)?$this->citations:$this->setCitations(new Data\Citation())->getCitations();
+    }
     /**
      * @return string
      */
@@ -254,13 +263,7 @@ class AbstractWork extends OAbstractWork
         return $this->workUrl;
     }
 
-    /**
-     * @return string
-     */
-    public function getCitation()
-    {
-        return $this->citation;
-    }
+
 
     /**
      * @return string

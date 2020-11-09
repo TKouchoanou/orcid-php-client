@@ -4,15 +4,16 @@
 namespace Orcid\Work\Work\Read;
 
 
+use Orcid\Work\Loader;
 use Orcid\Work\Work\Read\Summary\Record;
 
-interface SingleRecord
+interface SingleRecord extends Loader
 {
     /**
-     * @param string $source
+     * @param  $source
      * @return $this
      */
-    public function setSource(string $source);
+    public function setSource($source);
 
 
     /**
@@ -29,16 +30,16 @@ interface SingleRecord
     public function setCreatedDate($createdDate);
 
     /**
-     * @param string $visibility
+     * @param  $visibility
      * @return $this
      */
-    public function setVisibility(string $visibility);
+    public function setVisibility($visibility);
 
     /**
-     * @param string $path
+     * @param  $path
      * @return Record
      */
-    public function setPath(string $path);
+    public function setPath($path);
 
 
 

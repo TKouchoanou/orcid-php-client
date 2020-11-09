@@ -5,9 +5,10 @@ namespace Orcid\Work\Data\Data;
 
 
 use Exception;
-use Orcid\Work\Work\OAbstractWork;
+use Orcid\Work\Data\Common;
+use Orcid\Work\Data\Data;
 
-class Contributor
+class Contributor extends Common
 {
     /**
      * @var string
@@ -37,10 +38,7 @@ class Contributor
      * @var bool
      */
   protected $countOfProdEnv;
-    /**
-     * @var bool
-     */
-  protected $filterData;
+
 
     /**
      * Contributor constructor.
@@ -55,7 +53,8 @@ class Contributor
      */
     public function __construct(string $creditName, string $role, $orcid='',$sequence='', $email='',$countOfProdEnv=true,$filterData=true)
     {
-       $this->setFilterData($filterData)->setCreditName($creditName)->setRole($role)->setOrcid($orcid)->setSequence($sequence)
+           $filterData? $this->setFilter():$this->removeFilter();
+           $this->setCreditName($creditName)->setRole($role)->setOrcid($orcid)->setSequence($sequence)
             ->setEmail($email)->setCountOfProdEnv($countOfProdEnv)->setEnv();
     }
 
@@ -78,11 +77,11 @@ class Contributor
     {
         $role=empty($role)?'author':$role;
         if($this->hasFilter()){
-            $role=OAbstractWork::filterContributorRole($role);
+            $role=Data::filterContributorRole($role);
         }
-        if(!OAbstractWork::isValidContributorRole($role)){
+        if(!Data::isValidContributorRole($role)){
             throw new Exception('The author '.$this->creditName.' role '.$role.' is not valid here are author valid role: ['.
-                implode(",",OAbstractWork::AUTHOR_ROLE_TYPE)."]");
+                implode(",",Data::AUTHOR_ROLE_TYPE)."]");
         }
         $this->role = $role;
         return $this;
@@ -96,9 +95,9 @@ class Contributor
     public function setOrcid(string $orcid)
     {
         if($this->hasFilter()){
-        $orcid=OAbstractWork::filterOrcid($orcid);
+        $orcid=Data::filterOrcid($orcid);
       }
-        if(!empty($orcid) && !OAbstractWork::isValidOrcid($orcid)){
+        if(!empty($orcid) && !Data::isValidOrcid($orcid)){
             throw new Exception('The author '.$this->creditName.' Orcid '.$orcid.' is not valid');
         }
         $this->orcid = $orcid;
@@ -113,11 +112,11 @@ class Contributor
     public function setSequence(string $sequence)
     {
         if($this->hasFilter()){
-            $sequence=OAbstractWork::filterContributorSequence($sequence);
+            $sequence=Data::filterContributorSequence($sequence);
         }
-        if(!empty($sequence) && !OAbstractWork::isValidContributorSequence($sequence)){
+        if(!empty($sequence) && !Data::isValidContributorSequence($sequence)){
             throw new Exception('The author '.$this->creditName.' sequence '.$sequence.' is not valid here are sequence valid values : ['
-                .implode(",",OAbstractWork::AUTHOR_SEQUENCE_TYPE).']');
+                .implode(",",Data::AUTHOR_SEQUENCE_TYPE).']');
         }
         $this->sequence = $sequence;
         return $this;
@@ -143,14 +142,7 @@ class Contributor
         return $this;
     }
 
-    /**
-     * @param bool $filterData
-     * @return Contributor
-     */
-    public function setFilterData(bool $filterData){
-        $this->filterData=$filterData;
-        return $this;
-    }
+
 
     /**
      * @return $this
@@ -216,9 +208,25 @@ class Contributor
     }
 
     /**
+     * @param $orcidContributorArray
+     * @return Contributor
+     * @throws Exception
+     */
+    public static function loadInstanceFromOrcidArray($orcidContributorArray)
+    {
+        $orcidId=$orcidContributorArray['contributor-orcid']["path"];
+        $creditName=$orcidContributorArray['credit-name']['value'];
+        $email=isset($orcidContributorArray['contributor-email'])?$orcidContributorArray['contributor-email']:'';
+        $sequence=$orcidContributorArray['contributor-attributes']['contributor-sequence'];
+        $role=$orcidContributorArray['contributor-attributes']['contributor-role'];
+        return new Contributor($creditName,$role,$orcidId,$sequence,$email);
+    }
+
+    /**
      * @return bool
      */
-    public function hasFilter(){
-        return $this->filterData;
-      }
+    public function isValid()
+    {
+        return true;
+    }
 }

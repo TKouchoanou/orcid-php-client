@@ -282,8 +282,8 @@ It is an instance whose set of properties represents an orcid work from the user
        use Orcid\Work\Work\Read\Summary\Records as SummaryRecords;
  ```
  Please note that there are two types of Record and therefore two of Records (Record collection). The full record and the Summary record.
- You can get a FullRecord after reading an orcid item with the $ oclient-> readSingle ($putcode)  or oclient-> read($putcode) 
- method and an instance of FullRecords after reading many items with the function (oclient-> readMany($putCodesArray) or oclient-> read ($putCodesArray) . A full record contains all the data on the record item while a Summary record contains just the essentials ie: type, title and external identifiers.You will get a list of summary record (SummaryRecords) after reading the summary of all jobs in a user's orci account with the client's readSummary $ oclient-> readSummary () method.
+ You can get a FullRecord after reading an orcid item with the ```php $oclient->readSingle($putcode)```or ```php $oclient->read($putcode) ```
+ method and an instance of FullRecords after reading many items with the function ``php $oclient->readMany($putCodesArray)``  or ```php $oclient->read ($putCodesArray)```. A full record contains all the data on the record item while a Summary record contains just the essentials ie: type, title and external identifiers.You will get a list of summary record (SummaryRecords) after reading the summary of all jobs in a user's orci account with the client's readSummary ```php $oclient->readSummary()``` method.
 ### ExternalId
 represents an external identifier and contains the four properties $ idType, $ idValue, $ idUrl, $ idRelationship
 
@@ -313,7 +313,8 @@ represents an external identifier and contains the four properties $ idType, $ i
               $workType="The work type"; 
               $extIdType="idType"; 
               $exIdValue="idValue";
-              
+              $work->setFilter(); //to filter the data and try to put them in the format accepted by ORCID for example: WORKING_PAPER => working-paper
+
               if(\Orcid\Work\Data\Data::isValidTitle($title)){
                   $work->setTitle($title); 
               }
@@ -324,18 +325,15 @@ represents an external identifier and contains the four properties $ idType, $ i
                   $work->addExternalIdent($extIdType,$exIdValue); 
               }
 ```
- 
 
-#### Curent Evolution 
+### Curent Evolution compared to the previous version
 
-reorganization of the code: the complex data of an item are transformed into an object to facilitate access to properties (sub-data) and the evolution of sub-data. The added Classes are: Contributor, PublicationDate, ExternalId, Title, Source and Citation. For example: Title contains the properties like (the title value, the subtitle, the translated-title and the translated-language-code) and Citation contains (the citation value, the citation type).
 
 Added functionality to have a full record instance after reading a single record and a full record collection instance after reading Many Records. A full record contains all the data on the record while a Summary record contains just the essentials, ie: the type, title and external identifiers.
 
-Addition of validation and filter functions for the data of an orcid item with the static class: Orcid \ Work \ Data \ Data.
+Addition of validation and filter functions for the data of an orcid item with the static class: ```php Orcid \ Work \ Data \ Data```.
 
+Addition of the possibility to filter work data with``` php $work->setFilter()``` before value setting, and the possibility of removing the filter with ```$work->removeFilter()```
 
-Addition of the possibility of requesting that they be given to be filtered by activating $ work-> setFilter () and the possibility of removing the filter with $ work-> removeFilter ()
-
-Addition of the possibility of forcibly setting the value of a property of an object. This method makes it possible to force the request to send a value without it being validated. Indeed, I try to check the validity of the data based on lists of values ​​accepted by meta and the rules of values, before sending. But since allowed lists of values ​​evolve and the rules can change, it is possible that the validation rules are obsolete or that the list of values ​​accepted for a meta (eg: work-type) has changed compared to the version of the library that you have in your project and that the validation of a valid metadata is refused. In this case you can use the $ work → setPropertyByForce ('type', 'newOrcidWorkType')
+Addition of the possibility of forcibly setting the value of a property of an object. This method makes it possible to force the request to send a value without it being validated. Indeed, I try to check the validity of the data based on lists of values ​​accepted by meta and the rules of values, before sending. But since allowed lists of values ​​evolve and the rules can change, it is possible that the validation rules are obsolete or the list of values ​​accepted for a meta (eg: work-type) has changed compared to the version of the library that you have in your project. In this case you can use the ```php $ work→setPropertyByForce ('type', 'newOrcidWorkType')```. 
 

@@ -180,30 +180,30 @@ if ($oauth->isAuthenticated())
 
 The different methods of Oclient are:
 
-Send: allows you to send one or more publications. It takes as parameter an array of instance of the work class, an instance of works to send several publications or an instance of the work class to send a single publication
+<h4>Send<h4>: allows you to send one or more publications. It takes as parameter an array of instance of the work class, an instance of works to send several publications or an instance of the work class to send a single publication
 
   ```php 
      // send one or several work(s)
            /*** @var Work|Works|Work[] $works  */
      $OrcidClient->send($works); 
   ```
-Update: This method allows you to modify a Work already sent to Orcid. You can only modify a work already present in an orcid account with a putCode to recover.To modify don't forget to set putCode
+<h4>Update<h4>: This method allows you to modify a Work already sent to Orcid. You can only modify a work already present in an orcid account with a putCode to recover.To modify don't forget to set putCode
   ```php 
      // update a Work
      $OrcidClient->update($work); 
 ```
-Delete: allows you to delete a job. It takes as parameter the putCode of work on orcid
+<h4>Delete<h4>: allows you to delete a job. It takes as parameter the putCode of work on orcid
 ```php 
      // delete a Work
      $putcode=14563; 
      $OrcidClient->delete($putcode); 
 ```
-ReadSummary: Allows you to read all the works present Orcid registration of the account holder represented by $ oauth. 
+<h4>ReadSummary<h4>: Allows you to read all the works present Orcid registration of the account holder represented by $ oauth. 
   ```php 
      // read Summary
      $OrcidClient->readSummary()
 ```
-Read : Allows you to read one or more records by taking its parameter a putCode of type int or string or an array of putCode. The putCode must be a numeric value, it is returned by orcid
+<h4>Read</h4> : Allows you to read one or more records by taking its parameter a putCode of type int or string or an array of putCode. The putCode must be a numeric value, it is returned by orcid
   ```php 
      
      // case of reading of many works items (it's an array of putCode that you passed in parameter) of read($putCode)
@@ -329,11 +329,11 @@ represents an external identifier and contains the four properties $ idType, $ i
 ### Curent Evolution compared to the previous version
 
 
-Added functionality to have a full record instance after reading a single record and a full record collection instance after reading Many Records. A full record contains all the data on the record while a Summary record contains just the essentials, ie: the type, title and external identifiers.
+*Added functionality to have a full record instance after reading a single record and a full record collection instance after reading Many Records. A full record contains all the data on the record while a Summary record contains just the essentials, ie: the type, title and external identifiers.
 
-Addition of validation and filter functions for the data of an orcid item with the static class: ```php Orcid \ Work \ Data \ Data```.
+*Addition of validation and filter functions for the data of an orcid item with the static class: ```php Orcid \ Work \ Data \ Data```.
 
-Addition of the possibility to filter work data with``` php $work->setFilter()``` before value setting, and the possibility of removing the filter with ```$work->removeFilter()```
+*Addition of the possibility to filter work data with``` php $work->setFilter()``` before value setting, and the possibility of removing the filter with ```$work->removeFilter()```
 
-Addition of the possibility of forcibly setting the value of a property of an object. This method makes it possible to force the request to send a value without it being validated. Indeed, I try to check the validity of the data based on lists of values ​​accepted by meta and the rules of values, before sending. But since allowed lists of values ​​evolve and the rules can change, it is possible that the validation rules are obsolete or the list of values ​​accepted for a meta (eg: work-type) has changed compared to the version of the library that you have in your project. In this case you can use the ```php $ work→setPropertyByForce ('type', 'newOrcidWorkType')```. 
+*Addition of the possibility of forcibly setting the value of a property of an object. This method makes it possible to force the request to send a value without it being validated. Indeed, I try to check the validity of the data based on lists of values ​​accepted by meta and the rules of values, before sending. But since allowed lists of values ​​evolve and the rules can change, it is possible that the validation rules are obsolete or the list of values ​​accepted for a meta (eg: work-type) has changed compared to the version of the library that you have in your project. In this case you can use the ```php $ work→setPropertyByForce ('type', 'newOrcidWorkType')```. 
 

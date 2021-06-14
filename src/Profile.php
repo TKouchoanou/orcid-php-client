@@ -75,6 +75,21 @@ class Profile
     }
 
     /**
+     * Grabs the raw name elements to create fullname
+     *
+     * @return  string
+     **/
+    public function fullName()
+    {
+        $this->raw();
+        $details = $this->person()->name;
+
+        // "given-names" is a required field on ORCID profiles.
+        // "family-name", however, may or may not be available.
+        // https://members.orcid.org/api/tutorial/reading-xml#names
+        return $details->{'given-names'}->value . ($details->{'family-name'} ? ' ' . $details->{'family-name'}->value : '');
+    }
+    /**
      * Grabs the users email if it's set and available
      *
      * @return  string|null
@@ -95,21 +110,5 @@ class Profile
         }
 
         return $email;
-    }
-
-    /**
-     * Grabs the raw name elements to create fullname
-     *
-     * @return  string
-     **/
-    public function fullName()
-    {
-        $this->raw();
-        $details = $this->person()->name;
-
-        // "given-names" is a required field on ORCID profiles.
-        // "family-name", however, may or may not be available.
-        // https://members.orcid.org/api/tutorial/reading-xml#names
-        return $details->{'given-names'}->value . ($details->{'family-name'} ? ' ' . $details->{'family-name'}->value : '');
     }
 }

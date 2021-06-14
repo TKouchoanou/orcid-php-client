@@ -253,27 +253,6 @@ class Curl
 
         return $this;
     }
-
-    /**
-     * Shuts down the resource
-     *
-     * @return  $this
-     **/
-    public function close()
-    {
-        curl_close($this->resource);
-
-        return $this;
-    }
-
-    /**
-     * @return resource
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
     /**
      * @return mixed
      */
@@ -297,4 +276,25 @@ class Curl
     {
         return $this -> response;
     }
+    /**
+     * Shuts down the resource
+     *
+     * @return  $this
+     **/
+    public function close()
+    {
+        curl_close($this->resource);
+
+        return $this;
+    }
+
+    /**
+     * @return resource
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+
 }

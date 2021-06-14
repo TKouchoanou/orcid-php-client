@@ -325,6 +325,13 @@ class Oauth
         return $this->refreshToken;
     }
 
+    /**
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
+    }
 
     /**
      * @return string
@@ -627,11 +634,5 @@ class Oauth
         $this->authenticateData = $authenticateData;
     }
 
-    /**
-    * @return string
-    */
-    public function getEnvironment()
-    {
-        return $this->environment;
-    }
+
 }

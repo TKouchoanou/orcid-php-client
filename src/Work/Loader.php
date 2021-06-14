@@ -1,10 +1,8 @@
 <?php
 
-
 namespace Orcid\Work;
-
 
 interface Loader
 {
-  public static function loadInstanceFromOrcidArray($orcidArray);
+    public static function loadInstanceFromOrcidArray($orcidArray);
 }

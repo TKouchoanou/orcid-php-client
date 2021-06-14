@@ -5,8 +5,8 @@
  * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
-namespace Orcid\Work\Work;
 
+namespace Orcid\Work\Work;
 
  use Exception;
  use Orcid\Work\Common;
@@ -14,7 +14,7 @@ namespace Orcid\Work\Work;
  use Orcid\Work\Data\Data;
  use Orcid\Work\Data\Data\PublicationDate;
 
- abstract  class OAbstractWork extends Common
+ abstract class OAbstractWork extends Common
  {
      /**
       * @var string
@@ -55,7 +55,7 @@ namespace Orcid\Work\Work;
       */
      public function addExternalIdent(string $externalIdType, string $externalIdValue, $externalIdUrl = '', $externalIdRelationship = '')
      {
-         if($this->hasFilter()){
+         if ($this->hasFilter()) {
              $externalIdType =Data::filterExternalIdType($externalIdType);
              $externalIdRelationship=Data::filterExternalIdRelationType($externalIdRelationship);
          }
@@ -71,10 +71,11 @@ namespace Orcid\Work\Work;
       * @throws Exception
       */
      public function addNewExternalIdent(ExternalId $externalId)
-     { if($this->hasFilter()){
-         $externalId->setIdRelationship(Data::filterExternalIdRelationType($externalId->getIdRelationship()));
-         $externalId->setIdType(Data::filterExternalIdType($externalId->getIdType()));
-       }
+     {
+         if ($this->hasFilter()) {
+             $externalId->setIdRelationship(Data::filterExternalIdRelationType($externalId->getIdRelationship()));
+             $externalId->setIdType(Data::filterExternalIdType($externalId->getIdType()));
+         }
          $this->externalIds[] = $externalId;
          return $this;
      }
@@ -108,12 +109,12 @@ namespace Orcid\Work\Work;
          if (empty($workType)) {
              throw new Exception("The type of work must be string and not empty,you try to set empty value");
          }
-         if ($this->hasFilter()){
+         if ($this->hasFilter()) {
              $workType = Data::filterWorkType($workType);
          }
          if (!Data::isValidWorkType($workType)) {
              throw new Exception("The type of work  '" . $workType . "'  you try to set is not valid for orcid work, here are the valid work-type: [".
-             implode(",",Data::WORK_TYPES)."].");
+             implode(",", Data::WORK_TYPES)."].");
          }
          $this->type = $workType;
          return $this;
@@ -123,10 +124,11 @@ namespace Orcid\Work\Work;
       * @param Data\Title $titles
       * @return $this
       */
-     public function setTitles(Data\Title $titles){
+     public function setTitles(Data\Title $titles)
+     {
          $this->titles=$titles;
          return $this;
-      }
+     }
 
      /**
       * title is required , empty value is not accepted
@@ -153,8 +155,8 @@ namespace Orcid\Work\Work;
       */
      public function setSubTitle(string $subTitle)
      {
-             $this->getTitles()->setSubtitle($subTitle);
-             return $this;
+         $this->getTitles()->setSubtitle($subTitle);
+         return $this;
      }
 
      /**
@@ -170,7 +172,7 @@ namespace Orcid\Work\Work;
       */
      public function setTranslatedTitle(string $translatedTitle)
      {
-         if(!empty($translatedTitle)){
+         if (!empty($translatedTitle)) {
              $this->getTitles()->setTranslatedTitle($translatedTitle);
          }
          return $this;
@@ -187,7 +189,7 @@ namespace Orcid\Work\Work;
       */
      public function setTranslatedTitleLanguageCode(string $translatedTitleLanguageCode)
      {
-         if(!empty($translatedTitleLanguageCode)){
+         if (!empty($translatedTitleLanguageCode)) {
              $this->getTitles()->setTranslatedTitleLanguageCode($translatedTitleLanguageCode);
          }
          return $this;
@@ -207,7 +209,7 @@ namespace Orcid\Work\Work;
      public function setPublicationDate(string $year, $month = '', $day = '')
      {
          if (!empty($year)) {
-             $this->publicationDate = new PublicationDate($year,$month,$day);
+             $this->publicationDate = new PublicationDate($year, $month, $day);
          }
          return $this;
      }
@@ -228,9 +230,9 @@ namespace Orcid\Work\Work;
      /**
       * @return Data\Title
       */
-     public function getTitles() : Data\Title
+     public function getTitles(): Data\Title
      {
-         return isset($this->titles)?$this->titles: $this->setTitles(new Data\Title($this->filter))->getTitles();
+         return isset($this->titles) ? $this->titles : $this->setTitles(new Data\Title($this->filter))->getTitles();
      }
 
      /**
@@ -297,4 +299,4 @@ namespace Orcid\Work\Work;
      {
          return $this->externalIds;
      }
-}
+ }

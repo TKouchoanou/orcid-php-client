@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Orcid\Work\Data\Data;
-
 
 use Exception;
 use Orcid\Work\Data\Common;
@@ -19,9 +17,9 @@ class Citation extends Common
      */
     protected $value;
 
-    public function __construct( $filterData=true)
+    public function __construct($filterData=true)
     {
-        $filterData?$this->setFilter():$this->removeFilter();
+        $filterData ? $this->setFilter() : $this->removeFilter();
     }
 
     /**
@@ -42,8 +40,8 @@ class Citation extends Common
      */
     public function setValue(string $value)
     {
-        if(!empty($value)){
-            if(!Data::isValidCitation($value)){
+        if (!empty($value)) {
+            if (!Data::isValidCitation($value)) {
                 throw new Exception("The citation value sent is not valid. The max length of a citation is : ".Data::CITATION_MAX_LENGTH);
             }
             $this->value = $value;
@@ -56,7 +54,7 @@ class Citation extends Common
      */
     public function getType()
     {
-        return (empty($this->type) &&!empty($this->value))?$this->setType("formatted-unspecified")->getType():$this->type;
+        return (empty($this->type) &&!empty($this->value)) ? $this->setType("formatted-unspecified")->getType() : $this->type;
     }
 
     /**
@@ -69,8 +67,8 @@ class Citation extends Common
 
     public static function loadInstanceFromOrcidArray($orcidCitationArray)
     {
-        $citation=isset($orcidCitationArray['citation-value'])?$orcidCitationArray['citation-value']:'';
-        $citationType=isset($orcidCitationArray['citation-type'])?$orcidCitationArray['citation-type']:'';
+        $citation=isset($orcidCitationArray['citation-value']) ? $orcidCitationArray['citation-value'] : '';
+        $citationType=isset($orcidCitationArray['citation-type']) ? $orcidCitationArray['citation-type'] : '';
         return (new Citation(true))->setValue($citation)->setType($citationType);
     }
 

@@ -1,13 +1,10 @@
 <?php
 
-
 namespace Orcid\Work;
-
 
 use Exception;
 
-
-Abstract class Common
+abstract class Common
 {
     /**
      * @var bool
@@ -23,11 +20,13 @@ Abstract class Common
         return $this;
     }
 
-    public function hasFilter(){
+    public function hasFilter()
+    {
         return $this->filter;
     }
 
-    public function removeFilter(){
+    public function removeFilter()
+    {
         $this->filter = false;
         return $this;
     }
@@ -39,12 +38,13 @@ Abstract class Common
      * @return Common
      * @throws Exception
      */
-    public function setPropertyByForce(string $property,$value){
-        if(property_exists($this,$property)){
+    public function setPropertyByForce(string $property, $value)
+    {
+        if (property_exists($this, $property)) {
             $this->{$property}=$value;
-        }else{
+        } else {
             throw new Exception("your property ".$property." don't exist this objet property are : ".
-                implode(", ",array_keys(get_object_vars ($this))).".");
+                implode(", ", array_keys(get_object_vars($this))).".");
         }
         return $this;
     }

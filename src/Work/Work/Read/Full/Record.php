@@ -7,7 +7,6 @@
 
 namespace Orcid\Work\Work\Read\Full;
 
-
 use Exception;
 use Orcid\Work\Data\Data\Citation;
 use Orcid\Work\Data\Data\Contributor;
@@ -133,10 +132,10 @@ class Record extends AbstractWork implements SingleRecord
     {
         return $this->path;
     }
-    
-     /**
-     * @return string
-     */
+
+    /**
+    * @return string
+    */
     public function getVisibility()
     {
         return $this->visibility;
@@ -147,7 +146,6 @@ class Record extends AbstractWork implements SingleRecord
      */
     public static function loadInstanceFromOrcidArray($orcidFullRecord)
     {
-
         try {
             $fullRecord=new self();
             $fullRecord->setFilter();
@@ -157,42 +155,41 @@ class Record extends AbstractWork implements SingleRecord
             $visibility=$orcidFullRecord['visibility'];
             $workPath=$orcidFullRecord['path'];
             $putCode=$orcidFullRecord['put-code'];
-            $languageCode=isset($orcidFullRecord['language-code'])?$orcidFullRecord['language-code']:'';
-            $country = isset($orcidFullRecord['country']['value'])?$orcidFullRecord['country']['value']:'';
-            $journalTitle=isset($orcidFullRecord['journal-title']['value']) ? $orcidFullRecord['journal-title']['value']:'';
-            $shortDescription=isset($orcidFullRecord['short-description'])?$orcidFullRecord['short-description']:'';
-            $workUrl=isset($orcidFullRecord['url']['value'])?$orcidFullRecord['url']['value']:'';
+            $languageCode=isset($orcidFullRecord['language-code']) ? $orcidFullRecord['language-code'] : '';
+            $country = isset($orcidFullRecord['country']['value']) ? $orcidFullRecord['country']['value'] : '';
+            $journalTitle=isset($orcidFullRecord['journal-title']['value']) ? $orcidFullRecord['journal-title']['value'] : '';
+            $shortDescription=isset($orcidFullRecord['short-description']) ? $orcidFullRecord['short-description'] : '';
+            $workUrl=isset($orcidFullRecord['url']['value']) ? $orcidFullRecord['url']['value'] : '';
             $type=$orcidFullRecord['type'];
             $titleArray=$orcidFullRecord['title'];
             $titles=Title::loadInstanceFromOrcidArray($titleArray);
             $citationArray =$orcidFullRecord['citation'];
             $citations=Citation::loadInstanceFromOrcidArray($citationArray);
-            $publicationDate=isset($orcidFullRecord['publication-date'])?PublicationDate::loadInstanceFromOrcidArray($orcidFullRecord['publication-date']):null;
+            $publicationDate=isset($orcidFullRecord['publication-date']) ? PublicationDate::loadInstanceFromOrcidArray($orcidFullRecord['publication-date']) : null;
             $fullRecord->setCreatedDate($createdDate)->setLastModifiedDate($lastModifiedDate)
                 ->setSource($source)->setVisibility($visibility)->setPath($workPath)
                 ->setPutCode($putCode)->setTitles($titles)->setCitations($citations)
                 ->setCountry($country)->setJournalTitle($journalTitle)->setShortDescription($shortDescription)
                 ->setType($type)->setLanguageCode($languageCode)->setWorkUrl($workUrl);
 
-            if(!empty($publicationDate)){
+            if (!empty($publicationDate)) {
                 $fullRecord->setPubDate($publicationDate);
             }
 
             $externalIds= $orcidFullRecord['external-ids']['external-id'];
-            foreach( $externalIds as $externalId) {
+            foreach ($externalIds as $externalId) {
                 $newExternalId=ExternalId::loadInstanceFromOrcidArray($externalId);
                 $fullRecord->addNewExternalIdent($newExternalId);
             }
 
-            $contributorArray=isset($orcidFullRecord['contributors']['contributor'])?$orcidFullRecord['contributors']['contributor']:[];
-            foreach( $contributorArray as $contributor) {
+            $contributorArray=isset($orcidFullRecord['contributors']['contributor']) ? $orcidFullRecord['contributors']['contributor'] : [];
+            foreach ($contributorArray as $contributor) {
                 $newContributor=Contributor::loadInstanceFromOrcidArray($contributor);
                 $fullRecord->addNewContributor($newContributor);
             }
-
         } catch (Exception $e) {
             error_log("Panic in ".get_class($fullRecord)." : ".$e->getMessage());
         }
-       return $fullRecord;
+        return $fullRecord;
     }
 }

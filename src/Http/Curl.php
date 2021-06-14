@@ -1,8 +1,7 @@
 <?php
 /**
  * @package   orcid-php-client
- * @author    Sam Wilson <samwilson@purdue.edu>
-   modified by Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
+ * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr | theophane_malo@yahoo.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
@@ -27,13 +26,25 @@ class Curl
      */
     private $response_code=0;
     /**
+     * @var mixed
+     */
+    private $errno;
+    /**
+     * @var mixed
+     */
+    private $error;
+    /**
+     * @var mixed
+     */
+    private $response;
+    /**
      * Constructs a new instance
      *
      * @return  void
      **/
-    public function __construct()
+    public function __construct($withHeader=false)
     {
-        $this->initialize();
+        $this->initialize($withHeader);
     }
 
     /**
@@ -45,7 +56,7 @@ class Curl
     public function initialize($withHeader=false)
     {
         $this->resource = curl_init();
-        if($withHeader){
+        if ($withHeader) {
             $this->setHTTPRequestHeader();
         }
         $this->setReturnTransfer();
@@ -65,6 +76,18 @@ class Curl
     {
         curl_setopt($this->resource, $opt, $value);
 
+        return $this;
+    }
+
+    /**
+     * @param array $curlOptions
+     * @return $this
+     */
+    public function setOptions(array $curlOptions)
+    {
+        foreach ($curlOptions as $opt=>$value) {
+            curl_setopt($this->resource, $opt, $value);
+        }
         return $this;
     }
 
@@ -100,7 +123,6 @@ class Curl
         // Form raw string version of fields
         $raw   = '';
         $first = true;
-
         foreach ($fields as $key => $value) {
             if (!$first) {
                 $raw .= '&';
@@ -131,7 +153,7 @@ class Curl
      */
     public function setPut()
     {
-        return $this->setOpt( CURLOPT_CUSTOMREQUEST, 'PUT');
+        return $this->setOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
     }
 
     /**
@@ -139,7 +161,7 @@ class Curl
      */
     public function setDelete()
     {
-        return $this->setOpt( CURLOPT_CUSTOMREQUEST, "DELETE");
+        return $this->setOpt(CURLOPT_CUSTOMREQUEST, "DELETE");
     }
 
     /**
@@ -165,24 +187,40 @@ class Curl
         return $this;
     }
 
-    function setHTTPRequestHeader(){
+    public function setHTTPRequestHeader()
+    {
         $this->setOpt(CURLOPT_HEADER, true);
     }
     /**
      * Executes the request
      * @return  string
      **/
-    public function execute()
+    public function execute($close=true)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $response = curl_exec($this->resource);
+        $this->setResponse($response);
         $this->initialiseResponseData();
-        $this->reset();
+        if ($close) {
+            $this->close();
+        }
         return $response;
     }
 
-    public function initialiseResponseData(){
-        $this->response_code=curl_getinfo($this->resource,CURLINFO_HTTP_CODE);
-        $this->response_infos=curl_getinfo($this->resource);
+    public function initialiseResponseData()
+    {
+        $this -> response_code=curl_getinfo($this->resource, CURLINFO_HTTP_CODE);
+        $this -> response_infos=curl_getinfo($this->resource);
+        $this -> errno = curl_errno($this->resource);
+        $this -> error  =curl_error($this->resource);
+    }
+
+    /**
+     * @param mixed $response
+     */
+    protected function setResponse($response)
+    {
+        $this -> response = $response;
     }
 
     /**
@@ -234,5 +272,29 @@ class Curl
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getErrno()
+    {
+        return $this -> errno;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getError()
+    {
+        return $this -> error;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this -> response;
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Orcid\Work\Data;
 
 trait ODataFilter
@@ -13,7 +12,7 @@ trait ODataFilter
     public static function filterLanguageCode(string $languageCode)
     {
         $language_code=str_replace("-", "_", strtolower(trim($languageCode)));
-        return array_key_exists($language_code, Data::SPECIAL_LANGUAGE_CODES)?Data::SPECIAL_LANGUAGE_CODES[$language_code]:$language_code;
+        return array_key_exists($language_code, Data::SPECIAL_LANGUAGE_CODES) ? Data::SPECIAL_LANGUAGE_CODES[$language_code] : $language_code;
     }
 
     /**
@@ -47,7 +46,8 @@ trait ODataFilter
      * @param $sequence
      * @return string
      */
-    public static function filterContributorSequence($sequence){
+    public static function filterContributorSequence($sequence)
+    {
         return strtolower(trim($sequence));
     }
 
@@ -55,7 +55,8 @@ trait ODataFilter
      * @param string $orcidId
      * @return string
      */
-    public static function filterOrcid(string $orcidId){
+    public static function filterOrcid(string $orcidId)
+    {
         return str_replace('_', '-', strtolower(trim($orcidId)));
     }
 
@@ -72,7 +73,8 @@ trait ODataFilter
      * @param string $extIdType
      * @return string
      */
-    public static function filterExternalIdType(string $extIdType){
+    public static function filterExternalIdType(string $extIdType)
+    {
         return str_replace('_', '-', strtolower(trim($extIdType)));
     }
 
@@ -80,7 +82,8 @@ trait ODataFilter
      * @param string $type
      * @return string
      */
-    public static function filterExternalIdRelationType(string $type){
+    public static function filterExternalIdRelationType(string $type)
+    {
         return str_replace('_', '-', strtolower(trim($type)));
     }
 }

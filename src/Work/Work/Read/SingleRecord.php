@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Orcid\Work\Work\Read;
-
 
 use Orcid\Work\Loader;
 use Orcid\Work\Work\Read\Summary\Record;

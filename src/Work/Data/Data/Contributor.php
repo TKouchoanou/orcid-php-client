@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Orcid\Work\Data\Data;
-
 
 use Exception;
 use Orcid\Work\Data\Common;
@@ -13,31 +11,31 @@ class Contributor extends Common
     /**
      * @var string
      */
-  protected $creditName;
+    protected $creditName;
     /**
      * @var string
      */
-  protected $role;
+    protected $role;
     /**
      * @var string
      */
-  protected $orcid;
+    protected $orcid;
     /**
      * @var string
      */
-  protected $sequence;
+    protected $sequence;
     /**
      * @var string
      */
-  protected $email;
+    protected $email;
     /**
      * @var string
      */
-  protected $env;
+    protected $env;
     /**
      * @var bool
      */
-  protected $countOfProdEnv;
+    protected $countOfProdEnv;
 
 
     /**
@@ -51,10 +49,10 @@ class Contributor extends Common
      * @param bool $filterData
      * @throws Exception
      */
-    public function __construct(string $creditName, string $role, $orcid='',$sequence='', $email='',$countOfProdEnv=true,$filterData=true)
+    public function __construct(string $creditName, string $role, $orcid='', $sequence='', $email='', $countOfProdEnv=true, $filterData=true)
     {
-           $filterData? $this->setFilter():$this->removeFilter();
-           $this->setCreditName($creditName)->setRole($role)->setOrcid($orcid)->setSequence($sequence)
+        $filterData ? $this->setFilter() : $this->removeFilter();
+        $this->setCreditName($creditName)->setRole($role)->setOrcid($orcid)->setSequence($sequence)
             ->setEmail($email)->setCountOfProdEnv($countOfProdEnv)->setEnv();
     }
 
@@ -75,13 +73,13 @@ class Contributor extends Common
      */
     public function setRole(string $role='')
     {
-        $role=empty($role)?'author':$role;
-        if($this->hasFilter()){
+        $role=empty($role) ? 'author' : $role;
+        if ($this->hasFilter()) {
             $role=Data::filterContributorRole($role);
         }
-        if(!Data::isValidContributorRole($role)){
+        if (!Data::isValidContributorRole($role)) {
             throw new Exception('The author '.$this->creditName.' role '.$role.' is not valid here are author valid role: ['.
-                implode(",",Data::AUTHOR_ROLE_TYPE)."]");
+                implode(",", Data::AUTHOR_ROLE_TYPE)."]");
         }
         $this->role = $role;
         return $this;
@@ -94,10 +92,10 @@ class Contributor extends Common
      */
     public function setOrcid(string $orcid)
     {
-        if($this->hasFilter()){
-        $orcid=Data::filterOrcid($orcid);
-      }
-        if(!empty($orcid) && !Data::isValidOrcid($orcid)){
+        if ($this->hasFilter()) {
+            $orcid=Data::filterOrcid($orcid);
+        }
+        if (!empty($orcid) && !Data::isValidOrcid($orcid)) {
             throw new Exception('The author '.$this->creditName.' Orcid '.$orcid.' is not valid');
         }
         $this->orcid = $orcid;
@@ -111,12 +109,12 @@ class Contributor extends Common
      */
     public function setSequence(string $sequence)
     {
-        if($this->hasFilter()){
+        if ($this->hasFilter()) {
             $sequence=Data::filterContributorSequence($sequence);
         }
-        if(!empty($sequence) && !Data::isValidContributorSequence($sequence)){
+        if (!empty($sequence) && !Data::isValidContributorSequence($sequence)) {
             throw new Exception('The author '.$this->creditName.' sequence '.$sequence.' is not valid here are sequence valid values : ['
-                .implode(",",Data::AUTHOR_SEQUENCE_TYPE).']');
+                .implode(",", Data::AUTHOR_SEQUENCE_TYPE).']');
         }
         $this->sequence = $sequence;
         return $this;
@@ -149,7 +147,7 @@ class Contributor extends Common
      */
     protected function setEnv()
     {
-        $this->env = $this->isCountOfProdEnv()? '' : 'sandbox.';
+        $this->env = $this->isCountOfProdEnv() ? '' : 'sandbox.';
         return $this;
     }
 
@@ -216,10 +214,10 @@ class Contributor extends Common
     {
         $orcidId=$orcidContributorArray['contributor-orcid']["path"];
         $creditName=$orcidContributorArray['credit-name']['value'];
-        $email=isset($orcidContributorArray['contributor-email'])?$orcidContributorArray['contributor-email']:'';
+        $email=isset($orcidContributorArray['contributor-email']) ? $orcidContributorArray['contributor-email'] : '';
         $sequence=$orcidContributorArray['contributor-attributes']['contributor-sequence'];
         $role=$orcidContributorArray['contributor-attributes']['contributor-role'];
-        return new Contributor($creditName,$role,$orcidId,$sequence,$email);
+        return new Contributor($creditName, $role, $orcidId, $sequence, $email);
     }
 
     /**

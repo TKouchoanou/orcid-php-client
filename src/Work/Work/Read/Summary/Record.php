@@ -128,10 +128,10 @@ class Record extends OAbstractWork implements SingleRecord
     {
         return $this->path;
     }
-    
-     /**
-     * @return string
-     */
+
+    /**
+    * @return string
+    */
     public function getVisibility()
     {
         return $this->visibility;
@@ -143,7 +143,6 @@ class Record extends OAbstractWork implements SingleRecord
      */
     public static function loadInstanceFromOrcidArray($work)
     {
-
         try {
             $newRecord= new Record();
             $summary=$work['work-summary'][0];
@@ -155,8 +154,8 @@ class Record extends OAbstractWork implements SingleRecord
             $workType=$summary['type'];
             $visibility=$summary['visibility'];
             $workPath=$summary['path'];
-            $publicationDate=isset($summary['publication-date'])?PublicationDate::loadInstanceFromOrcidArray($summary['publication-date']):null;
-            if(!empty($publicationDate)){
+            $publicationDate=isset($summary['publication-date']) ? PublicationDate::loadInstanceFromOrcidArray($summary['publication-date']) : null;
+            if (!empty($publicationDate)) {
                 $newRecord->setPubDate($publicationDate);
             }
             $titles=Title::loadInstanceFromOrcidArray($summary['title']);
@@ -168,7 +167,7 @@ class Record extends OAbstractWork implements SingleRecord
                 ->setType($workType)
                 ->setPath($workPath)
                 ->setVisibility($visibility);
-            foreach( $externalIdArray as $externalId) {
+            foreach ($externalIdArray as $externalId) {
                 $newExternalId=ExternalId::loadInstanceFromOrcidArray($externalId);
                 $newRecord->addNewExternalIdent($newExternalId);
             }

@@ -7,13 +7,12 @@
 
 namespace Orcid\Work\Data\Data;
 
-
 use Exception;
 use Orcid\Work\Data\Common;
 use Orcid\Work\Data\Data;
 
 class ExternalId extends Common
-{ 
+{
     /**
      * @var string
      */
@@ -40,9 +39,9 @@ class ExternalId extends Common
      * @param bool $filterData
      * @throws Exception
      */
-    public function __construct(string $idType, string $idValue, $idUrl='', $idRelationship='',$filterData=true)
+    public function __construct(string $idType, string $idValue, $idUrl='', $idRelationship='', $filterData=true)
     {
-        $filterData?$this->setFilter():$this->removeFilter();
+        $filterData ? $this->setFilter() : $this->removeFilter();
         $this->setIdRelationship($idRelationship);
         $this->setIdType($idType);
         $this->setIdValue($idValue);
@@ -53,8 +52,9 @@ class ExternalId extends Common
      * @param $other
      * @return bool
      */
-    public function isEqualTo($other){
-        return ( $other instanceof ExternalId
+    public function isEqualTo($other)
+    {
+        return ($other instanceof ExternalId
                 && $other->getIdType()===$this->idType
                 && $other->getIdValue()===$this->idValue);
     }
@@ -64,9 +64,10 @@ class ExternalId extends Common
      * @param string $idValue
      * @return bool
      */
-   public function isSame(string $idType,string $idValue){
-       return $this->idType===(string)$idType && $this->idValue===(string)$idValue;
-   }
+    public function isSame(string $idType, string $idValue)
+    {
+        return $this->idType===(string)$idType && $this->idValue===(string)$idValue;
+    }
 
     /**
      * @param string $idRelationship
@@ -74,15 +75,16 @@ class ExternalId extends Common
      * @throws Exception
      */
     public function setIdRelationship(string $idRelationship="")
-    {  $idRelationship=empty($idRelationship)?'self':$idRelationship;
-        if($this->hasFilter()){
+    {
+        $idRelationship=empty($idRelationship) ? 'self' : $idRelationship;
+        if ($this->hasFilter()) {
             $idRelationship=Data::filterExternalIdRelationType($idRelationship);
         }
-        if(Data::isValidExternalIdRelationType($idRelationship)){
+        if (Data::isValidExternalIdRelationType($idRelationship)) {
             $this->idRelationship = $idRelationship;
-        }else{
+        } else {
             throw new Exception("the relationship value is not valid here are relationship valid value ["
-                .implode(",",Data::EXTERNAL_ID_RELATION_TYPE)."].");
+                .implode(",", Data::EXTERNAL_ID_RELATION_TYPE)."].");
         }
         return $this;
     }
@@ -95,7 +97,7 @@ class ExternalId extends Common
      */
     public function setIdType(string $idType)
     {
-        $this->checkIsNotEmptyValue($idType,'idType');
+        $this->checkIsNotEmptyValue($idType, 'idType');
         $this->idType = $idType;
         return $this;
     }
@@ -117,7 +119,7 @@ class ExternalId extends Common
      */
     public function setIdValue(string $idValue)
     {
-        $this->checkIsNotEmptyValue($idValue,'idValue');
+        $this->checkIsNotEmptyValue($idValue, 'idValue');
         $this->idValue = $idValue;
         return $this;
     }
@@ -159,20 +161,20 @@ class ExternalId extends Common
      * @param $name
      * @throws Exception
      */
-    private function checkIsNotEmptyValue($value,$name)
+    private function checkIsNotEmptyValue($value, $name)
     {
-        if(empty($value)){
+        if (empty($value)) {
             throw new Exception('the value of '.$name.' can\'t be empty for valid external Id type') ;
         }
     }
 
     public static function loadInstanceFromOrcidArray($orcidExternalIdArray)
     {
-        $relationType=isset($orcidExternalIdArray['external-id-relationship'])?$orcidExternalIdArray['external-id-relationship']:'';
-        $url=isset($orcidExternalIdArray['external-id-url']['value'])?$orcidExternalIdArray['external-id-url']['value']:'';
+        $relationType=isset($orcidExternalIdArray['external-id-relationship']) ? $orcidExternalIdArray['external-id-relationship'] : '';
+        $url=isset($orcidExternalIdArray['external-id-url']['value']) ? $orcidExternalIdArray['external-id-url']['value'] : '';
         $type=$orcidExternalIdArray['external-id-type'];
         $value=$orcidExternalIdArray['external-id-value'];
-        return new ExternalId($type,$value,$url,$relationType);
+        return new ExternalId($type, $value, $url, $relationType);
     }
 
     /**

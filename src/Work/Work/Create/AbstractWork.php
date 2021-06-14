@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Orcid\Work\Work\Create;
 
 use Exception;
@@ -63,13 +62,14 @@ class AbstractWork extends OAbstractWork
      */
     public function addContributor(string $creditName, string $role='', string $orcidId='', string $sequence='', $orcidFromProductionEnv=true)
     {
-        if(!empty($creditName)){
-            if($this->hasFilter()){
-             $role=Data::filterContributorRole($role);
-             $sequence=Data::filterContributorSequence($sequence);
-             $orcidId=Data::filterOrcid($orcidId);
+        if (!empty($creditName)) {
+            if ($this->hasFilter()) {
+                $role=Data::filterContributorRole($role);
+                $sequence=Data::filterContributorSequence($sequence);
+                $orcidId=Data::filterOrcid($orcidId);
             }
-            $this->authors []= new Contributor($creditName,$role,$orcidId,$sequence,'',$orcidFromProductionEnv);}
+            $this->authors []= new Contributor($creditName, $role, $orcidId, $sequence, '', $orcidFromProductionEnv);
+        }
         return $this;
     }
 
@@ -85,7 +85,7 @@ class AbstractWork extends OAbstractWork
      */
     public function addNewContributor(Contributor $contributor)
     {
-        if($this->hasFilter()){
+        if ($this->hasFilter()) {
             $contributor->setRole(Data::filterContributorRole($contributor->getRole()))
                         ->setSequence(Data::filterContributorSequence($contributor->getSequence()))
                         ->setOrcid(Data::filterOrcid($contributor->getOrcid()));
@@ -100,7 +100,7 @@ class AbstractWork extends OAbstractWork
      */
     public function setJournalTitle(string $journalTitle)
     {
-        if(!empty($journalTitle)) {
+        if (!empty($journalTitle)) {
             $this->journalTitle = $journalTitle;
         }
         return $this;
@@ -114,7 +114,7 @@ class AbstractWork extends OAbstractWork
      */
     public function setShortDescription(string $shortDescription)
     {
-        if(!empty($shortDescription)) {
+        if (!empty($shortDescription)) {
             if (!Data::isValidShortDescription($shortDescription)) {
                 throw new Exception('The short description length must not be than 5000 characters');
             }
@@ -132,12 +132,12 @@ class AbstractWork extends OAbstractWork
      */
     public function setLanguageCode(string $languageCode)
     {
-        if(!empty($languageCode)){
-            if($this->hasFilter()){
+        if (!empty($languageCode)) {
+            if ($this->hasFilter()) {
                 $languageCode=Data::filterLanguageCode($languageCode);
             }
-            if(!Data::isValidLanguageCode($languageCode)){
-                throw new Exception("Your language code is not valid. here are valid language code: [".implode(",",Data::LANGUAGE_CODES)."] ".
+            if (!Data::isValidLanguageCode($languageCode)) {
+                throw new Exception("Your language code is not valid. here are valid language code: [".implode(",", Data::LANGUAGE_CODES)."] ".
                     "if you want to set it by force use the method setPropertyByForce('property','value')");
             }
             $this->languageCode = $languageCode;
@@ -152,11 +152,11 @@ class AbstractWork extends OAbstractWork
      * @return $this
      * @throws Exception
      */
-    public function setCitation(string $citation,$citationType='')
+    public function setCitation(string $citation, $citationType='')
     {
-        if(!empty($citation))   {
+        if (!empty($citation)) {
             $this->getCitations()->setValue($citation);
-            if(!empty($citationType)){
+            if (!empty($citationType)) {
                 $this->getCitations()->setType($citationType);
             }
         }
@@ -196,13 +196,13 @@ class AbstractWork extends OAbstractWork
      */
     public function setCountry(string $country)
     {
-        if(!empty($country)){
-            if($this->hasFilter()){
+        if (!empty($country)) {
+            if ($this->hasFilter()) {
                 $country=Data::filterCountryCode($country);
             }
-            if(!Data::isValidCountryCode($country)){
+            if (!Data::isValidCountryCode($country)) {
                 throw new Exception("The country is not valid it must be a  code of  two characters and must respect ISO 3166 standard for country.".
-                    " here are valid values : [" .implode(",",Data::COUNTRY_CODES).
+                    " here are valid values : [" .implode(",", Data::COUNTRY_CODES).
                     "] if you want to set it by force use the method setPropertyByForce('property','value')");
             }
             $this->country = $country;
@@ -218,7 +218,7 @@ class AbstractWork extends OAbstractWork
      */
     public function setWorkUrl(string $workUrl)
     {
-        if(!empty($workUrl)){
+        if (!empty($workUrl)) {
             $this->workUrl = $workUrl;
         }
         return $this;
@@ -253,7 +253,7 @@ class AbstractWork extends OAbstractWork
      */
     public function getCitations(): Data\Citation
     {
-        return isset($this->citations)?$this->citations:$this->setCitations(new Data\Citation())->getCitations();
+        return isset($this->citations) ? $this->citations : $this->setCitations(new Data\Citation())->getCitations();
     }
     /**
      * @return string
@@ -296,5 +296,4 @@ class AbstractWork extends OAbstractWork
     {
         return $this->languageCode;
     }
-
 }

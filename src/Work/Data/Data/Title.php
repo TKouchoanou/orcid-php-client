@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Orcid\Work\Data\Data;
-
 
 use Exception;
 use Orcid\Work\Data\Common;
@@ -33,7 +31,7 @@ class Title extends Common
      */
     public function __construct($filterData=true)
     {
-        $filterData?$this->setFilter():$this->removeFilter();
+        $filterData ? $this->setFilter() : $this->removeFilter();
     }
 
     /**
@@ -62,8 +60,8 @@ class Title extends Common
      */
     public function setSubtitle(string $subTitle)
     {
-        if(!empty($subTitle)){
-            if(!Data::isValidSubTitle($subTitle)){
+        if (!empty($subTitle)) {
+            if (!Data::isValidSubTitle($subTitle)) {
                 throw new Exception("The subtitle value sent is not valid. its length must be between [0 -".Data::SUBTITLE_MAX_LENGTH."] your subtitle (".$subTitle.") length is : ".strlen($subTitle));
             }
             $this->subtitle = $subTitle;
@@ -84,8 +82,8 @@ class Title extends Common
      */
     public function setTranslatedTitle(string $translatedTitle)
     {
-        if(!empty($translatedTitle)){
-            if(!Data::isValidTranslatedTitle($translatedTitle)){
+        if (!empty($translatedTitle)) {
+            if (!Data::isValidTranslatedTitle($translatedTitle)) {
                 throw new Exception("The translatedTitle value sent is not valid. its length must be between [0 -".Data::TRANSLATED_MAX_LENGTH."] your translatedTitle (".$translatedTitle.") length is : ".strlen($translatedTitle));
             }
             $this->translatedTitle = $translatedTitle;
@@ -105,11 +103,11 @@ class Title extends Common
     public function setTranslatedTitleLanguageCode(string $translatedTitleLanguageCode)
     {
         if (!empty($translatedTitleLanguageCode)) {
-            if($this->hasFilter()){
+            if ($this->hasFilter()) {
                 $translatedTitleLanguageCode=Data::filterLanguageCode($translatedTitleLanguageCode);
             }
-            if(!Data::isValidLanguageCode($translatedTitleLanguageCode)){
-                throw new Exception("Your language code is not valid. here are valid language code: [".implode(",",Data::LANGUAGE_CODES)."] ".
+            if (!Data::isValidLanguageCode($translatedTitleLanguageCode)) {
+                throw new Exception("Your language code is not valid. here are valid language code: [".implode(",", Data::LANGUAGE_CODES)."] ".
                     "if you want to set it by force use the method setPropertyByForce('property','value')");
             }
             $this->translatedTitleLanguageCode = $translatedTitleLanguageCode;
@@ -159,10 +157,10 @@ class Title extends Common
     {
         $titles=new self();
         $title=$orcidTitleArray['title']['value'];
-        $translatedTitle=isset($orcidTitleArray['translated-title']['value'])?$orcidTitleArray['translated-title']['value']:'';
-        $translatedTitleLanguageCode=isset($orcidTitleArray['translated-title']['language-code'])?$orcidTitleArray['translated-title']['language-code']:'';
-        $subTitle=isset($orcidTitleArray['subtitle']['value'])?$orcidTitleArray['subtitle']['value']:'';
-       return $titles->setFilter()->setValue($title)->setTranslatedTitle($translatedTitle)->setTranslatedTitleLanguageCode($translatedTitleLanguageCode)->setSubtitle($subTitle);
+        $translatedTitle=isset($orcidTitleArray['translated-title']['value']) ? $orcidTitleArray['translated-title']['value'] : '';
+        $translatedTitleLanguageCode=isset($orcidTitleArray['translated-title']['language-code']) ? $orcidTitleArray['translated-title']['language-code'] : '';
+        $subTitle=isset($orcidTitleArray['subtitle']['value']) ? $orcidTitleArray['subtitle']['value'] : '';
+        return $titles->setFilter()->setValue($title)->setTranslatedTitle($translatedTitle)->setTranslatedTitleLanguageCode($translatedTitleLanguageCode)->setSubtitle($subTitle);
     }
 
     /**

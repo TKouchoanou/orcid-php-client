@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Orcid\Work\Data\Data;
-
 
 use Exception;
 use Orcid\Work\Data\Common;
@@ -13,15 +11,15 @@ class PublicationDate extends Common
     /**
      * @var string
      */
- protected $year;
+    protected $year;
     /**
      * @var string
      */
- protected $month;
+    protected $month;
     /**
      * @var string
      */
- protected $day;
+    protected $day;
 
     /**
      * PublicationDate constructor.
@@ -30,7 +28,8 @@ class PublicationDate extends Common
      * @param string $day
      * @throws Exception
      */
-    public function __construct(string $year,string $month="",string $day=""){
+    public function __construct(string $year, string $month="", string $day="")
+    {
         $this->setYear($year)->setMonth($month)->setDay($day);
     }
 
@@ -42,8 +41,8 @@ class PublicationDate extends Common
     public function setDay(string $day)
     {
         if (!empty($day) && (!is_numeric($day) || strlen((string)$day) > 2 || (int)$day > 31 || (int)$day < 1)) {
-              throw new Exception( " \n The day must be a numeric string or a number whose value is between 1 and 31. You have send Day=" . $day);
-       }
+            throw new Exception(" \n The day must be a numeric string or a number whose value is between 1 and 31. You have send Day=" . $day);
+        }
         $this->day = $day;
         return $this;
     }
@@ -56,7 +55,7 @@ class PublicationDate extends Common
     public function setMonth(string $month)
     {
         if ((!empty($month) && (!is_numeric($month) || mb_strlen((string)$month) > 2 || (int)$month > 12 || (int)$month < 1))) {
-            throw new Exception( " \n The month must be a numeric string or a integer whose value is between 1 and 12. You have send Month=" . $month);
+            throw new Exception(" \n The month must be a numeric string or a integer whose value is between 1 and 12. You have send Month=" . $month);
         }
         $this->month = $month;
         return $this;
@@ -69,7 +68,7 @@ class PublicationDate extends Common
      */
     public function setYear(string $year)
     {
-        if(!Data::isValidPublicationYear($year)){
+        if (!Data::isValidPublicationYear($year)) {
             throw new Exception(" \n The year must be a string made up of four numeric characters or be a number of four digits.
              The min value for orcid work year is ".Data::PUBLICATION_DATE_MIN_YEAR. " and the max value  is ".Data::PUBLICATION_DATE_MAX_YEAR.". You have send Year=" . $year);
         }
@@ -108,10 +107,10 @@ class PublicationDate extends Common
      */
     public static function loadInstanceFromOrcidArray($orcidPubDateArray)
     {
-        $pubYear=isset($orcidPubDateArray['year']['value'])?$orcidPubDateArray['year']['value']:'';
-        $pubMonth=isset($orcidPubDateArray['month']['value'])?$orcidPubDateArray['month']['value']:'';
-        $pubDay=isset($orcidPubDateArray['day']['value'])?$orcidPubDateArray['day']['value']:'';
-        return new self($pubYear,$pubMonth,$pubDay);
+        $pubYear=isset($orcidPubDateArray['year']['value']) ? $orcidPubDateArray['year']['value'] : '';
+        $pubMonth=isset($orcidPubDateArray['month']['value']) ? $orcidPubDateArray['month']['value'] : '';
+        $pubDay=isset($orcidPubDateArray['day']['value']) ? $orcidPubDateArray['day']['value'] : '';
+        return new self($pubYear, $pubMonth, $pubDay);
     }
 
     /**

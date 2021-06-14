@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Orcid\Work\Work\Read;
-
 
 use ArrayIterator;
 use Orcid\Work\Loader;
@@ -81,5 +79,4 @@ abstract class AbstractRecordList extends ArrayIterator implements Loader
     {
         return $this->count()===0;
     }
-
 }

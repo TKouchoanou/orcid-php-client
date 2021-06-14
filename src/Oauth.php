@@ -5,6 +5,7 @@
    modified by Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
+
 namespace Orcid;
 
 use Orcid\Http\Curl;
@@ -18,10 +19,10 @@ class Oauth
     /**
      * API endpoint constants
      **/
-    const HOSTNAME  = 'orcid.org';
-    const AUTHORIZE = 'oauth/authorize';
-    const TOKEN     = 'oauth/token';
-    const VERSION   = '2.0';
+    public const HOSTNAME  = 'orcid.org';
+    public const AUTHORIZE = 'oauth/authorize';
+    public const TOKEN     = 'oauth/token';
+    public const VERSION   = '2.0';
 
     /**
      * The http tranport object
@@ -144,7 +145,7 @@ class Oauth
      **/
     public function __construct($http = null)
     {
-        $this->http = $http ?: new Curl;
+        $this->http = $http ?: new Curl();
     }
 
     /**
@@ -471,11 +472,11 @@ class Oauth
         $url .= '&response_type=code';
 
         // Process non-required fields
-        $url .= ($this->showLogin)          ? '&show_login=true'                    : '';
-        $url .= (isset($this->state))       ? '&state=' . $this->state              : '';
+        $url .= ($this->showLogin) ? '&show_login=true' : '';
+        $url .= (isset($this->state)) ? '&state=' . $this->state : '';
         $url .= (isset($this->familyNames)) ? '&family_names=' . $this->familyNames : '';
-        $url .= (isset($this->givenNames))  ? '&given_names=' . $this->givenNames   : '';
-        $url .= (isset($this->email))       ? '&email=' . urlencode($this->email)   : '';
+        $url .= (isset($this->givenNames)) ? '&given_names=' . $this->givenNames : '';
+        $url .= (isset($this->email)) ? '&email=' . urlencode($this->email) : '';
 
         return $url;
     }
@@ -501,11 +502,11 @@ class Oauth
         if (!$this->clientSecret) {
             throw new Exception('Client secret is required');
         }
-       /**
-        * if (!$this->redirectUri) {
-                  throw new Exception('Redirect URI is required');
-        }
-        * */
+        /**
+         * if (!$this->redirectUri) {
+                   throw new Exception('Redirect URI is required');
+         }
+         * */
 
         $fields = [
             'client_id'     => $this->clientId,
@@ -567,8 +568,9 @@ class Oauth
      **/
     public function getProfile($orcid = null)
     {
-        if($this->http instanceOf Curl && !is_resource($this->http->getResource()))
+        if ($this->http instanceof Curl && !is_resource($this->http->getResource())) {
             $this->http->initialize();
+        }
 
         $this->http->setUrl($this->getApiEndpoint('record', $orcid));
 
@@ -624,10 +626,10 @@ class Oauth
     {
         $this->authenticateData = $authenticateData;
     }
-    
-     /**
-     * @return string
-     */
+
+    /**
+    * @return string
+    */
     public function getEnvironment()
     {
         return $this->environment;

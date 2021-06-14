@@ -7,7 +7,6 @@
 
 namespace Orcid\Work\Read;
 
-
 use Orcid\Work\OAwork;
 
 class Record extends OAwork
@@ -118,13 +117,12 @@ class Record extends OAwork
     {
         return $this->path;
     }
-    
-     /**
-     * @return string
-     */
+
+    /**
+    * @return string
+    */
     public function getVisibility()
     {
         return $this->visibility;
     }
-
 }

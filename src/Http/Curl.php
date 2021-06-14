@@ -57,7 +57,7 @@ class Curl
     public function initialize($withHeader=false)
     {
         $this->resource = curl_init();
-        if($withHeader){
+        if ($withHeader) {
             $this->setHTTPRequestHeader();
         }
         $this->setReturnTransfer();
@@ -84,8 +84,9 @@ class Curl
      * @param array $curlOptions
      * @return $this
      */
-    public function setOptions(array $curlOptions){
-        foreach ($curlOptions as $opt=>$value){
+    public function setOptions(array $curlOptions)
+    {
+        foreach ($curlOptions as $opt=>$value) {
             curl_setopt($this->resource, $opt, $value);
         }
         return $this;
@@ -153,7 +154,7 @@ class Curl
      */
     public function setPut()
     {
-        return $this->setOpt( CURLOPT_CUSTOMREQUEST, 'PUT');
+        return $this->setOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
     }
 
     /**
@@ -161,7 +162,7 @@ class Curl
      */
     public function setDelete()
     {
-        return $this->setOpt( CURLOPT_CUSTOMREQUEST, "DELETE");
+        return $this->setOpt(CURLOPT_CUSTOMREQUEST, "DELETE");
     }
 
     /**
@@ -187,7 +188,8 @@ class Curl
         return $this;
     }
 
-    function setHTTPRequestHeader(){
+    public function setHTTPRequestHeader()
+    {
         $this->setOpt(CURLOPT_HEADER, true);
     }
     /**
@@ -198,19 +200,20 @@ class Curl
     {
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         $response = curl_exec($this->resource);
-        $this->setResponse ($response);
+        $this->setResponse($response);
         $this->initialiseResponseData();
-        if($close){
-            $this->close ();
+        if ($close) {
+            $this->close();
         }
         return $response;
     }
 
-    public function initialiseResponseData(){
-        $this -> response_code=curl_getinfo($this->resource,CURLINFO_HTTP_CODE);
+    public function initialiseResponseData()
+    {
+        $this -> response_code=curl_getinfo($this->resource, CURLINFO_HTTP_CODE);
         $this -> response_infos=curl_getinfo($this->resource);
-        $this -> errno = curl_errno ($this->resource);
-        $this -> error  =curl_error ($this->resource);
+        $this -> errno = curl_errno($this->resource);
+        $this -> error  =curl_error($this->resource);
     }
 
     /**

@@ -7,11 +7,10 @@
 
 namespace Orcid\Work;
 
-
 use Exception;
 
 class ExternalId
-{ 
+{
     /**
      * @var string
      */
@@ -49,8 +48,9 @@ class ExternalId
      * @param $other
      * @return bool
      */
-    public function isEqualTo($other){
-        return ( $other instanceof ExternalId
+    public function isEqualTo($other)
+    {
+        return ($other instanceof ExternalId
                 && $other->getIdType()===$this->idType
                 && $other->getIdValue()===$this->idValue);
     }
@@ -60,23 +60,24 @@ class ExternalId
      * @param string $idValue
      * @return bool
      */
-   public function isSame(string $idType,string $idValue){
-       return $this->idType===(string)$idType && $this->idValue===(string)$idValue;
-   }
+    public function isSame(string $idType, string $idValue)
+    {
+        return $this->idType===(string)$idType && $this->idValue===(string)$idValue;
+    }
 
     /**
      * @param string $idRelationship
      * @throws Exception
      */
     public function setIdRelationship(string $idRelationship="")
-    {  $idRelationship=empty($idRelationship)?'self':$idRelationship;
-        if(OAwork::isValidExternalIdRelationType($idRelationship)){
+    {
+        $idRelationship=empty($idRelationship) ? 'self' : $idRelationship;
+        if (OAwork::isValidExternalIdRelationType($idRelationship)) {
             $this->idRelationship = OAwork::tryToNormalizeExternalIdRelationType($idRelationship);
-        }else{
+        } else {
             throw new Exception("the relationship value is not valid here are relationship valid value ["
-                .implode(",",OAwork::EXTERNAL_ID_RELATION_TYPE)."].");
+                .implode(",", OAwork::EXTERNAL_ID_RELATION_TYPE)."].");
         }
-
     }
 
     /**
@@ -86,7 +87,7 @@ class ExternalId
      */
     public function setIdType(string $idType)
     {
-        $this->checkIsNotEmptyValue($idType,'idType');
+        $this->checkIsNotEmptyValue($idType, 'idType');
         $this->idType = OAwork::tryToNormalizeExternalIdType($idType);
     }
 
@@ -104,7 +105,7 @@ class ExternalId
      */
     public function setIdValue(string $idValue)
     {
-        $this->checkIsNotEmptyValue($idValue,'idValue');
+        $this->checkIsNotEmptyValue($idValue, 'idValue');
         $this->idValue = $idValue;
     }
 
@@ -145,11 +146,10 @@ class ExternalId
      * @param $name
      * @throws Exception
      */
-    private function checkIsNotEmptyValue($value,$name)
+    private function checkIsNotEmptyValue($value, $name)
     {
-        if(empty($value)){
+        if (empty($value)) {
             throw new Exception('the value of '.$name.' can\'t be empty for valid external Id type') ;
         }
     }
-
 }

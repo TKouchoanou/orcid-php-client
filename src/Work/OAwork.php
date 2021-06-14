@@ -5,43 +5,44 @@
  * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
+
 namespace Orcid\Work;
 
-
  use Exception;
- abstract  class OAwork
+
+ abstract class OAwork
  {
      use ODataValidator;
-     const YEAR = 'year';
-     const MONTH = 'month';
-     const DAY = 'day';
+     public const YEAR = 'year';
+     public const MONTH = 'month';
+     public const DAY = 'day';
 
-     const EXTERNAL_ID_RELATION_TYPE = ['self', 'part-of'];
-     const CITATION_FORMATS = ['formatted-unspecified', 'bibtex', 'ris', 'formatted-apa', 'formatted-harvard', 'formatted-ieee', 'formatted-mla', 'formatted-vancouver', 'formatted-chicago'];
+     public const EXTERNAL_ID_RELATION_TYPE = ['self', 'part-of'];
+     public const CITATION_FORMATS = ['formatted-unspecified', 'bibtex', 'ris', 'formatted-apa', 'formatted-harvard', 'formatted-ieee', 'formatted-mla', 'formatted-vancouver', 'formatted-chicago'];
      /**
       *language code which is accepted by orcid  don't contains: zh Sino-Tibetan Chinese, he Afro-Asiatic Hebrew ,id Austronesian Indonesian,yi  Indo-European Yiddish
       */
-     const LANGAGE_CODES = ['en', 'ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'zh_CN', 'zh_TW', 'cu',
+     public const LANGAGE_CODES = ['en', 'ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'zh_CN', 'zh_TW', 'cu',
          'cv', 'kw', 'co', 'cr', 'hr', 'cs', 'da', 'dv', 'nl', 'dz', 'en', 'eo', 'et', 'ee', 'fo', 'fj', 'fi', 'fr', 'fy', 'ff', 'gl', 'lg', 'ka', 'de', 'el', 'kl', 'gn', 'gu', 'ht', 'ha', 'iw', 'hz', 'hi', 'ho', 'hu', 'is',
          'io', 'ig', 'in', 'ia', 'ie', 'iu', 'ik', 'ga', 'it', 'ja', 'jv', 'kn', 'kr', 'ks', 'kk', 'km', 'ki', 'rw', 'ky', 'kv', 'kg', 'ko', 'ku', 'kj', 'lo', 'la', 'lv', 'li', 'ln', 'lt', 'lu', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt'
          , 'gv', 'mi', 'mr', 'mh', 'mo', 'mn', 'na', 'nv', 'ng', 'ne', 'nd', 'se', 'no', 'nb', 'nn', 'ny', 'oc', 'oj', 'or', 'om', 'os', 'pi', 'pa', 'fa', 'pl', 'pt', 'ps', 'qu', 'rm', 'ro', 'rn', 'ru', 'sm', 'sg', 'sa', 'sc', 'gd'
          , 'sr', 'sn', 'ii', 'sd', 'si', 'sk', 'sl', 'so', 'nr', 'st', 'es', 'su', 'sw', 'ss', 'sv', 'tl', 'ty', 'tg', 'ta', 'tt', 'te', 'th', 'bo', 'ti', 'to', 'ts', 'tn', 'tr', 'tk', 'tw', 'ug', 'uk', 'ur', 'uz', 've', 'vi',
          'vo', 'wa', 'cy', 'wo', 'xh', 'ji', 'yo', 'za', 'zu'];
 
-     const SPECIAL_LANGAGE_CODES = ['zh_cn' => 'zh_CN', 'ZH_CN' => 'zh_CN', 'zh_tw' => 'zh_TW', 'ZH_TW' => 'zh_TW'];
+     public const SPECIAL_LANGAGE_CODES = ['zh_cn' => 'zh_CN', 'ZH_CN' => 'zh_CN', 'zh_tw' => 'zh_TW', 'ZH_TW' => 'zh_TW'];
 
      /** orcid accepts countries that meet the standard iso-3166-country-or-empty http://documentation.abes.fr/sudoc/formats/CodesPays.htm */
-     const COUNTRY_CODES = ['AF', 'AX', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'AG', 'AR', 'AM', 'AW', 'AU', 'AT', 'AZ', 'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BM', 'BT', 'BO', 'BQ', 'BA', 'BW', 'BV', 'BR', 'IO', 'BN', 'BG', 'BF', 'BI', 'CV', 'KH', 'CM', 'CA', 'KY',
+     public const COUNTRY_CODES = ['AF', 'AX', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'AG', 'AR', 'AM', 'AW', 'AU', 'AT', 'AZ', 'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BM', 'BT', 'BO', 'BQ', 'BA', 'BW', 'BV', 'BR', 'IO', 'BN', 'BG', 'BF', 'BI', 'CV', 'KH', 'CM', 'CA', 'KY',
          'CF', 'TD', 'CL', 'CN', 'CX', 'CC', 'CO', 'KM', 'CG', 'CD', 'CK', 'CR', 'CI', 'HR', 'CU', 'CW', 'CY', 'CZ', 'DK', 'DJ', 'DM', 'DO', 'EC', 'EG', 'SV', 'GQ', 'ER', 'EE', 'SZ', 'ET', 'FK', 'FO', 'FJ', 'FI', 'FR', 'GF', 'PF', 'TF', 'GA', 'GM', 'GE', 'DE', 'GH', 'GI', 'GR', 'GL',
          'GD', 'GP', 'GU', 'GT', 'GG', 'GN', 'GW', 'GY', 'HT', 'HM', 'VA', 'HN', 'HK', 'HU', 'IS', 'IN', 'ID', 'IR', 'IQ', 'IE', 'IM', 'IL', 'IT', 'JM', 'JP', 'JE', 'JO', 'KZ', 'KE', 'KI', 'KP', 'KR', 'KW', 'KG', 'LA', 'LV', 'LB', 'LS', 'LR', 'LY', 'LI', 'LT', 'LU', 'MO', 'MG', 'MW',
          'MY', 'MV', 'ML', 'MT', 'MH', 'MQ', 'MR', 'MU', 'YT', 'MX', 'FM', 'MD', 'MC', 'MN', 'ME', 'MS', 'MA', 'MZ', 'MM', 'NA', 'NR', 'NP', 'NL', 'NC', 'NZ', 'NI', 'NE', 'NG', 'NU', 'NF', 'MK', 'MP', 'NO', 'OM', 'PK', 'PW', 'PS', 'PA', 'PG', 'PY', 'PE', 'PH', 'PN', 'PL', 'PT', 'PR',
          'QA', 'RE', 'RO', 'RU', 'RW', 'BL', 'SH', 'KN', 'LC', 'MF', 'PM', 'VC', 'WS', 'SM', 'ST', 'SA', 'SN', 'RS', 'SC', 'SL', 'SG', 'SX', 'SK', 'SI', 'SB', 'SO', 'ZA', 'GS', 'SS', 'ES', 'LK', 'SD', 'SR', 'SJ', 'SE', 'CH', 'SY', 'TW', 'TJ', 'TZ', 'TH', 'TL', 'TG', 'TK', 'TO', 'TT',
          'TN', 'TR', 'TM', 'TC', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UM', 'UY', 'UZ', 'VU', 'VE', 'VN', 'VG', 'VI', 'WF', 'EH', 'YE', 'ZM', 'ZW'];
 
-     const EXTENAL_ID_TYPE = ['agr', 'ark', 'arxiv', 'asin', 'asin-tld', 'authenticusid', 'bibcode', 'cba', 'cienciaiul', 'cit', 'ctx', 'dnb', 'doi', 'eid', 'ethos',
+     public const EXTENAL_ID_TYPE = ['agr', 'ark', 'arxiv', 'asin', 'asin-tld', 'authenticusid', 'bibcode', 'cba', 'cienciaiul', 'cit', 'ctx', 'dnb', 'doi', 'eid', 'ethos',
          'grant_number', 'handle','hal', 'hir', 'isbn', 'issn', 'jfm', 'jstor', 'kuid', 'lccn', 'lensid', 'mr', 'oclc', 'ol', 'osti', 'other-id', 'pat', 'pdb', 'pmc', 'pmid',
          'proposal-id', 'rfc', 'rrid', 'source-work-id', 'ssrn', 'uri', 'urn', 'wosuid', 'zbl'];
-     const EXTERNAL_URL_BY_IDTYPE = ['arxiv' => 'https://arxiv.org/abs/', 'asin' => 'http://www.amazon.com/dp/',
+     public const EXTERNAL_URL_BY_IDTYPE = ['arxiv' => 'https://arxiv.org/abs/', 'asin' => 'http://www.amazon.com/dp/',
          'authenticusid' => 'https://www.authenticus.pt/', 'bibcode' => 'http://adsabs.harvard.edu/abs/',
          'cienciaiul' => 'https://ciencia.iscte-iul.pt/id/', 'dnb' => 'https://d-nb.info/',
          'doi' => 'https://doi.org/', 'ethos' => 'http://ethos.bl.uk/OrderDetails.do?uin=', 'handle' => 'http://hdl.handle.net/',
@@ -52,12 +53,12 @@ namespace Orcid\Work;
          'pdb' => 'http://identifiers.org/pdb/', 'pmc' => 'https://europepmc.org/articles/', 'pmid' => 'https://www.ncbi.nlm.nih.gov/pubmed/',
          'rfc' => 'https://tools.ietf.org/html/', 'rrid' => 'https://identifiers.org/rrid/', 'ssrn' => 'http://papers.ssrn.com/abstract_id=',
          'zbl' => 'http://zbmath.org/?format=complete&q='];
-     const WORK_TYPES = ['artistic-performance', 'book-chapter', 'book-review', 'book', 'conference-abstract', 'conference-paper', 'conference-poster', 'data-set',
+     public const WORK_TYPES = ['artistic-performance', 'book-chapter', 'book-review', 'book', 'conference-abstract', 'conference-paper', 'conference-poster', 'data-set',
          'dictionary-entry', 'disclosure', 'dissertation', 'edited-book', 'encyclopedia-entry', 'invention', 'journal-article', 'journal-issue', 'lecture-speech', 'license',
          'magazine-article', 'manual', 'newsletter-article', 'newspaper-article', 'online-resource', 'other', 'patent', 'registered-copyright', 'report', 'research-technique',
          'research-tool', 'spin-off-company', 'standards-and-policy', 'supervised-student-publication', 'technical-standard', 'test', 'translation', 'trademark', 'website', 'working-paper'];
-     const AUTHOR_SEQUENCE_TYPE = ['first', 'additional'];
-     const AUTHOR_ROLE_TYPE = ['author', 'assignee', 'editor', 'chair-or-translator', 'co-investigator', 'co-inventor', 'graduate-student', 'other-inventor', 'principal-investigator', 'postdoctoral-researcher', 'support-staff'];
+     public const AUTHOR_SEQUENCE_TYPE = ['first', 'additional'];
+     public const AUTHOR_ROLE_TYPE = ['author', 'assignee', 'editor', 'chair-or-translator', 'co-investigator', 'co-inventor', 'graduate-student', 'other-inventor', 'principal-investigator', 'postdoctoral-researcher', 'support-staff'];
      /**
       * @var string|
       */
@@ -156,7 +157,7 @@ namespace Orcid\Work;
          }
          if (!in_array($workType, self::WORK_TYPES)) {
              throw new Exception("The type of work  '" . $type . "'  you try to set is not valid for orcid work, here are the valid worktype: [".
-             implode(",",self::WORK_TYPES)."].");
+             implode(",", self::WORK_TYPES)."].");
          }
          $this->type = $workType;
          return $this;
@@ -227,10 +228,10 @@ namespace Orcid\Work;
      public function setTranslatedTitleLanguageCode(string $translatedTitleLanguageCode)
      {
          if (!empty($translatedTitleLanguageCode)) {
-             if(self::isValidLanguageCode($translatedTitleLanguageCode)){
+             if (self::isValidLanguageCode($translatedTitleLanguageCode)) {
                  $this->translatedTitleLanguageCode = self::tryToNormalizeLanguageCode($translatedTitleLanguageCode);
-             }else{
-                 throw new Exception("Your language code is not valid. here are valid langage code: [".implode(",",self::LANGAGE_CODES)."] ".
+             } else {
+                 throw new Exception("Your language code is not valid. here are valid langage code: [".implode(",", self::LANGAGE_CODES)."] ".
                      "if you want to set it by force use the method setPropertyByForce('property','value')");
              }
          }
@@ -283,15 +284,16 @@ namespace Orcid\Work;
       * @return OAwork
       * @throws Exception
       */
-    public function setPropertyByForce(string $property,$value){
-      if(property_exists($this,$property)){
-          $this->{$property}=$value;
-      }else{
-          throw new Exception("your property ".$property." don't exist this objet property are : ".
-              implode(", ",array_keys(get_object_vars ($this))).".");
-      }
-      return $this;
-    }
+     public function setPropertyByForce(string $property, $value)
+     {
+         if (property_exists($this, $property)) {
+             $this->{$property}=$value;
+         } else {
+             throw new Exception("your property ".$property." don't exist this objet property are : ".
+              implode(", ", array_keys(get_object_vars($this))).".");
+         }
+         return $this;
+     }
      /**
       * @return string
       */
@@ -348,8 +350,4 @@ namespace Orcid\Work;
      {
          return $this->externals;
      }
-
-
-
-
-}
+ }

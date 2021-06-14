@@ -5,6 +5,7 @@
  * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr | theophane_malo@yahoo.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
+
 namespace Orcid;
 
 /**

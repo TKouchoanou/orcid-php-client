@@ -5,18 +5,17 @@
  * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
+
 namespace Orcid\Work\Read;
-
-
 
 use ArrayIterator;
 use Exception;
 
 class Records extends ArrayIterator
 {
-  /**
-     * @var string 
-     */
+    /**
+       * @var string
+       */
     protected $lastModifiedDate;
     /**
      * @var array
@@ -46,9 +45,9 @@ class Records extends ArrayIterator
      */
     public function append($value)
     {
-        if(!is_null($value) && ($value instanceof Record)){
+        if (!is_null($value) && ($value instanceof Record)) {
             parent::append($value);
-        }else{
+        } else {
             throw new Exception("The value you can append must be instance of Record and not null");
         }
     }
@@ -98,7 +97,8 @@ class Records extends ArrayIterator
      * @param array $orcidRecords
      * @return $this
      */
-    public function buildWorkRecords(array $orcidRecords){
+    public function buildWorkRecords(array $orcidRecords)
+    {
 
         //orcid records in associative array
         $groups=$orcidRecords['group'];
@@ -108,16 +108,16 @@ class Records extends ArrayIterator
         $this->setOrcidWorks($orcidRecords);
         $this->setGroup($groups);
         $this->setPath($path);
-        foreach( $groups as $work) {
+        foreach ($groups as $work) {
             $newRecord= new Record();
             $summary=$work['work-summary'][0];
             $putCode=$summary['put-code'];
             $source=$summary['source']['source-name']['value'];
 
             $title=$summary['title']['title']['value'];
-            $translatedTitle=isset($summary['title']['translated-title']['value'])?$summary['title']['translated-title']['value']:null;
-            $translatedTitleLanguageCode=isset($summary['title']['translated-title']['language-code'])?$summary['title']['translated-title']['language-code']:null;
-            $subTitle=isset($summary['title']['subtitle']['value'])?$summary['title']['subtitle']['value']:null;
+            $translatedTitle=isset($summary['title']['translated-title']['value']) ? $summary['title']['translated-title']['value'] : null;
+            $translatedTitleLanguageCode=isset($summary['title']['translated-title']['language-code']) ? $summary['title']['translated-title']['language-code'] : null;
+            $subTitle=isset($summary['title']['subtitle']['value']) ? $summary['title']['subtitle']['value'] : null;
 
             $externalIdArray= $summary['external-ids']['external-id'];
             $lastUpdateDate=$summary['last-modified-date']['value'];
@@ -125,9 +125,9 @@ class Records extends ArrayIterator
             $workType=$summary['type'];
             $visibility=$summary['visibility'];
             $workPath=$summary['path'];
-            $pubYear=isset($summary['publication-date']['year']['value'])?$summary['publication-date']['year']['value']:'';
-            $pubMonth=isset($summary['publication-date']['month']['value'])?$summary['publication-date']['month']['value']:'';
-            $pubDay=isset($summary['publication-date']['day']['value'])?$summary['publication-date']['day']['value']:'';
+            $pubYear=isset($summary['publication-date']['year']['value']) ? $summary['publication-date']['year']['value'] : '';
+            $pubMonth=isset($summary['publication-date']['month']['value']) ? $summary['publication-date']['month']['value'] : '';
+            $pubDay=isset($summary['publication-date']['day']['value']) ? $summary['publication-date']['day']['value'] : '';
             try {
                 $newRecord->setPutCode($putCode)
                     ->setTitle($title)
@@ -138,22 +138,21 @@ class Records extends ArrayIterator
                     ->setPath($workPath)
                     ->setVisibility($visibility)
                     ->setPublicationDate($pubYear, $pubMonth, $pubDay);
-                if(!empty($translatedTitle)){
+                if (!empty($translatedTitle)) {
                     $newRecord->setTranslatedTitle($translatedTitle);
                 }
-                if(!empty($translatedTitleLanguageCode)){
+                if (!empty($translatedTitleLanguageCode)) {
                     $newRecord->setTranslatedTitleLanguageCode($translatedTitleLanguageCode);
                 }
-                if(!empty($subTitle)){
+                if (!empty($subTitle)) {
                     $newRecord->setSubTitle($subTitle);
                 }
-                foreach( $externalIdArray as $externalId) {
-                    $relationType=isset($externalId['external-id-relationship'])?$externalId['external-id-relationship']:'';
-                    $url=isset($externalId['external-id-url']['value'])?$externalId['external-id-url']['value']:'';
+                foreach ($externalIdArray as $externalId) {
+                    $relationType=isset($externalId['external-id-relationship']) ? $externalId['external-id-relationship'] : '';
+                    $url=isset($externalId['external-id-url']['value']) ? $externalId['external-id-url']['value'] : '';
                     $type=$externalId['external-id-type'];
                     $value=$externalId['external-id-value'];
                     $newRecord->addExternalIdent($type, $value, $url, $relationType);
-
                 }
                 $this->append($newRecord);
             } catch (Exception $e) {

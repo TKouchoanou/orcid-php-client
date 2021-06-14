@@ -106,21 +106,21 @@ $oauth->useProductionEnvironment();
 ### Work
 Work is a class that allows you to create a publication on your orcid account. The data of a document to send to orcid must be added to a Work instance by the setters. Work provides methods to create xml in the format accepted by Orcid
 ```php
-   // creation of an Orcid work
+   // creation of an Orcid work full configuration
         $work=new Work();
-        $work->setFilter() //to filter data
+        $work->setFilter()  
              ->setTitle("Les stalagmites du réseau du trou Noir")
-	         ->setTranslatedTitle('The stalagmites of the Black hole network')
+	     ->setTranslatedTitle('The stalagmites of the Black hole network')
              ->setTranslatedTitleLanguageCode('en')
              ->setType("Work-paper")
-	         ->setWorkUrl("the work url")
+	     ->setWorkUrl("the work url")
              ->setJournalTitle("naturephysic")
              ->setCitation("The work citation....")//if you don't set citationType formatted-unspecified will be set
-	         ->setCitationType('the citation type')
+	     ->setCitationType('the citation type')
              ->setShortDescription("the work description...") // the descript must be  less than 500 characters
-	         ->setPublicationDate('1998','09','20')// the first parameter year is required if you want to set date
-	         ->setLanguageCode('fr')
-	         ->setCountry('us')
+	     ->setPublicationDate('1998','09','20')// the first parameter year is required if you want to set date
+	     ->setLanguageCode('fr')
+	     ->setCountry('us')
             //add Authors with Author FullName and role, by default the role 'author' will be chosen your can also add the orcidID and the sequence of author
              ->addContributor("Benjamin Lans","author","1111-OOOO-2543-3333","first")
              ->addContributor("Richard Maire","editor")
@@ -133,12 +133,12 @@ Work is a class that allows you to create a publication on your orcid account. T
              ->addExternalIdent("uri","00199711");
   
 ```
-The minimum configuration for sending an Orcid Work is to define the title, the type of document and add at least an external identifier.
+The  minimum configuration for sending an Orcid Work is to define the title, the type of document and add at least an external identifier.
 ```php
  // minimum configuration to create an Orcid work
         $work=new Work();
         $work->setTitle('title')
-	         ->setType('workType')
+	     ->setType('workType')
              ->addExternalIdent('idType','idValue');  
 ```
 In the case of a work modification, Put-code is required .
@@ -330,9 +330,9 @@ represents an external identifier and contains the four properties $ idType, $ i
 
 * Added functionality to have a full record instance after reading a single record and a full record collection instance after reading Many Records. A full record contains all the data on the record while a Summary record contains just the essentials, ie: the type, title and external identifiers.
 
-* Addition of validation and filter functions for the data of an orcid item with the static class: ```php Orcid \ Work \ Data \ Data```.
+* Addition of validation and filter functions for the data of an orcid item with the static class: ```Orcid\Work\Data\Data```.
 
-* Addition of the possibility to filter work data with``` php $work->setFilter()``` before value setting, and the possibility of removing the filter with ```$work->removeFilter()```.
+* Addition of the possibility to filter work data with``` $work->setFilter()``` before value setting, and the possibility of removing the filter with ```$work->removeFilter()```.
 
-* Addition of the possibility of forcibly setting the value of a property of an object. This method makes it possible to force the request to send a value without it being validated. Indeed, I try to check the validity of the data based on lists of values ​​accepted by meta and the rules of values, before sending. But since allowed lists of values ​​evolve and the rules can change, it is possible that the validation rules are obsolete or the list of values ​​accepted for a meta (eg: work-type) has changed compared to the version of the library that you have in your project. In this case you can use the ```php $ work→setPropertyByForce ('type', 'newOrcidWorkType')```. 
+* Addition of the possibility of forcibly setting the value of a property of an object. This method makes it possible to force the request to send a value without it being validated. Indeed, I try to check the validity of the data based on lists of values ​​accepted by meta and the rules of values, before sending. But since allowed lists of values ​​evolve and the rules can change, it is possible that the validation rules are obsolete or the list of values ​​accepted for a meta (eg: work-type) has changed compared to the version of the library that you have in your project. In this case you can use the``` $work→setPropertyByForce ('type', 'newOrcidWorkType')```
 

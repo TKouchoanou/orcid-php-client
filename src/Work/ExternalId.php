@@ -2,7 +2,7 @@
 /**
  * @package   orcid-php-client
  * @author    Kouchoanou Enagnon Théophane Malo <theophane.kouchoanou@ccsd.cnrs.fr>
- * @license   http://www.opensource.org/licenses/mit-license.php MIT
+ * @license   https://www.gnu.org/licenses/gpl-3.0.html GPL-3.0-or-later
  */
 
 namespace Orcid\Work;

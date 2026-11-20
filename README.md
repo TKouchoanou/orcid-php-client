@@ -3,6 +3,12 @@ php client to send and read workflows on orcid
 
 This library was started to support the ORCID OAuth2 authentication workflow. It also supports basic profile access, but is a work in progress. More features are to come as needed by the developer or requested/contributed by other interested parties.
 
+## About this fork
+
+This project is a fork of [TKouchoanou/orcid-php-client](https://github.com/TKouchoanou/orcid-php-client), itself based on the original [hubzero/orcid-php](https://github.com/hubzero/orcid-php) library by Sam Wilson.
+
+It is now maintained by the [CCSD](https://www.ccsd.cnrs.fr/) at [CCSDForge/orcid-php-client](https://github.com/CCSDForge/orcid-php-client) and published on Composer as `ccsd/orcid-php-client`. Issues and pull requests should be submitted to this repository.
+
 ## Usage
 
 ### OAuth2
@@ -285,3 +291,13 @@ represents an external identifier and contains the four properties $ idType, $ i
                 $idRelationship=$externalId->getIdRelationship();
         }
 ```
+
+## Authors
+
+See the [AUTHORS](AUTHORS) file for the list of authors and contributors.
+
+## License
+
+This library is licensed under the [GNU General Public License v3.0](LICENSE) or later.
+
+It is based on [hubzero/orcid-php](https://github.com/hubzero/orcid-php), released under the MIT License. The original copyright and permission notice is kept in [LICENSE.MIT](LICENSE.MIT).

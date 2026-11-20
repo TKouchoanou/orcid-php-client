@@ -3,7 +3,10 @@
 /**
  * @package   orcid-php-client
  * @author    Kouchoanou Théophane <theophane.kouchoanou@ccsd.cnrs.fr | theophane_malo@yahoo.fr>
- * @license   http://www.opensource.org/licenses/mit-license.php MIT
+ * @license   https://www.gnu.org/licenses/gpl-3.0.html GPL-3.0-or-later
+ *
+ * Based on hubzero/orcid-php (Copyright (c) 2015 HUBzero Foundation, LLC.),
+ * released under the MIT License, see LICENSE.MIT
  */
 
 namespace Orcid;

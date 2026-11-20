@@ -17,6 +17,7 @@ class Works extends ArrayIterator
      * @param Work $value
      * @throws Exception
      */
+    #[\ReturnTypeWillChange]
     public function append($value)
     {
         if (!is_null($value) && ($value instanceof Work)) {

@@ -43,6 +43,7 @@ class Records extends ArrayIterator
      * @param Record $value
      * @throws Exception
      */
+    #[\ReturnTypeWillChange]
     public function append($value)
     {
         if (!is_null($value) && ($value instanceof Record)) {

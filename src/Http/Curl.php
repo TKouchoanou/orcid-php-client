@@ -15,7 +15,7 @@ class Curl
 {
     /**
      * The connection resource
-     * @var  resource
+     * @var  resource|\CurlHandle|null
      **/
     private $resource = null;
     /**
@@ -273,13 +273,18 @@ class Curl
      **/
     public function close()
     {
-        curl_close($this->resource);
+        if ($this->resource) {
+            curl_close($this->resource);
+        }
+        // curl_close() is a no-op since PHP 8.0: drop the handle so a closed
+        // connection can be detected and re-initialized
+        $this->resource = null;
 
         return $this;
     }
 
     /**
-     * @return resource
+     * @return resource|\CurlHandle|null
      */
     public function getResource()
     {

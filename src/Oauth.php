@@ -566,7 +566,9 @@ class Oauth
      **/
     public function getProfile($orcid = null)
     {
-        if (!is_resource($this->http->getResource())) {
+        $resource = $this->http->getResource();
+        // Since PHP 8.0 curl handles are CurlHandle objects, not resources
+        if (!is_resource($resource) && !($resource instanceof \CurlHandle)) {
             $this->http->initialize();
         }
 
